@@ -1,0 +1,61 @@
+{
+  "private": true,
+  "name": "ckl-advanced-templates-pf1",
+  "description": "",
+  "license": "",
+  "homepage": "",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bugs": {
+    "url": ""
+  },
+  "contributors": [
+    {
+      "name": "",
+      "email": ""
+    }
+  ],
+  "type": "module",
+  "scripts": {
+    "build": "gulp build",
+    "build:watch": "gulp watch",
+    "link-project": "gulp link",
+    "clean": "gulp clean",
+    "clean:link": "gulp link --clean",
+    "lint": "eslint --ext .js,.cjs .",
+    "lint:fix": "eslint --ext .js,.cjs --fix .",
+    "format": "prettier --write \"./**/*.(js|cjs|json|yml|scss)\"",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:ci": "jest --ci --reporters=default --reporters=jest-junit",
+    "postinstall": "husky install"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^13.1.3",
+    "@rollup/stream": "^2.0.0",
+    "@typhonjs-fvtt/eslint-config-foundry.js": "^0.8.0",
+    "eslint": "^8.9.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-jest": "^26.1.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "fs-extra": "^10.0.0",
+    "gulp": "^4.0.2",
+    "gulp-dart-sass": "^1.0.2",
+    "gulp-sourcemaps": "^3.0.0",
+    "husky": "^7.0.4",
+    "jest": "^27.5.1",
+    "jest-junit": "^13.0.0",
+    "lint-staged": "^12.3.4",
+    "prettier": "^2.5.1",
+    "rollup": "^2.67.2",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0",
+    "yargs": "^17.3.1"
+  },
+  "lint-staged": {
+    "*.(js|cjs)": "eslint --fix",
+    "*.(json|yml|scss)": "prettier --write"
+  }
+}
