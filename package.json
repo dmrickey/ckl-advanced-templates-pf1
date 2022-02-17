@@ -19,18 +19,18 @@
   ],
   "type": "module",
   "scripts": {
-    "build": "gulp build",
     "build:watch": "gulp watch",
-    "link-project": "gulp link",
-    "clean": "gulp clean",
+    "build": "gulp build",
     "clean:link": "gulp link --clean",
-    "lint": "eslint --ext .js,.cjs .",
-    "lint:fix": "eslint --ext .js,.cjs --fix .",
+    "clean": "gulp clean",
     "format": "prettier --write \"./**/*.(js|cjs|json|yml|scss)\"",
-    "test": "jest",
-    "test:watch": "jest --watch",
+    "link-project": "gulp link",
+    "lint:fix": "eslint --ext .js,.cjs --fix .",
+    "lint": "eslint --ext .js,.cjs .",
+    "postinstall": "husky install",
     "test:ci": "jest --ci --reporters=default --reporters=jest-junit",
-    "postinstall": "husky install"
+    "test:watch": "jest --watch",
+    "test": "jest"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^13.1.3",
