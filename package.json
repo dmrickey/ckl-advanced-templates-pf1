@@ -35,6 +35,7 @@
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^13.1.3",
     "@rollup/stream": "^2.0.0",
+    "@typhonjs-config/eslint-config": "^0.3.2",
     "@typhonjs-fvtt/eslint-config-foundry.js": "^0.8.0",
     "eslint": "^8.9.0",
     "eslint-config-prettier": "^8.3.0",
