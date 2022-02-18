@@ -25,6 +25,7 @@ module.exports = {
         'brace-style': [2, "stroustrup"],
         "no-unused-vars": ["off", { "argsIgnorePattern": "^_" }],
         "space-before-function-paren": ["error", { "anonymous": "always", "named": "never", "asyncArrow": "always" }],
+        "indent": ["error", 4],
     },
 
     ignorePatterns: [

@@ -1,6 +1,6 @@
-const self = me => typeof me === 'function' ? me() : me;
+const self = (me) => typeof me === 'function' ? me() : me;
 
-export default func => {
+export default (func) => {
     // todo read game setting
     // eslint-disable-next-line
     if (true) {
