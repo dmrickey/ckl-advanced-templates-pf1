@@ -1,6 +1,6 @@
 {
     "name": "ckl-advanced-templates-pf1",
-    "title": "ckl-advanced-templates-pf1",
+    "title": "Advanced Templates Pf1",
     "description": "",
     "version": "This is auto replaced",
     "author": "David Rickey",
@@ -13,12 +13,8 @@
     "minimumCoreVersion": "9",
     "compatibleCoreVersion": "9",
     "scripts": [],
-    "esmodules": [
-        "module/ckl-advanced-templates-pf1.js"
-    ],
-    "styles": [
-        "styles/ckl-advanced-templates-pf1.css"
-    ],
+    "esmodules": ["module/ckl-advanced-templates-pf1.js"],
+    "styles": ["styles/ckl-advanced-templates-pf1.css"],
     "packs": [],
     "dependencies": [
         {
