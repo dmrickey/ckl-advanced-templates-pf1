@@ -7,7 +7,7 @@ import { hideControlIconKey } from '../measured-template-pf-advanced';
 /**
  * Common logic and switch statement for placing all templates
  *
- * @param {function} wrapped The base `promptMeasureTemplate`
+ * @param {Function} wrapped The base `promptMeasureTemplate`
  * @param {object} shared The shared context passed between different functions when executing an Attack
  * @returns {object} The template creation data
  */
@@ -23,8 +23,8 @@ async function promptMeasureTemplate(wrapped, shared) {
         };
     }
 
-    const windows = Object.values(ui.windows).filter(x => !!x.minimize && !x._minimized);
-    await Promise.all(windows.map(x => x.minimize()));
+    const windows = Object.values(ui.windows).filter((x) => !!x.minimize && !x._minimized);
+    await Promise.all(windows.map((x) => x.minimize()));
 
     const type = this.data.data.measureTemplate.type;
 
@@ -33,7 +33,7 @@ async function promptMeasureTemplate(wrapped, shared) {
         t: type,
         flags: { [MODULE_NAME]: { [hideControlIconKey]: true } },
         user: game.userId,
-    }
+    };
 
     if (this.data.data.measureTemplate?.overrideColor) {
         options.fillColor = this.data.data.measureTemplate.customColor;
@@ -63,7 +63,7 @@ async function promptMeasureTemplate(wrapped, shared) {
     await Promise.all(windows.map(x => x.maximize()));
 
     if (template.result) {
-        await shared.template.update({ flags: { [MODULE_NAME]: { [hideControlIconKey]: false } } })
+        await shared.template.update({ flags: { [MODULE_NAME]: { [hideControlIconKey]: false } } });
     }
 
     return template;

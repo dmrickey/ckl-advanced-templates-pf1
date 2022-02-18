@@ -9,11 +9,15 @@ const initMeasuredTemplate = () => {
     const MeasuredTemplatePF = CONFIG.MeasuredTemplate.objectClass;
 
     class MeasuredTemplatePFAdvanced extends MeasuredTemplatePF {
-        get shouldOverrideIcon() { return !!this.data.flags?.[MODULE_NAME]?.[hideControlIconKey]; }
+        get shouldOverrideIcon() {
+            return !!this.data.flags?.[MODULE_NAME]?.[hideControlIconKey];
+        }
 
         // todo read game setting to see if medium or smaller tokens are forced to pick a corner of their square to center from
         // eslint-disable-next-line
-        get tokenEmanationSize() { return false ? 1 : -1; }
+        get tokenEmanationSize() {
+            return false ? 1 : -1;
+        }
 
         get shouldOverrideTokenEmanation() {
             return game.settings.get('pf1', 'measureStyle')

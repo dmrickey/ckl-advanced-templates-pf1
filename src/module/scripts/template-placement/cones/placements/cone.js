@@ -101,7 +101,7 @@ export default async function (options, token) {
     const targetConfig = {
         drawIcon: false,
         drawOutline: false,
-    }
+    };
 
     let currentSpotIndex = 0;
     const updateTemplateRotation = async (crosshairs) => {
@@ -120,7 +120,7 @@ export default async function (options, token) {
                 return normalizedAngle < 0
                     ? normalizedAngle + 360
                     : normalizedAngle;
-            }
+            };
 
             const ray = new Ray(square.center, crosshairs);
             const angle = radToNormalizedAngle(ray.angle);
