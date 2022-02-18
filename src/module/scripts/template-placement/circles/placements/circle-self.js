@@ -1,5 +1,5 @@
-import { MODULE_NAME } from "../../../../consts";
-import { getToken, ifDebug } from "../../../utils";
+import { MODULE_NAME } from '../../../../consts';
+import { getToken, ifDebug } from '../../../utils';
 
 /**
  * Template that is automatically placed centered on the caster
@@ -16,9 +16,9 @@ export default async function (options, itemPf) {
     templateData = mergeObject(templateData, { flags: { [MODULE_NAME]: { ...itemPf.data.flags[MODULE_NAME], ...{ tokenId: token.id } } } }, { recursive: true });
     console.log(templateData);
 
-    let template = (await canvas.scene.createEmbeddedDocuments('MeasuredTemplate', [templateData]))[0];
+    const template = (await canvas.scene.createEmbeddedDocuments('MeasuredTemplate', [templateData]))[0];
 
     game.user.updateTokenTargets();
 
     return template;
-};
+}

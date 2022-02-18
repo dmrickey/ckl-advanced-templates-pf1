@@ -27,6 +27,6 @@ const createCircle = async (itemPf, shared, options, wrapped) => {
         place: () => { },
         result: true,
     };
-}
+};
 
 export default createCircle;

@@ -50,4 +50,4 @@ export default async function (options) {
     }
 
     return template;
-};
+}

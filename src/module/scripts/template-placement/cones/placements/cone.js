@@ -84,7 +84,7 @@ export default async function (options, token) {
     }
     else {
         const width = Math.max(Math.round(token.data.width), 1);
-        const height = Math.max(Math.round(token.data.height), 1)
+        const height = Math.max(Math.round(token.data.height), 1);
         square = sourceSquare(token.center, width, height);
     }
 
@@ -92,7 +92,7 @@ export default async function (options, token) {
         ...options,
         ...square.allSpots[0],
         angle: 90,
-    }
+    };
 
     let template = (await canvas.scene.createEmbeddedDocuments('MeasuredTemplate', [templateData]))[0];
 
@@ -137,7 +137,7 @@ export default async function (options, token) {
 
             targetTokens(template);
         }
-    }
+    };
 
     const rotateCrosshairs = await warpgate.crosshairs.show(
         targetConfig,

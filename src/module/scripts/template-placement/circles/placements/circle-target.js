@@ -11,4 +11,4 @@ export default async function (options) {
     // todo
     ifDebug(() => console.log('inside _placeCircleOnToken'));
     return await circle(options);
-};
+}

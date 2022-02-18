@@ -30,6 +30,6 @@ const createCone = async (itemPf, shared, options, wrapped) => {
         place: () => { },
         result: true,
     };
-}
+};
 
 export default createCone;
