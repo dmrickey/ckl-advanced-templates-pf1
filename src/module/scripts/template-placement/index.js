@@ -6,6 +6,7 @@ import { hideControlIconKey } from '../measured-template-pf-advanced';
 
 /**
  * Common logic and switch statement for placing all templates
+ *
  * @param {function} wrapped The base `promptMeasureTemplate`
  * @param {object} shared The shared context passed between different functions when executing an Attack
  * @returns {object} The template creation data

@@ -2,6 +2,7 @@ import { MODULE_NAME } from "../../../../consts";
 import { getToken, ifDebug } from "../../../utils";
 
 /**
+ * Template that is automatically placed centered on the caster
  *
  * @param {object} options Template creation data
  * @param {ItemPF} itemPf The pathfinder Item that the template was created from

@@ -4,6 +4,7 @@ import template from './template.js';
 
 /**
  * Adds advanced template options button to abilities with configured templates (that are supported)
+ *
  * @param {*} sheet The actor sheet
  * @param {*} jq jquery
  * @param {*} _options unused

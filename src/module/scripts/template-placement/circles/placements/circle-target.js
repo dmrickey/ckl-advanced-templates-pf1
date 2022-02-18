@@ -3,6 +3,7 @@ import circle from "./circle";
 
 /**
  * Unused - for if you need to drop a circle directly on a target
+ *
  * @param {object} options Template creation data
  * @returns {object} The created template
  */

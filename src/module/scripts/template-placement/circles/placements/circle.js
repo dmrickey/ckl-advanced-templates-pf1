@@ -3,6 +3,7 @@ import { ifDebug } from '../../../utils';
 
 /**
  * For placing a circle at the cursor at a grid intersection
+ *
  * @param {object} options Template creation data
  * @returns {object} The created template
  */

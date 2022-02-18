@@ -2,6 +2,7 @@ import { targetTokens } from '../../../utils';
 
 /**
  * For placing a cone that is not a 15' cone originating from the givent token
+ *
  * @param {object} options The template creation data
  * @param {TokenPF} token The originating token
  * @returns {object} The created template
