@@ -1,6 +1,6 @@
-import { MODULE_NAME } from "../consts";
-import { CirclePlacement } from "./template-placement/circles/circle-placement";
-import { ifDebug } from "./utils";
+import { MODULE_NAME } from '../consts';
+import { CirclePlacement } from './template-placement/circles/circle-placement';
+import { ifDebug } from './utils';
 
 const hideControlIconKey = 'hideControlIconKey';
 
@@ -16,7 +16,7 @@ const initMeasuredTemplate = () => {
         get tokenEmanationSize() { return false ? 1 : -1; }
 
         get shouldOverrideTokenEmanation() {
-            return game.settings.get("pf1", "measureStyle")
+            return game.settings.get('pf1', 'measureStyle')
                 && this.data.t === 'circle'
                 && this.data.flags?.[MODULE_NAME]?.[CirclePlacement.placementKey] === 'self'
                 && ['burst', 'emanation'].includes(this.data.flags?.[MODULE_NAME]?.[CirclePlacement.areaTypeKey])
@@ -106,16 +106,16 @@ const initMeasuredTemplate = () => {
 
             // Get the Template shape
             switch (this.data.t) {
-                case "circle":
+                case 'circle':
                     this.shape = this._getCircleShape(distance);
                     break;
-                case "cone":
+                case 'cone':
                     this.shape = this._getConeShape(direction, this.data.angle, distance);
                     break;
-                case "rect":
+                case 'rect':
                     this.shape = this._getRectShape(direction, distance);
                     break;
-                case "ray":
+                case 'ray':
                     this.shape = this._getRayShape(direction, distance, width);
                     break;
             }

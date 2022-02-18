@@ -71,7 +71,7 @@ async function promptMeasureTemplate(wrapped, shared) {
 
 export default promptMeasureTemplate;
 
-const _getSize = (itemPf, shared) => typeof itemPf.data.data.measureTemplate.size === "string"
+const _getSize = (itemPf, shared) => typeof itemPf.data.data.measureTemplate.size === 'string'
     ? RollPF.safeTotal(itemPf.data.data.measureTemplate.size, shared.rollData)
     : game.pf1.utils.convertDistance(itemPf.data.data.measureTemplate.size)[0];
 

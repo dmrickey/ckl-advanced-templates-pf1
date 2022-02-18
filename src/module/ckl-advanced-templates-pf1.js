@@ -47,14 +47,14 @@ Hooks.once('ready', async () => {
 });
 
 // Add any additional hooks if necessary
-Hooks.on("pf1.postInit", () => {
+Hooks.on('pf1.postInit', () => {
     initMeasuredTemplate();
-    libWrapper.register(MODULE_NAME, "game.pf1.ItemAttack.promptMeasureTemplate", promptMeasureTemplate, "MIXED");
+    libWrapper.register(MODULE_NAME, 'game.pf1.ItemAttack.promptMeasureTemplate', promptMeasureTemplate, 'MIXED');
 
-    Hooks.on("canvasReady", () => {
+    Hooks.on('canvasReady', () => {
         canvas.templates.placeables.forEach((template) => {
             template.highlightGrid();
-        })
+        });
     });
 });
 

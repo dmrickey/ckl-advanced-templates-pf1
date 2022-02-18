@@ -1,8 +1,8 @@
-import placeCircle from "./placements/circle";
-import placeCircleSelf from "./placements/circle-self";
-import placeCircleTarget from "./placements/circle-target";
+import placeCircle from './placements/circle';
+import placeCircleSelf from './placements/circle-self';
+import placeCircleTarget from './placements/circle-target';
 import { MODULE_NAME } from '../../../consts';
-import { ifDebug } from "../../utils";
+import { ifDebug } from '../../utils';
 
 export class CirclePlacement {
     // burst, emanation, or spread
