@@ -51,7 +51,7 @@ export class ConePlacement {
      * Shows the menu, saves the result, then returns the result
      *
      * @param {*} is15Feet If the cone is 15 or not
-     * @returns True if a placement type was selected, false if it was canceled.
+     * @returns {bool} True if a placement type was selected, false if it was canceled.
      */
     async showPlacementMenu(is15Feet) {
         const makeButton = ({ key: value, label }) => ({ label, value });
@@ -82,5 +82,5 @@ export class ConePlacement {
         }
 
         return !!placementType;
-    };
+    }
 }

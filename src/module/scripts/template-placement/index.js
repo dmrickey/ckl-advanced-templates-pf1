@@ -60,7 +60,7 @@ async function promptMeasureTemplate(wrapped, shared) {
             break;
     }
 
-    await Promise.all(windows.map(x => x.maximize()));
+    await Promise.all(windows.map((x) => x.maximize()));
 
     if (template.result) {
         await shared.template.update({ flags: { [MODULE_NAME]: { [hideControlIconKey]: false } } });

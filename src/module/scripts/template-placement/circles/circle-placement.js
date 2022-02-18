@@ -60,7 +60,7 @@ export class CirclePlacement {
             }
         }
         return undefined;
-    }
+    };
 
     async createCurrentTemplate(options, wrapped) {
         const getHandler = (key) => this.placementTypes[key] || this.placementTypes[undefined];
@@ -116,7 +116,7 @@ export class CirclePlacement {
                     [CirclePlacement.areaTypeKey]: (burstResult || spreadResult || emanationResult || '').toLowerCase(),
                     [CirclePlacement.movesWithTokenKey]: !!movesWithTokenResult,
                 }
-            }
+            };
             await this.itemPf.update({ flags });
         }
 
@@ -139,10 +139,10 @@ export class CirclePlacement {
         }
 
         return areaType;
-    }
+    };
 
     _getPlacementType = () => {
         const placementType = this.itemPf.getFlag(MODULE_NAME, CirclePlacement.placementKey);
         return placementType || this.placementTypes.grid.key;
-    }
+    };
 }

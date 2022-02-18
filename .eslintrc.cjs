@@ -1,6 +1,6 @@
 module.exports = {
     parserOptions: {
-        ecmaVersion: 2020,
+        ecmaVersion: 'latest',
         sourceType: 'module',
     },
 
@@ -12,7 +12,7 @@ module.exports = {
         'eslint:recommended',
         // '@typhonjs-fvtt/eslint-config-foundry.js/0.8.0',
         'plugin:jest/recommended',
-        'plugin:prettier/recommended',
+        // 'plugin:prettier/recommended',
         '@typhonjs-config/eslint-config/esm/2022/browser',
         '@typhonjs-fvtt/eslint-config-foundry.js'
     ],
@@ -25,7 +25,7 @@ module.exports = {
         'brace-style': [2, 'stroustrup'],
         'no-unused-vars': ['off', { 'argsIgnorePattern': '^_' }],
         'space-before-function-paren': ['error', { 'anonymous': 'always', 'named': 'never', 'asyncArrow': 'always' }],
-        'indent': ['error', 4],
+        'indent': ['error', 4, { 'SwitchCase': 1 }],
         'operator-linebreak': ['error', 'before'],
     },
 

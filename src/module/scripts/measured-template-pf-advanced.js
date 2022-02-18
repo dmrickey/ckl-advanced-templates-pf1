@@ -14,8 +14,8 @@ const initMeasuredTemplate = () => {
         }
 
         // todo read game setting to see if medium or smaller tokens are forced to pick a corner of their square to center from
-        // eslint-disable-next-line
         get tokenEmanationSize() {
+            // eslint-disable-next-line
             return false ? 1 : -1;
         }
 
@@ -29,7 +29,7 @@ const initMeasuredTemplate = () => {
 
         get tokenSizeSquares() {
             const tokenId = this.data.flags?.[MODULE_NAME]?.tokenId;
-            const token = canvas.tokens.placeables.find(x => x.id === tokenId);
+            const token = canvas.tokens.placeables.find((x) => x.id === tokenId);
             const sizeSquares = token?.data.width || 1;
             return { token, sizeSquares };
         }
@@ -73,7 +73,7 @@ const initMeasuredTemplate = () => {
             ];
 
             return allSpots;
-        };
+        }
 
         _getEmanationShape() {
             const { sizeSquares } = this.tokenSizeSquares;
@@ -92,7 +92,7 @@ const initMeasuredTemplate = () => {
             }
 
             /* ALL OF THIS IS THE ORIGINAL METHOD EXCEPT FOR THE PARTS IN MY IF(SHOULDOVERRIDE) BLOCKS */
-            let d = canvas.dimensions;
+            const d = canvas.dimensions;
             this.position.set(this.data.x, this.data.y);
 
             // Extract and prepare data
@@ -102,7 +102,7 @@ const initMeasuredTemplate = () => {
             direction = Math.toRadians(direction);
             if (this.shouldOverrideTokenEmanation) {
                 const { sizeSquares } = this.tokenSizeSquares;
-                distance += d.size * sizeSquares / 2
+                distance += d.size * sizeSquares / 2;
             }
 
             // Create ray and bounding rectangle
@@ -244,7 +244,7 @@ const initMeasuredTemplate = () => {
     }
 
     CONFIG.MeasuredTemplate.objectClass = MeasuredTemplatePFAdvanced;
-}
+};
 
 export {
     hideControlIconKey,
