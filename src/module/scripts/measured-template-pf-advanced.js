@@ -251,7 +251,7 @@ const initMeasuredTemplate = () => {
             if (!type
                 || !distance
                 || !canvas.scene
-                || !["cone", "circle"].includes(type)
+                || !['cone', 'circle'].includes(type)
             ) {
                 return null;
             }
@@ -260,13 +260,51 @@ const initMeasuredTemplate = () => {
             const cls = CONFIG.MeasuredTemplate.documentClass;
             const template = new cls(templateData, { parent: canvas.scene });
 
-            // todo do I need to initialize specific measured template type variables here?
+            let abilityCls;
+            switch (type) {
+                case 'circle':
+                    switch (this.itemPf.getFlag(MODULE_NAME, CirclePlacement.placementKey)) {
+                        case 'self':
+                            abilityCls = AbilityTemplateCircleSelf;
+                            break;
+                        case 'useSystem':
+                            // todo
+                            break;
+                        case 'grid':
+                        default:
+                            abilityCls = AbilityTemplateCircle;
+                            break;
+                    }
+                    break;
+                case 'cone':
+                    switch (this.itemPf.getFlag(MODULE_NAME, ConePlacement.placementKey)) {
+                        case 'useSystem':
+                            // todo
+                            break;
+                        case 'alt15':
+                            abilityCls = AbilityTemplateConeSelf;
+                            break;
+                        case 'selectTargetSquare':
+                            abilityCls = AbilityTemplateConeTarget;
+                            break;
+                        case 'self15':
+                        case 'self':
+                        default:
+                            abilityCls = distance === 15
+                                ? AbilityTemplateConeSelf15
+                                : AbilityTemplateConeSelf;
+                            break;
+                    }
+                    break;
+            }
 
-            const thisTemplate = new this(template);
+            thisTemplate = new abilityCls(template);
             return thisTemplate;
         }
 
         async drawPreview() {
+            this.initializePlacement();
+
             const initialLayer = canvas.activeLayer;
             await this.draw();
             this.active = true;
@@ -314,47 +352,78 @@ const initMeasuredTemplate = () => {
 
 
         /**
-         * returns { result: boolean, place: () => {} (places template), delete: () => {} (deletes template) }
+         * returns true if committed, false if cancelled
          */
         async commitPreview() { }
+
+        /**
+         * sets up data specififc to template placement (initial position, rotation, set up points array for cones around token, extra width info for emanations, etc)
+         */
+        initializePlacement() { }
     }
 
     class AbilityTemplateCircleSelf extends AbilityTemplateAdvanced {
+        /** @override */
         async commitPreview() {
+
+        }
+
+        /** @override */
+        async initializePlacement() {
 
         }
     }
 
     class AbilityTemplateCircle extends AbilityTemplateAdvanced {
+        /** @override */
         async commitPreview() {
+
+        }
+
+        /** @override */
+        async initializePlacement() {
 
         }
     }
 
     class AbilityTemplateConeSelf15 extends AbilityTemplateAdvanced {
+        /** @override */
         async commitPreview() {
+
+        }
+
+        /** @override */
+        async initializePlacement() {
 
         }
     }
 
     class AbilityTemplateConeSelf extends AbilityTemplateAdvanced {
+        /** @override */
         async commitPreview() {
+
+        }
+
+        /** @override */
+        async initializePlacement() {
 
         }
     }
 
     class AbilityTemplateConeTarget extends AbilityTemplateAdvanced {
+        /** @override */
         async commitPreview() {
+
+        }
+
+        /** @override */
+        async initializePlacement() {
 
         }
     }
 
     game[MODULE_NAME] = {
-        AbilityTemplateCircle,
-        AbilityTemplateCircleSelf,
-        AbilityTemplateConeSelf,
-        AbilityTemplateConeSelf15,
-        AbilityTemplateConeTarget,
+        AbilityTemplateAdvanced,
         MeasuredTemplatePFAdvanced,
     };
 };
