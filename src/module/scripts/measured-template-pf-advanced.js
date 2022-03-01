@@ -244,6 +244,119 @@ const initMeasuredTemplate = () => {
     }
 
     CONFIG.MeasuredTemplate.objectClass = MeasuredTemplatePFAdvanced;
+
+    class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
+        static fromData(templateData) {
+            const { type, distance } = templateData;
+            if (!type
+                || !distance
+                || !canvas.scene
+                || !["cone", "circle"].includes(type)
+            ) {
+                return null;
+            }
+
+            // Return the template constructed from the item data
+            const cls = CONFIG.MeasuredTemplate.documentClass;
+            const template = new cls(templateData, { parent: canvas.scene });
+
+            // todo do I need to initialize specific measured template type variables here?
+
+            const thisTemplate = new this(template);
+            return thisTemplate;
+        }
+
+        async drawPreview() {
+            const initialLayer = canvas.activeLayer;
+            await this.draw();
+            this.active = true;
+            this.layer.activate();
+            this.layer.preview.addChild(this);
+
+            const finalized = await this.commitPreview();
+
+            this.active = false;
+            const hl = canvas.grid.getHighlightLayer(`Template.${this.id}`);
+            hl.clear();
+
+            this.destroy();
+            initialLayer.activate();
+
+            return finalized
+                ? {
+                    result: true,
+                    place: async () => {
+                        const doc = (await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [this.data.toObject()]))[0];
+                        this.document = doc;
+                        return doc;
+                    },
+                    delete: () => {
+                        return this.document.delete();
+                    },
+
+                }
+                : { result: false };
+        }
+
+        refresh() {
+            if (!this.template || !canvas.scene) {
+                return;
+            }
+
+            super.refresh();
+
+            if (this.active) {
+                this.highlightGrid();
+            }
+
+            return this;
+        }
+
+
+        /**
+         * returns { result: boolean, place: () => {} (places template), delete: () => {} (deletes template) }
+         */
+        async commitPreview() { }
+    }
+
+    class AbilityTemplateCircleSelf extends AbilityTemplateAdvanced {
+        async commitPreview() {
+
+        }
+    }
+
+    class AbilityTemplateCircle extends AbilityTemplateAdvanced {
+        async commitPreview() {
+
+        }
+    }
+
+    class AbilityTemplateConeSelf15 extends AbilityTemplateAdvanced {
+        async commitPreview() {
+
+        }
+    }
+
+    class AbilityTemplateConeSelf extends AbilityTemplateAdvanced {
+        async commitPreview() {
+
+        }
+    }
+
+    class AbilityTemplateConeTarget extends AbilityTemplateAdvanced {
+        async commitPreview() {
+
+        }
+    }
+
+    game[MODULE_NAME] = {
+        AbilityTemplateCircle,
+        AbilityTemplateCircleSelf,
+        AbilityTemplateConeSelf,
+        AbilityTemplateConeSelf15,
+        AbilityTemplateConeTarget,
+        MeasuredTemplatePFAdvanced,
+    };
 };
 
 export {

@@ -16,7 +16,8 @@ const createCircle = async (itemPf, shared, options, wrapped) => {
         }
     }
 
-    // because wrapped is called so deeply, checking a shared variable to see if wrapped was called or if custom placement was called
+    // todo this will need to be updated
+    // because wrapped is called so deeply, check the shared variable to see if wrapped was called or if custom placement was called
     if (shared.template) {
         return template;
     }

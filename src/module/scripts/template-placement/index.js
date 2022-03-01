@@ -8,7 +8,9 @@ import { hideControlIconKey } from '../measured-template-pf-advanced';
  * Common logic and switch statement for placing all templates
  *
  * @param {Function} wrapped The base `promptMeasureTemplate`
+ *
  * @param {object} shared The shared context passed between different functions when executing an Attack
+ *
  * @returns {object} The template creation data
  */
 async function promptMeasureTemplate(wrapped, shared) {
@@ -28,31 +30,28 @@ async function promptMeasureTemplate(wrapped, shared) {
 
     const type = this.data.data.measureTemplate.type;
 
-    const options = {
-        distance: _getSize(this, shared),
+    const templateData = {
+        distance: _getSize(this, shared) || 5,
         t: type,
         flags: { [MODULE_NAME]: { [hideControlIconKey]: true } },
         user: game.userId,
+        _id: randomID(16),
+        fillColor: this.data.data.measureTemplate?.overrideColor
+            ? this.data.data.measureTemplate.customColor
+            : templateData.fillColor = game.user.color,
+        texture: this.data.data.measureTemplate?.overrideTexture
+            ? templateData.texture = this.data.data.measureTemplate.customTexture
+            : null,
+        // todo add token id and/or actor id
     };
-
-    if (this.data.data.measureTemplate?.overrideColor) {
-        options.fillColor = this.data.data.measureTemplate.customColor;
-    }
-    else {
-        options.fillColor = game.user.color;
-    }
-
-    if (this.data.data.measureTemplate?.overrideTexture) {
-        options.texture = this.data.data.measureTemplate.customTexture;
-    }
 
     let template;
     switch (type) {
         case 'cone':
-            template = await createCone(this, shared, options, async () => await wrapped(shared));
+            template = await createCone(this, shared, templateData, async () => await wrapped(shared));
             break;
         case 'circle':
-            template = await createCircle(this, shared, options, async () => await wrapped(shared));
+            template = await createCircle(this, shared, templateData, async () => await wrapped(shared));
             break;
         default:
             ifDebug(() => console.log(`Passing template type '${type}' to system`));
@@ -60,7 +59,11 @@ async function promptMeasureTemplate(wrapped, shared) {
             break;
     }
 
-    await Promise.all(windows.map((x) => x.maximize()));
+    // todo read from game setting
+    // eslint-disable-next-line
+    if (false) {
+        await Promise.all(windows.map((x) => x.maximize()));
+    }
 
     if (template.result) {
         await shared.template.update({ flags: { [MODULE_NAME]: { [hideControlIconKey]: false } } });
