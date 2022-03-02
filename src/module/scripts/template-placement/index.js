@@ -3,6 +3,7 @@ import createCone from './cones';
 import createCircle from './circles';
 import { MODULE_NAME } from '../../consts';
 import { hideControlIconKey } from '../measured-template-pf-advanced';
+import { getToken } from '../utils';
 
 /**
  * Common logic and switch statement for placing all templates
@@ -31,45 +32,54 @@ async function promptMeasureTemplate(wrapped, shared) {
     const type = this.data.data.measureTemplate.type;
 
     const templateData = {
+        _id: randomID(16),
         distance: _getSize(this, shared) || 5,
         t: type,
-        flags: { [MODULE_NAME]: { [hideControlIconKey]: true } },
+        // flags: { [MODULE_NAME]: { [hideControlIconKey]: true } }, // don't think I need this anymore
         user: game.userId,
-        _id: randomID(16),
         fillColor: this.data.data.measureTemplate?.overrideColor
             ? this.data.data.measureTemplate.customColor
-            : templateData.fillColor = game.user.color,
+            : game.user.color,
         texture: this.data.data.measureTemplate?.overrideTexture
-            ? templateData.texture = this.data.data.measureTemplate.customTexture
+            ? this.data.data.measureTemplate.customTexture
             : null,
-        // todo add token id and/or actor id
+        itemId: this.id,
+        tokenId: getToken(this)?.id,
     };
 
-    let template;
-    switch (type) {
-        case 'cone':
-            template = await createCone(this, shared, templateData, async () => await wrapped(shared));
-            break;
-        case 'circle':
-            template = await createCircle(this, shared, templateData, async () => await wrapped(shared));
-            break;
-        default:
-            ifDebug(() => console.log(`Passing template type '${type}' to system`));
-            template = await wrapped(shared);
-            break;
+    // let template;
+    // switch (type) {
+    //     case 'cone':
+    //         template = await createCone(this, shared, templateData, async () => await wrapped(shared));
+    //         break;
+    //     case 'circle':
+    //         template = await createCircle(this, shared, templateData, async () => await wrapped(shared));
+    //         break;
+    //     default:
+    //         ifDebug(() => console.log(`Passing template type '${type}' to system`));
+    //         template = await wrapped(shared);
+    //         break;
+    // }
+
+    const template = game[MODULE_NAME].AbilityTemplateAdvanced.fromData(templateData);
+    if (!template) {
+        return { result: false };
     }
 
-    // todo read from game setting
-    // eslint-disable-next-line
-    if (false) {
+    const result = template.drawPreview(this);
+
+    if (!template.result) {
+        // todo read from game setting to see if the user wants it to re-expand when cast
         await Promise.all(windows.map((x) => x.maximize()));
+        return result;
     }
 
-    if (template.result) {
-        await shared.template.update({ flags: { [MODULE_NAME]: { [hideControlIconKey]: false } } });
-    }
+    shared.template = await result.place();
 
-    return template;
+    // probably not necessary since I don't think I need to hide the control icon on ability templates
+    await shared.template.update({ flags: { [MODULE_NAME]: { [hideControlIconKey]: false } } });
+
+    return result;
 }
 
 export default promptMeasureTemplate;

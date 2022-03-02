@@ -1,5 +1,3 @@
-const getToken = (itemPf) => itemPf
-    ? [...canvas.scene.tokens].find((x) => x.actor.id === itemPf.actor.id)?.object
-    : undefined;
+const getToken = (itemPf) => itemPf?.parent?.getActiveTokens()?.[0] || undefined;
 
 export default getToken;

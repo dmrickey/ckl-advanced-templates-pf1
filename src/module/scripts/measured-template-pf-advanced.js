@@ -1,4 +1,4 @@
-import { MODULE_NAME } from '../consts';
+import { CONSTS, MODULE_NAME } from '../consts';
 import { CirclePlacement } from './template-placement/circles/circle-placement';
 import { ConePlacement } from './template-placement/cones/cone-placement';
 import { ifDebug } from './utils';
@@ -265,13 +265,13 @@ const initMeasuredTemplate = () => {
             switch (type) {
                 case 'circle':
                     switch (this.itemPf.getFlag(MODULE_NAME, CirclePlacement.placementKey)) {
-                        case 'self':
+                        case CONSTS.placement.circle.self:
                             abilityCls = AbilityTemplateCircleSelf;
                             break;
-                        case 'useSystem':
+                        case CONSTS.placement.circle.useSystem:
                             // todo
                             break;
-                        case 'grid':
+                        case CONSTS.placement.circle.useSystem.grid:
                         default:
                             abilityCls = AbilityTemplateCircle;
                             break;
@@ -279,17 +279,17 @@ const initMeasuredTemplate = () => {
                     break;
                 case 'cone':
                     switch (this.itemPf.getFlag(MODULE_NAME, ConePlacement.placementKey)) {
-                        case 'useSystem':
+                        case CONSTS.placement.cone.useSystem:
                             // todo
                             break;
-                        case 'alt15':
+                        case CONSTS.placement.cone.alt15:
                             abilityCls = AbilityTemplateConeSelf;
                             break;
-                        case 'selectTargetSquare':
+                        case CONSTS.placement.cone.selectTargetSquare:
                             abilityCls = AbilityTemplateConeTarget;
                             break;
-                        case 'self15':
-                        case 'self':
+                        case CONSTS.placement.cone.self15:
+                        case CONSTS.placement.cone.self:
                         default:
                             abilityCls = distance === 15
                                 ? AbilityTemplateConeSelf15
@@ -303,7 +303,7 @@ const initMeasuredTemplate = () => {
             return thisTemplate;
         }
 
-        async drawPreview() {
+        async drawPreview(itemPf) {
             this.initializePlacement();
 
             const initialLayer = canvas.activeLayer;
