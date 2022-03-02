@@ -1,5 +1,6 @@
 import { MODULE_NAME } from '../consts';
 import { CirclePlacement } from './template-placement/circles/circle-placement';
+import { ConePlacement } from './template-placement/cones/cone-placement';
 import { ifDebug } from './utils';
 
 const hideControlIconKey = 'hideControlIconKey';
@@ -298,7 +299,7 @@ const initMeasuredTemplate = () => {
                     break;
             }
 
-            thisTemplate = new abilityCls(template);
+            const thisTemplate = new abilityCls(template);
             return thisTemplate;
         }
 

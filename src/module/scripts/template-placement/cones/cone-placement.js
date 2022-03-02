@@ -2,7 +2,7 @@ import { MODULE_NAME } from '../../../consts';
 import * as create from './placements';
 
 export class ConePlacement {
-    _placementKey = 'conePlacement';
+    static placementKey = 'conePlacement';
 
     constructor(itemPf) {
         this.itemPf = itemPf;
@@ -43,7 +43,7 @@ export class ConePlacement {
 
     async createCurrentTemplate(options, token, wrapped) {
         const getHandler = (key) => this.placementTypes[key] || this.placementTypes[undefined];
-        const handler = getHandler(this.itemPf.getFlag(MODULE_NAME, this._placementKey));
+        const handler = getHandler(this.itemPf.getFlag(MODULE_NAME, ConePlacement.placementKey));
         return await handler.func(options, token, wrapped);
     }
 
@@ -51,6 +51,7 @@ export class ConePlacement {
      * Shows the menu, saves the result, then returns the result
      *
      * @param {*} is15Feet If the cone is 15 or not
+     *
      * @returns {bool} True if a placement type was selected, false if it was canceled.
      */
     async showPlacementMenu(is15Feet) {
@@ -78,7 +79,7 @@ export class ConePlacement {
         const { buttons: placementType } = dialogResult;
 
         if (placementType) {
-            await this.itemPf.setFlag(MODULE_NAME, this._placementKey, placementType);
+            await this.itemPf.setFlag(MODULE_NAME, ConePlacement.placementKey, placementType);
         }
 
         return !!placementType;
