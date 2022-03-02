@@ -61,12 +61,12 @@ async function promptMeasureTemplate(wrapped, shared) {
     //         break;
     // }
 
-    const template = game[MODULE_NAME].AbilityTemplateAdvanced.fromData(templateData);
+    const template = game[MODULE_NAME].AbilityTemplateAdvanced.fromData(templateData, this);
     if (!template) {
         return { result: false };
     }
 
-    const result = template.drawPreview(this);
+    const result = template.drawPreview();
 
     if (!template.result) {
         // todo read from game setting to see if the user wants it to re-expand when cast

@@ -4,12 +4,14 @@ import { targetTokens } from '../../../utils';
  * For placing a cone that is not a 15' cone originating from the givent token
  *
  * @param {object} options The template creation data
+ *
  * @param {TokenPF} token The originating token
+ *
  * @returns {object} The created template
  */
 export default async function (options, token) {
-    const gridSize = canvas.grid.h;
     const sourceSquare = (center, widthSquares, heightSquares) => {
+        const gridSize = canvas.grid.h;
         const h = gridSize * heightSquares;
         const w = gridSize * widthSquares;
 

@@ -1,7 +1,7 @@
 import { CONSTS, MODULE_NAME } from '../consts';
 import { CirclePlacement } from './template-placement/circles/circle-placement';
 import { ConePlacement } from './template-placement/cones/cone-placement';
-import { ifDebug } from './utils';
+import { getToken, ifDebug } from './utils';
 
 const hideControlIconKey = 'hideControlIconKey';
 
@@ -247,7 +247,7 @@ const initMeasuredTemplate = () => {
     CONFIG.MeasuredTemplate.objectClass = MeasuredTemplatePFAdvanced;
 
     class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
-        static fromData(templateData) {
+        static fromData(templateData, itemPf) {
             const { type, distance } = templateData;
             if (!type
                 || !distance
@@ -300,12 +300,12 @@ const initMeasuredTemplate = () => {
             }
 
             const thisTemplate = new abilityCls(template);
+            this.initializePlacement(itemPf);
+
             return thisTemplate;
         }
 
-        async drawPreview(itemPf) {
-            this.initializePlacement();
-
+        async drawPreview() {
             const initialLayer = canvas.activeLayer;
             await this.draw();
             this.active = true;
@@ -359,66 +359,257 @@ const initMeasuredTemplate = () => {
 
         /**
          * sets up data specififc to template placement (initial position, rotation, set up points array for cones around token, extra width info for emanations, etc)
+         *
+         * @param itemPf
          */
-        initializePlacement() { }
+        initializePlacement(itemPf) { }
     }
 
     class AbilityTemplateCircleSelf extends AbilityTemplateAdvanced {
         /** @override */
         async commitPreview() {
+            ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
 
         }
 
         /** @override */
-        async initializePlacement() {
+        async initializePlacement(itemPf) {
+            ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
+            const token = getToken(itemPf) || {};
+            const { x, y } = token.center;
+            this.data.x = x;
+            this.data.y = y;
         }
     }
 
     class AbilityTemplateCircle extends AbilityTemplateAdvanced {
         /** @override */
         async commitPreview() {
+            ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
 
         }
 
         /** @override */
-        async initializePlacement() {
+        async initializePlacement(itemPf) {
+            ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
+            const mouse = canvas.app.renderer.plugins.interaction.mouse;
+            const position = mouse.getLocalPosition(canvas.app.stage);
+            const { x, y } = position;
+            this.data.x = x;
+            this.data.y = y;
         }
     }
 
     class AbilityTemplateConeSelf15 extends AbilityTemplateAdvanced {
+        _tokenSquare;
+
         /** @override */
         async commitPreview() {
+            ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
 
         }
 
         /** @override */
-        async initializePlacement() {
+        async initializePlacement(itemPf) {
+            ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
+            const token = getToken(itemPf);
+            if (typeof token === 'undefined' || !token) {
+                const sourceConfig = {
+                    drawIcon: true,
+                    drawOutline: false,
+                    interval: -1,
+                    label: 'Cone Start',
+                };
+        
+                const source = await warpgate.crosshairs.show(sourceConfig);
+                if (source.cancelled) {
+                    return;
+                }
+                this._tokenSquare = this._sourceSquare({ x: source.x, y: source.y }, 1, 1);
+            }
+            else {
+                const width = Math.max(Math.round(token.data.width), 1);
+                const height = Math.max(Math.round(token.data.height), 1);
+                this._tokenSquare = this._sourceSquare(token.center, width, height);
+            }
+
+            const { x, y } = this._tokenSquare.allSpots[0];
+            this.data.x = x;
+            this.data.y = y;
+            this.data.angle = 90;
+        }
+        
+        _sourceSquare(center, widthSquares, heightSquares) {
+            const gridSize = canvas.grid.h;
+            const h = gridSize * heightSquares;
+            const w = gridSize * widthSquares;
+
+            const bottom = center.y + h / 2;
+            const left = center.x - w / 2;
+            const top = center.y - h / 2;
+            const right = center.x + w / 2;
+
+            const rightSpots = [...new Array(heightSquares)].map((_, i) => ({
+                direction: 0,
+                x: right,
+                y: top + gridSize / 2 + gridSize * i,
+            }));
+            const bottomSpots = [...new Array(widthSquares)].map((_, i) => ({
+                direction: 90,
+                x: right - gridSize / 2 - gridSize * i,
+                y: bottom,
+            }));
+            const leftSpots = [...new Array(heightSquares)].map((_, i) => ({
+                direction: 180,
+                x: left,
+                y: bottom - gridSize / 2 - gridSize * i,
+            }));
+            const topSpots = [...new Array(widthSquares)].map((_, i) => ({
+                direction: 270,
+                x: left + gridSize / 2 + gridSize * i,
+                y: top,
+            }));
+            const allSpots = [
+                ...rightSpots.slice(Math.floor(rightSpots.length / 2)),
+                { direction: 45, x: right, y: bottom },
+                ...bottomSpots,
+                { direction: 135, x: left, y: bottom },
+                ...leftSpots,
+                { direction: 225, x: left, y: top },
+                ...topSpots,
+                { direction: 315, x: right, y: top },
+                ...rightSpots.slice(0, Math.floor(rightSpots.length / 2)),
+            ];
+
+            return {
+                x: left,
+                y: top,
+                center,
+                top,
+                bottom,
+                left,
+                right,
+                h,
+                w,
+                heightSquares,
+                widthSquares,
+                allSpots,
+            };
         }
     }
 
     class AbilityTemplateConeSelf extends AbilityTemplateAdvanced {
+        _tokenSquare;
+
         /** @override */
         async commitPreview() {
+            ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
 
         }
 
         /** @override */
-        async initializePlacement() {
+        async initializePlacement(itemPf) {
+            ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
+            const token = getToken(itemPf);
+            if (typeof token === 'undefined' || !token) {
+                const sourceConfig = {
+                    drawIcon: true,
+                    drawOutline: false,
+                    interval: -1,
+                    label: 'Cone Start',
+                };
+        
+                const source = await warpgate.crosshairs.show(sourceConfig);
+                if (source.cancelled) {
+                    return;
+                }
+                this._tokenSquare = this._sourceSquare({ x: source.x, y: source.y }, 1, 1);
+            }
+            else {
+                const width = Math.max(Math.round(token.data.width), 1);
+                const height = Math.max(Math.round(token.data.height), 1);
+                this._tokenSquare = this._sourceSquare(token.center, width, height);
+            }
+
+            const { x, y } = this._tokenSquare.allSpots[0];
+            this.data.x = x;
+            this.data.y = y;
+            this.data.angle = 90;
+        }
+
+        _sourceSquare(center, widthSquares, heightSquares) {
+            const gridSize = canvas.grid.h;
+            const h = gridSize * heightSquares;
+            const w = gridSize * widthSquares;
+    
+            const bottom = center.y + h / 2;
+            const left = center.x - w / 2;
+            const top = center.y - h / 2;
+            const right = center.x + w / 2;
+    
+            const rightSpots = [...new Array(heightSquares + 1)].map((_, i) => ({
+                direction: 0,
+                x: right,
+                y: top + gridSize * i,
+            }));
+            const bottomSpots = [...new Array(widthSquares + 1)].map((_, i) => ({
+                direction: 90,
+                x: right - gridSize * i,
+                y: bottom,
+            }));
+            const leftSpots = [...new Array(heightSquares + 1)].map((_, i) => ({
+                direction: 180,
+                x: left,
+                y: bottom - gridSize * i,
+            }));
+            const topSpots = [...new Array(widthSquares + 1)].map((_, i) => ({
+                direction: 270,
+                x: left + gridSize * i,
+                y: top,
+            }));
+            const allSpots = [
+                ...rightSpots.slice(Math.floor(rightSpots.length / 2)),
+                { direction: 45, x: right, y: bottom },
+                ...bottomSpots,
+                { direction: 135, x: left, y: bottom },
+                ...leftSpots,
+                { direction: 225, x: left, y: top },
+                ...topSpots,
+                { direction: 315, x: right, y: top },
+                ...rightSpots.slice(0, Math.floor(rightSpots.length / 2)),
+            ];
+    
+            return {
+                x: left,
+                y: top,
+                center,
+                top,
+                bottom,
+                left,
+                right,
+                h,
+                w,
+                heightSquares,
+                widthSquares,
+                allSpots,
+            };
         }
     }
 
     class AbilityTemplateConeTarget extends AbilityTemplateAdvanced {
         /** @override */
         async commitPreview() {
+            ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
 
         }
 
         /** @override */
-        async initializePlacement() {
+        async initializePlacement(itemPf) {
+            ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
         }
     }
