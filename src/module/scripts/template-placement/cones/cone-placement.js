@@ -1,5 +1,4 @@
 import { CONSTS, MODULE_NAME } from '../../../consts';
-import * as create from './placements';
 
 export class ConePlacement {
     constructor(itemPf) {
@@ -64,7 +63,7 @@ export class ConePlacement {
     }
     
     _getSize() {
-        const rollData = null; // todo get this value from itemPF
+        const rollData = this.itemPf.actor._rollData;
         return typeof this.itemPf.data.data.measureTemplate.size === 'string'
             ? RollPF.safeTotal(this.itemPf.data.data.measureTemplate.size, rollData)
             : game.pf1.utils.convertDistance(this.itemPf.data.data.measureTemplate.size)[0];
