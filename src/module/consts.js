@@ -5,14 +5,12 @@ export const CONSTS = {
         circle: {
             grid: 'grid',
             self: 'self',
-            useSystem: 'useSystem',
         },
         cone: {
             alt15: 'alt15',
             selectTargetSquare: 'selectTargetSquare',
             self: 'self',
-            self15: 'self15',
-            useSystem: 'useSystem',
         },
+        useSystem: 'useSystem',
     },
 };

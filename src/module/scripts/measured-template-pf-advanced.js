@@ -268,7 +268,7 @@ const initMeasuredTemplate = () => {
                         case CONSTS.placement.circle.self:
                             abilityCls = AbilityTemplateCircleSelf;
                             break;
-                        case CONSTS.placement.circle.useSystem:
+                        case CONSTS.placement.useSystem:
                             // todo
                             break;
                         case CONSTS.placement.circle.useSystem.grid:
@@ -279,21 +279,18 @@ const initMeasuredTemplate = () => {
                     break;
                 case 'cone':
                     switch (this.itemPf.getFlag(MODULE_NAME, ConePlacement.placementKey)) {
-                        case CONSTS.placement.cone.useSystem:
+                        case CONSTS.placement.useSystem:
                             // todo
                             break;
                         case CONSTS.placement.cone.alt15:
-                            abilityCls = AbilityTemplateConeSelf;
+                            abilityCls = AbilityTemplateConeSelfAlt15;
                             break;
                         case CONSTS.placement.cone.selectTargetSquare:
                             abilityCls = AbilityTemplateConeTarget;
                             break;
-                        case CONSTS.placement.cone.self15:
                         case CONSTS.placement.cone.self:
                         default:
-                            abilityCls = distance === 15
-                                ? AbilityTemplateConeSelf15
-                                : AbilityTemplateConeSelf;
+                            abilityCls = AbilityTemplateConeSelf;
                             break;
                     }
                     break;
@@ -370,6 +367,7 @@ const initMeasuredTemplate = () => {
         async commitPreview() {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
 
+            return true;
         }
 
         /** @override */
@@ -387,11 +385,47 @@ const initMeasuredTemplate = () => {
         /** @override */
         async commitPreview() {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
+            // game.user.updateTokenTargets();
 
+            const updateTemplateLocation = async (crosshairs) => {
+                while (crosshairs.inFlight) {
+                    await warpgate.wait(20);
+
+                    const { x, y } = crosshairs.center;
+                    if (this.data.x === x && this.data.y === y) {
+                        continue;
+                    }
+
+                    this.data.x = x;
+                    this.data.y = y;
+                    this.refresh();
+                    // todo grab targets
+                }
+            };
+
+            const targetConfig = {
+                drawIcon: true,
+                drawOutline: false,
+                interval: 1,
+                // todo grab icon from ItemPF
+            };
+            const crosshairs = await warpgate.crosshairs.show(
+                targetConfig,
+                {
+                    show: updateTemplateLocation
+                }
+            );
+
+            if (crosshairs.cancelled) {
+                // game.user.updateTokenTargets();
+                return false;
+            }
+
+            return true;
         }
 
         /** @override */
-        async initializePlacement(itemPf) {
+        async initializePlacement(_itemPf) {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
             const mouse = canvas.app.renderer.plugins.interaction.mouse;
@@ -406,7 +440,7 @@ const initMeasuredTemplate = () => {
         _tokenSquare;
 
         /** @override */
-        async initializeConeData(token, is15override = false) {
+        async initializeConeData(itemPf, token, alt15Override = false) {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
             if (typeof token === 'undefined' || !token) {
@@ -416,7 +450,7 @@ const initMeasuredTemplate = () => {
                     interval: -1,
                     label: 'Cone Start',
                 };
-        
+
                 const source = await warpgate.crosshairs.show(sourceConfig);
                 if (source.cancelled) {
                     return;
@@ -426,7 +460,7 @@ const initMeasuredTemplate = () => {
             else {
                 const width = Math.max(Math.round(token.data.width), 1);
                 const height = Math.max(Math.round(token.data.height), 1);
-                this._tokenSquare = this._sourceSquare(token.center, width, height);
+                this._tokenSquare = this._sourceSquare(token.center, width, height, alt15Override);
             }
 
             const { x, y } = this._tokenSquare.allSpots[0];
@@ -435,15 +469,14 @@ const initMeasuredTemplate = () => {
             this.data.angle = 90;
         }
 
-        _sourceSquare(center, widthSquares, heightSquares, is15override = false) {
-            
+        _sourceSquare(center, widthSquares, heightSquares, alt15Override = false) {
             const { distance } = this.data;
-            const is15 = distance === 15 && !is15override;
+            const is15 = distance === 15 && !alt15Override;
 
             const gridSize = canvas.grid.h;
             const h = gridSize * heightSquares;
             const w = gridSize * widthSquares;
-    
+
             const bottom = center.y + h / 2;
             const left = center.x - w / 2;
             const top = center.y - h / 2;
@@ -452,7 +485,7 @@ const initMeasuredTemplate = () => {
             // 15 foot cones originate in the middle of the grid, so for every square-edge there's one origin point instead of two
             const gridOffset = is15 ? gridSize / 2 : 0;
             const qtyOffset = is15 ? 0 : 1;
-    
+
             const rightSpots = [...new Array(heightSquares + qtyOffset)].map((_, i) => ({
                 direction: 0,
                 x: right,
@@ -484,7 +517,7 @@ const initMeasuredTemplate = () => {
                 { direction: 315, x: right, y: top },
                 ...rightSpots.slice(0, Math.floor(rightSpots.length / 2)),
             ];
-    
+
             return {
                 x: left,
                 y: top,
@@ -502,7 +535,7 @@ const initMeasuredTemplate = () => {
         }
     }
 
-    class AbilityTemplateConeSelf15 extends AbilityTemplateConeBase {
+    class AbilityTemplateConeSelfAlt15 extends AbilityTemplateConeBase {
         _tokenSquare;
 
         /** @override */
@@ -516,7 +549,7 @@ const initMeasuredTemplate = () => {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
             const token = getToken(itemPf);
-            super.initializeConeData(token);
+            super.initializeConeData(itemPf, token, true);
         }
     }
 
@@ -532,7 +565,7 @@ const initMeasuredTemplate = () => {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
             const token = getToken(itemPf);
-            super.initializeConeData(token, true);
+            super.initializeConeData(itemPf, token);
         }
     }
 
@@ -547,7 +580,7 @@ const initMeasuredTemplate = () => {
         async initializePlacement(itemPf) {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
-            super.initializeConeData();
+            super.initializeConeData(itemPf);
         }
     }
 
