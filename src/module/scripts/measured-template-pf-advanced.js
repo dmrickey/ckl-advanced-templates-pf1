@@ -440,7 +440,7 @@ const initMeasuredTemplate = () => {
         _tokenSquare;
 
         /** @override */
-        async initializeConeData(itemPf, token, alt15Override = false) {
+        async initializeConeData(token, alt15Override = false) {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
             if (typeof token === 'undefined' || !token) {
@@ -549,7 +549,7 @@ const initMeasuredTemplate = () => {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
             const token = getToken(itemPf);
-            super.initializeConeData(itemPf, token, true);
+            super.initializeConeData(token, true);
         }
     }
 
@@ -565,7 +565,7 @@ const initMeasuredTemplate = () => {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
             const token = getToken(itemPf);
-            super.initializeConeData(itemPf, token);
+            super.initializeConeData(token);
         }
     }
 
@@ -580,7 +580,7 @@ const initMeasuredTemplate = () => {
         async initializePlacement(itemPf) {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
-            super.initializeConeData(itemPf);
+            super.initializeConeData();
         }
     }
 
