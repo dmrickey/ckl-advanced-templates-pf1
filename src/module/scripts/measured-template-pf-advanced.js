@@ -1,6 +1,4 @@
 import { CONSTS, MODULE_NAME } from '../consts';
-import { CirclePlacement } from './template-placement/circles/circle-placement';
-import { ConePlacement } from './template-placement/cones/cone-placement';
 import { getToken, ifDebug } from './utils';
 
 const hideControlIconKey = 'hideControlIconKey';
@@ -23,8 +21,8 @@ const initMeasuredTemplate = () => {
         get shouldOverrideTokenEmanation() {
             return game.settings.get('pf1', 'measureStyle')
                 && this.data.t === 'circle'
-                && this.data.flags?.[MODULE_NAME]?.[CirclePlacement.placementKey] === 'self'
-                && ['burst', 'emanation'].includes(this.data.flags?.[MODULE_NAME]?.[CirclePlacement.areaTypeKey])
+                && this.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] === 'self'
+                && ['burst', 'emanation'].includes(this.data.flags?.[MODULE_NAME]?.[CONSTS.flags.circle.areaType])
                 && this.tokenSizeSquares.sizeSquares > this.tokenEmanationSize;
         }
 
@@ -260,16 +258,17 @@ const initMeasuredTemplate = () => {
             // Return the template constructed from the item data
             const cls = CONFIG.MeasuredTemplate.documentClass;
             const template = new cls(templateData, { parent: canvas.scene });
-
+            const placementType = this.itemPf.getFlag(MODULE_NAME, CONSTS.flags.placementType);
+            
             let abilityCls;
             switch (type) {
                 case 'circle':
-                    switch (this.itemPf.getFlag(MODULE_NAME, CirclePlacement.placementKey)) {
-                        case CONSTS.placement.circle.self:
-                            abilityCls = AbilityTemplateCircleSelf;
-                            break;
+                    switch (placementType) {
                         case CONSTS.placement.useSystem:
                             // todo
+                            break;
+                        case CONSTS.placement.circle.self:
+                            abilityCls = AbilityTemplateCircleSelf;
                             break;
                         case CONSTS.placement.circle.useSystem.grid:
                         default:
@@ -278,7 +277,7 @@ const initMeasuredTemplate = () => {
                     }
                     break;
                 case 'cone':
-                    switch (this.itemPf.getFlag(MODULE_NAME, ConePlacement.placementKey)) {
+                    switch (placementType) {
                         case CONSTS.placement.useSystem:
                             // todo
                             break;
@@ -357,7 +356,7 @@ const initMeasuredTemplate = () => {
         /**
          * sets up data specififc to template placement (initial position, rotation, set up points array for cones around token, extra width info for emanations, etc)
          *
-         * @param itemPf
+         * @param {ItemPF} itemPf used to grab the token data for initial placement
          */
         initializePlacement(itemPf) { }
     }

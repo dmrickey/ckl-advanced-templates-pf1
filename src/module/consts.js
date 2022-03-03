@@ -13,4 +13,14 @@ export const CONSTS = {
         },
         useSystem: 'useSystem',
     },
+    flags: {
+        placementType: 'placementType',
+        circle: {
+            areaType: 'areaType',
+            movesWithToken: 'movesWithToken',
+        },
+        cone: {
+        },
+    },
 };
+

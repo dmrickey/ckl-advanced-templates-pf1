@@ -2,8 +2,6 @@ import { CONSTS, MODULE_NAME } from '../../../consts';
 import * as create from './placements';
 
 export class ConePlacement {
-    static placementKey = 'conePlacement';
-
     constructor(itemPf) {
         this.itemPf = itemPf;
     }
@@ -41,7 +39,7 @@ export class ConePlacement {
         const buttons = [];
         buttons.push(makeButton(this._placementTypes[CONSTS.placement.cone.self]));
         if (showAlternateOption) {
-            buttons.push(makeButton(this.placementTypes[CONSTS.placement.cone.alt15]));
+            buttons.push(makeButton(this._placementTypes[CONSTS.placement.cone.alt15]));
         }
         buttons.push(makeButton(this._placementTypes[CONSTS.placement.cone.selectTargetSquare]));
         buttons.push(makeButton(this._placementTypes[CONSTS.placement.useSystem]));
@@ -59,7 +57,7 @@ export class ConePlacement {
         const { buttons: placementType } = dialogResult;
 
         if (placementType) {
-            await this.itemPf.setFlag(MODULE_NAME, ConePlacement.placementKey, placementType);
+            await this.itemPf.setFlag(MODULE_NAME, CONSTS.flags.placementType, placementType);
         }
 
         return !!placementType;
