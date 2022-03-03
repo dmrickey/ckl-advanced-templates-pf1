@@ -1,7 +1,5 @@
 import ifDebug from '../utils/if-debug';
-import createCone from './cones';
-import createCircle from './circles';
-import { MODULE_NAME } from '../../consts';
+import { CONSTS, MODULE_NAME } from '../../consts';
 import { hideControlIconKey } from '../measured-template-pf-advanced';
 import { getToken } from '../utils';
 
@@ -26,6 +24,10 @@ async function promptMeasureTemplate(wrapped, shared) {
         };
     }
 
+    if (this.getFlag(MODULE_NAME, CONSTS.flags.placementType) === CONSTS.placement.useSystem) {
+        return wrapped(shared);
+    }
+
     const windows = Object.values(ui.windows).filter((x) => !!x.minimize && !x._minimized);
     await Promise.all(windows.map((x) => x.minimize()));
 
@@ -46,20 +48,6 @@ async function promptMeasureTemplate(wrapped, shared) {
         itemId: this.id,
         tokenId: getToken(this)?.id,
     };
-
-    // let template;
-    // switch (type) {
-    //     case 'cone':
-    //         template = await createCone(this, shared, templateData, async () => await wrapped(shared));
-    //         break;
-    //     case 'circle':
-    //         template = await createCircle(this, shared, templateData, async () => await wrapped(shared));
-    //         break;
-    //     default:
-    //         ifDebug(() => console.log(`Passing template type '${type}' to system`));
-    //         template = await wrapped(shared);
-    //         break;
-    // }
 
     const template = game[MODULE_NAME].AbilityTemplateAdvanced.fromData(templateData, this);
     if (!template) {

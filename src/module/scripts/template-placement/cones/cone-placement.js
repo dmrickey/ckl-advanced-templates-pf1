@@ -31,7 +31,7 @@ export class ConePlacement {
      */
     async showPlacementMenu() {
         const is15Feet = this._getSize() === 15;
-        const showAlternateOption = is15Feet; // && read from settings to get if alternative is allowed
+        const showAlternateOption = is15Feet && false; // && read from settings to get if alternative is allowed
 
         const makeButton = ({ key: value, label }) => ({ label, value });
 
