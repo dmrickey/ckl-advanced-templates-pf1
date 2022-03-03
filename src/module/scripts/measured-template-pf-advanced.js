@@ -402,20 +402,13 @@ const initMeasuredTemplate = () => {
         }
     }
 
-    class AbilityTemplateConeSelf15 extends AbilityTemplateAdvanced {
+    class AbilityTemplateConeBase extends AbilityTemplateAdvanced {
         _tokenSquare;
 
         /** @override */
-        async commitPreview() {
-            ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
-
-        }
-
-        /** @override */
-        async initializePlacement(itemPf) {
+        async initializeConeData(token, is15override = false) {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
-            const token = getToken(itemPf);
             if (typeof token === 'undefined' || !token) {
                 const sourceConfig = {
                     drawIcon: true,
@@ -441,35 +434,43 @@ const initMeasuredTemplate = () => {
             this.data.y = y;
             this.data.angle = 90;
         }
-        
-        _sourceSquare(center, widthSquares, heightSquares) {
+
+        _sourceSquare(center, widthSquares, heightSquares, is15override = false) {
+            
+            const { distance } = this.data;
+            const is15 = distance === 15 && !is15override;
+
             const gridSize = canvas.grid.h;
             const h = gridSize * heightSquares;
             const w = gridSize * widthSquares;
-
+    
             const bottom = center.y + h / 2;
             const left = center.x - w / 2;
             const top = center.y - h / 2;
             const right = center.x + w / 2;
 
-            const rightSpots = [...new Array(heightSquares)].map((_, i) => ({
+            // 15 foot cones originate in the middle of the grid, so for every square-edge there's one origin point instead of two
+            const gridOffset = is15 ? gridSize / 2 : 0;
+            const qtyOffset = is15 ? 0 : 1;
+    
+            const rightSpots = [...new Array(heightSquares + qtyOffset)].map((_, i) => ({
                 direction: 0,
                 x: right,
-                y: top + gridSize / 2 + gridSize * i,
+                y: top + gridSize * i + gridOffset,
             }));
-            const bottomSpots = [...new Array(widthSquares)].map((_, i) => ({
+            const bottomSpots = [...new Array(widthSquares + qtyOffset)].map((_, i) => ({
                 direction: 90,
-                x: right - gridSize / 2 - gridSize * i,
+                x: right - gridSize * i - gridOffset,
                 y: bottom,
             }));
-            const leftSpots = [...new Array(heightSquares)].map((_, i) => ({
+            const leftSpots = [...new Array(heightSquares + qtyOffset)].map((_, i) => ({
                 direction: 180,
                 x: left,
-                y: bottom - gridSize / 2 - gridSize * i,
+                y: bottom - gridSize * i - gridOffset,
             }));
-            const topSpots = [...new Array(widthSquares)].map((_, i) => ({
+            const topSpots = [...new Array(widthSquares + qtyOffset)].map((_, i) => ({
                 direction: 270,
-                x: left + gridSize / 2 + gridSize * i,
+                x: left + gridSize * i + gridOffset,
                 y: top,
             }));
             const allSpots = [
@@ -483,7 +484,7 @@ const initMeasuredTemplate = () => {
                 { direction: 315, x: right, y: top },
                 ...rightSpots.slice(0, Math.floor(rightSpots.length / 2)),
             ];
-
+    
             return {
                 x: left,
                 y: top,
@@ -501,7 +502,7 @@ const initMeasuredTemplate = () => {
         }
     }
 
-    class AbilityTemplateConeSelf extends AbilityTemplateAdvanced {
+    class AbilityTemplateConeSelf15 extends AbilityTemplateConeBase {
         _tokenSquare;
 
         /** @override */
@@ -515,88 +516,23 @@ const initMeasuredTemplate = () => {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
             const token = getToken(itemPf);
-            if (typeof token === 'undefined' || !token) {
-                const sourceConfig = {
-                    drawIcon: true,
-                    drawOutline: false,
-                    interval: -1,
-                    label: 'Cone Start',
-                };
-        
-                const source = await warpgate.crosshairs.show(sourceConfig);
-                if (source.cancelled) {
-                    return;
-                }
-                this._tokenSquare = this._sourceSquare({ x: source.x, y: source.y }, 1, 1);
-            }
-            else {
-                const width = Math.max(Math.round(token.data.width), 1);
-                const height = Math.max(Math.round(token.data.height), 1);
-                this._tokenSquare = this._sourceSquare(token.center, width, height);
-            }
+            super.initializeConeData(token);
+        }
+    }
 
-            const { x, y } = this._tokenSquare.allSpots[0];
-            this.data.x = x;
-            this.data.y = y;
-            this.data.angle = 90;
+    class AbilityTemplateConeSelf extends AbilityTemplateAdvanced {
+        /** @override */
+        async commitPreview() {
+            ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
+
         }
 
-        _sourceSquare(center, widthSquares, heightSquares) {
-            const gridSize = canvas.grid.h;
-            const h = gridSize * heightSquares;
-            const w = gridSize * widthSquares;
-    
-            const bottom = center.y + h / 2;
-            const left = center.x - w / 2;
-            const top = center.y - h / 2;
-            const right = center.x + w / 2;
-    
-            const rightSpots = [...new Array(heightSquares + 1)].map((_, i) => ({
-                direction: 0,
-                x: right,
-                y: top + gridSize * i,
-            }));
-            const bottomSpots = [...new Array(widthSquares + 1)].map((_, i) => ({
-                direction: 90,
-                x: right - gridSize * i,
-                y: bottom,
-            }));
-            const leftSpots = [...new Array(heightSquares + 1)].map((_, i) => ({
-                direction: 180,
-                x: left,
-                y: bottom - gridSize * i,
-            }));
-            const topSpots = [...new Array(widthSquares + 1)].map((_, i) => ({
-                direction: 270,
-                x: left + gridSize * i,
-                y: top,
-            }));
-            const allSpots = [
-                ...rightSpots.slice(Math.floor(rightSpots.length / 2)),
-                { direction: 45, x: right, y: bottom },
-                ...bottomSpots,
-                { direction: 135, x: left, y: bottom },
-                ...leftSpots,
-                { direction: 225, x: left, y: top },
-                ...topSpots,
-                { direction: 315, x: right, y: top },
-                ...rightSpots.slice(0, Math.floor(rightSpots.length / 2)),
-            ];
-    
-            return {
-                x: left,
-                y: top,
-                center,
-                top,
-                bottom,
-                left,
-                right,
-                h,
-                w,
-                heightSquares,
-                widthSquares,
-                allSpots,
-            };
+        /** @override */
+        async initializePlacement(itemPf) {
+            ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
+
+            const token = getToken(itemPf);
+            super.initializeConeData(token, true);
         }
     }
 
@@ -611,6 +547,7 @@ const initMeasuredTemplate = () => {
         async initializePlacement(itemPf) {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
+            super.initializeConeData();
         }
     }
 
