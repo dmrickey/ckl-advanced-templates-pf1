@@ -1,5 +1,5 @@
-import { CirclePlacement } from '../template-placement/circles/circle-placement';
-import { ConePlacement } from '../template-placement/cones/cone-placement';
+import { CirclePlacement } from '../template-placement/circle-placement';
+import { ConePlacement } from '../template-placement/cone-placement';
 import template from './template.js';
 
 /**

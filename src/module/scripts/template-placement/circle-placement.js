@@ -1,8 +1,5 @@
-import placeCircle from './placements/circle';
-import placeCircleSelf from './placements/circle-self';
-import placeCircleTarget from './placements/circle-target';
-import { CONSTS, MODULE_NAME } from '../../../consts';
-import { ifDebug } from '../../utils';
+import { CONSTS, MODULE_NAME } from '../../consts';
+import { ifDebug } from '../utils';
 
 export class CirclePlacement {
     // emanation or burst "centered on you" spreads from edge - not center

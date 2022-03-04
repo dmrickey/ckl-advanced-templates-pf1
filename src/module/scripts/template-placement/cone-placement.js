@@ -1,4 +1,4 @@
-import { CONSTS, MODULE_NAME } from '../../../consts';
+import { CONSTS, MODULE_NAME } from '../../consts';
 
 export class ConePlacement {
     constructor(itemPf) {
