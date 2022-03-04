@@ -303,10 +303,16 @@ const initMeasuredTemplate = () => {
 
         async drawPreview() {
             const initialLayer = canvas.activeLayer;
+
             await this.draw();
             this.active = true;
             this.layer.activate();
             this.layer.preview.addChild(this);
+
+            if (this.controlIcon) {
+                this.controlIcon.removeAllListeners();
+            }
+            this.hitArea = new PIXI.Polygon([]);
 
             const finalized = await this.commitPreview();
 
