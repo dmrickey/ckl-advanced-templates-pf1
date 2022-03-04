@@ -32,12 +32,13 @@ async function promptMeasureTemplate(wrapped, shared) {
     await Promise.all(windows.map((x) => x.minimize()));
 
     const type = this.data.data.measureTemplate.type;
+    const token = getToken(this) || {};
 
     const templateData = {
         _id: randomID(16),
         distance: _getSize(this, shared) || 5,
         t: type,
-        // flags: { [MODULE_NAME]: { [hideControlIconKey]: true } }, // don't think I need this anymore
+        flags: { [MODULE_NAME]: { ...this.data.flags[MODULE_NAME], ...{ tokenId: token?.id } } },
         user: game.userId,
         fillColor: this.data.data.measureTemplate?.overrideColor
             ? this.data.data.measureTemplate.customColor
@@ -45,8 +46,6 @@ async function promptMeasureTemplate(wrapped, shared) {
         texture: this.data.data.measureTemplate?.overrideTexture
             ? this.data.data.measureTemplate.customTexture
             : null,
-        itemId: this.id,
-        tokenId: getToken(this)?.id,
     };
 
     const template = await game[MODULE_NAME].AbilityTemplateAdvanced.fromData(templateData, this);
@@ -63,9 +62,6 @@ async function promptMeasureTemplate(wrapped, shared) {
     }
 
     shared.template = await result.place();
-
-    // probably not necessary since I don't think I need to hide the control icon on ability templates
-    await shared.template.update({ flags: { [MODULE_NAME]: { [hideControlIconKey]: false } } });
 
     return result;
 }

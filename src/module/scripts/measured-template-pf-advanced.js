@@ -321,7 +321,8 @@ const initMeasuredTemplate = () => {
                 ? {
                     result: true,
                     place: async () => {
-                        const doc = (await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [this.data.toObject(false)]))[0];
+                        this.data.update(this.data);
+                        const doc = (await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [this.data.toObject()]))[0];
                         this.document = doc;
                         return doc;
                     },
@@ -374,9 +375,6 @@ const initMeasuredTemplate = () => {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
             const token = getToken(itemPf) || {};
-            // todo move merging flags onto template data creation so all templates can have it?
-            this.data.flags = mergeObject(this.data.flags, { [MODULE_NAME]: { ...itemPf.data.flags[MODULE_NAME], ...{ tokenId: token?.id } } }, { recursive: true });
-
             const { x, y } = token.center;
             this.data.x = x;
             this.data.y = y;
