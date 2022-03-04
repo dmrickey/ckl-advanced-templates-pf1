@@ -1,17 +1,11 @@
 import { CONSTS, MODULE_NAME } from '../consts';
 import { getToken, ifDebug } from './utils';
 
-const hideControlIconKey = 'hideControlIconKey';
-
 const initMeasuredTemplate = () => {
     ifDebug(() => console.log('init measured template override'));
     const MeasuredTemplatePF = CONFIG.MeasuredTemplate.objectClass;
 
     class MeasuredTemplatePFAdvanced extends MeasuredTemplatePF {
-        get shouldOverrideIcon() {
-            return !!this.data.flags?.[MODULE_NAME]?.[hideControlIconKey];
-        }
-
         // todo read game setting to see if medium or smaller tokens are forced to pick a corner of their square to center from
         get tokenEmanationSize() {
             // eslint-disable-next-line
@@ -86,7 +80,7 @@ const initMeasuredTemplate = () => {
 
         /** @override */
         refresh() {
-            if (!this.shouldOverrideIcon && !this.shouldOverrideTokenEmanation) {
+            if (!this.shouldOverrideTokenEmanation) {
                 return super.refresh();
             }
 
@@ -149,18 +143,29 @@ const initMeasuredTemplate = () => {
                 .drawCircle(this.ray.dx, this.ray.dy, 6);
 
             // Update the HUD
-            if (this.shouldOverrideIcon) {
-                this.hud.icon.interactive = false;
-                this.hud.icon.border.visible = false;
-            }
-            else {
-                this.hud.icon.visible = this.layer._active;
-                this.hud.icon.border.visible = this._hover;
-            }
+            this.hud.icon.visible = this.layer._active;
+            this.hud.icon.border.visible = this._hover;
 
             this._refreshRulerText();
 
             return this;
+        }
+
+        /**
+         * Draw the ControlIcon for the MeasuredTemplate
+         *
+         * @returns {ControlIcon}
+         *
+         * @private
+         */
+        /** @override */
+        _drawControlIcon() {
+            // todo add in override for icon
+            const size = Math.max(Math.round((canvas.dimensions.size * 0.5) / 20) * 20, 40);
+            const icon = new ControlIcon({ texture: CONFIG.controlIcons.template, size });
+            icon.x -= (size * 0.5);
+            icon.y -= (size * 0.5);
+            return icon;
         }
 
         /** @override */
@@ -635,6 +640,5 @@ const initMeasuredTemplate = () => {
 };
 
 export {
-    hideControlIconKey,
     initMeasuredTemplate,
 };

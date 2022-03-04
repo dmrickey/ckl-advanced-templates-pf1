@@ -1,6 +1,5 @@
 import ifDebug from '../utils/if-debug';
 import { CONSTS, MODULE_NAME } from '../../consts';
-import { hideControlIconKey } from '../measured-template-pf-advanced';
 import { getToken } from '../utils';
 
 /**
