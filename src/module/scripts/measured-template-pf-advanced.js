@@ -264,9 +264,6 @@ const initMeasuredTemplate = () => {
             switch (type) {
                 case 'circle':
                     switch (placementType) {
-                        case CONSTS.placement.useSystem:
-                            // todo
-                            break;
                         case CONSTS.placement.circle.self:
                             abilityCls = AbilityTemplateCircleSelf;
                             break;
@@ -278,9 +275,6 @@ const initMeasuredTemplate = () => {
                     break;
                 case 'cone':
                     switch (placementType) {
-                        case CONSTS.placement.useSystem:
-                            // todo
-                            break;
                         case CONSTS.placement.cone.alt15:
                             abilityCls = AbilityTemplateConeSelfAlt15;
                             break;
