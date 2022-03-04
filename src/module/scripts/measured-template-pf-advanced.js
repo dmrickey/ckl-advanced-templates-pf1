@@ -21,7 +21,7 @@ const initMeasuredTemplate = () => {
         get shouldOverrideTokenEmanation() {
             return game.settings.get('pf1', 'measureStyle')
                 && this.data.t === 'circle'
-                && this.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] === 'self'
+                && this.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] === CONSTS.placement.circle.self
                 && ['burst', 'emanation'].includes(this.data.flags?.[MODULE_NAME]?.[CONSTS.flags.circle.areaType])
                 && this.tokenSizeSquares.sizeSquares > this.tokenEmanationSize;
         }
@@ -270,7 +270,7 @@ const initMeasuredTemplate = () => {
                         case CONSTS.placement.circle.self:
                             abilityCls = AbilityTemplateCircleSelf;
                             break;
-                        case CONSTS.placement.circle.useSystem.grid:
+                        case CONSTS.placement.circle.grid:
                         default:
                             abilityCls = AbilityTemplateCircle;
                             break;

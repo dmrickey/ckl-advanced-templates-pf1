@@ -13,15 +13,15 @@ export class CirclePlacement {
 
     _placementTypes = {
         [CONSTS.placement.circle.grid]: {
-            key: [CONSTS.placement.circle.grid],
+            key: CONSTS.placement.circle.grid,
             label: 'Select Grid Placement',
         },
         [CONSTS.placement.circle.self]: {
-            key: [CONSTS.placement.circle.self],
+            key: CONSTS.placement.circle.self,
             label: 'Centered on You',
         },
         [CONSTS.placement.useSystem]: {
-            key: [CONSTS.placement.useSystem],
+            key: CONSTS.placement.useSystem,
             label: 'Use System Default',
         },
     };
@@ -36,9 +36,9 @@ export class CirclePlacement {
         const dialogResult = await warpgate.menu({
             inputs: [
                 { type: 'info', label: `Select placement type for this ${this.itemPf.type}` },
-                { type: 'radio', label: this._placementTypes.grid.label, options: ['placementType', currentPlacementType === this._placementTypes.grid.key] },
-                { type: 'radio', label: this._placementTypes.self.label, options: ['placementType', currentPlacementType === this._placementTypes.self.key] },
-                { type: 'radio', label: this._placementTypes.useDefault.label, options: ['placementType', currentPlacementType === this._placementTypes.useDefault.key] },
+                { type: 'radio', label: this._placementTypes[CONSTS.placement.circle.grid].label, options: ['placementType', currentPlacementType === this._placementTypes[CONSTS.placement.circle.grid].key] },
+                { type: 'radio', label: this._placementTypes[CONSTS.placement.circle.self].label, options: ['placementType', currentPlacementType === this._placementTypes[CONSTS.placement.circle.self].key] },
+                { type: 'radio', label: this._placementTypes[CONSTS.placement.useSystem].label, options: ['placementType', currentPlacementType === this._placementTypes[CONSTS.placement.useSystem].key] },
                 { type: 'info', label: '<hr style="width: 100%;" />' },
                 { type: 'info', label: 'Select effect type' },
                 { type: 'radio', label: 'Burst', options: ['areaType', areaType === 'burst'] },
@@ -110,6 +110,6 @@ export class CirclePlacement {
 
     _getPlacementType = () => {
         const placementType = this.itemPf.getFlag(MODULE_NAME, CONSTS.flags.placementType);
-        return placementType || this._placementTypes.grid.key;
+        return placementType || this._placementTypes[CONSTS.placement.circle.grid].key;
     };
 }
