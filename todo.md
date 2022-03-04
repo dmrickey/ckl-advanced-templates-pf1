@@ -18,18 +18,16 @@
 
 ## General
 - duration that ties into time passing like buffs do
-- show rangefinding on "close" spells
+  - alternately (or maybe as an interim option) add a checkbox to delete templates after spell is cast
+- show rangefinding on spells (including showing cancel icon if out of range)
 
 ## Settings
 - allow for option to make right click always cancel and only configure manually
-- GM setting to disallow alternate 15' cone
+- GM setting to allow alternate 15' cone
 - GM setting to turn off logging
-- GM setting to allow Mark Seifter's alternate not-a-rule centered on you actually means sentered on a corner near you for medium or smaller creatures
-- add a config option to add an option to attach a circle to the target
 
-## Ability Template refactoring
-- Move template data creation into AbilityTemplate's `fromData` method and rename it to `fromItem` (also pass itemm into it).
-  - return early if correct data isn't in the template
+## Lang
+- externalize all strings
 
 ## Unknowns that I don't intend to look into
 - Gridless
