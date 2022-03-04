@@ -20,7 +20,7 @@ export class CirclePlacement {
             key: [CONSTS.placement.circle.self],
             label: 'Centered on You',
         },
-        [CONSTS.placement.useDefault]: {
+        [CONSTS.placement.useSystem]: {
             key: [CONSTS.placement.useSystem],
             label: 'Use System Default',
         },

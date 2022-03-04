@@ -245,8 +245,8 @@ const initMeasuredTemplate = () => {
     CONFIG.MeasuredTemplate.objectClass = MeasuredTemplatePFAdvanced;
 
     class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
-        static fromData(templateData, itemPf) {
-            const { type, distance } = templateData;
+        static async fromData(templateData, itemPf) {
+            const { t: type, distance } = templateData;
             if (!type
                 || !distance
                 || !canvas.scene
@@ -258,8 +258,8 @@ const initMeasuredTemplate = () => {
             // Return the template constructed from the item data
             const cls = CONFIG.MeasuredTemplate.documentClass;
             const template = new cls(templateData, { parent: canvas.scene });
-            const placementType = this.itemPf.getFlag(MODULE_NAME, CONSTS.flags.placementType);
-            
+            const placementType = itemPf.getFlag(MODULE_NAME, CONSTS.flags.placementType);
+
             let abilityCls;
             switch (type) {
                 case 'circle':
@@ -296,7 +296,7 @@ const initMeasuredTemplate = () => {
             }
 
             const thisTemplate = new abilityCls(template);
-            this.initializePlacement(itemPf);
+            await thisTemplate.initializePlacement(itemPf);
 
             return thisTemplate;
         }
@@ -321,7 +321,7 @@ const initMeasuredTemplate = () => {
                 ? {
                     result: true,
                     place: async () => {
-                        const doc = (await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [this.data.toObject()]))[0];
+                        const doc = (await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [this.data.toObject(false)]))[0];
                         this.document = doc;
                         return doc;
                     },
@@ -358,7 +358,7 @@ const initMeasuredTemplate = () => {
          *
          * @param {ItemPF} itemPf used to grab the token data for initial placement
          */
-        initializePlacement(itemPf) { }
+        async initializePlacement(itemPf) { }
     }
 
     class AbilityTemplateCircleSelf extends AbilityTemplateAdvanced {
@@ -445,9 +445,8 @@ const initMeasuredTemplate = () => {
 
             // game.user.updateTokenTargets();
             const targetConfig = {
-                drawIcon: true,
+                drawIcon: false,
                 drawOutline: false,
-                // todo use item icon
             };
 
             let currentSpotIndex = 0;
@@ -459,7 +458,8 @@ const initMeasuredTemplate = () => {
                     const radToNormalizedAngle = (rad) => {
                         let angle = (rad * 180 / Math.PI) % 360;
                         // offset the angle for even-sided tokens, because it's centered in the grid it's just wonky without the offset
-                        if (this._tokenSquare.heightSquares % 2 === 1 && this._tokenSquare.widthSquares % 2 === 1) {
+                        const offset = this._is15 ? 0 : 1;
+                        if (this._tokenSquare.heightSquares % 2 === offset && this._tokenSquare.widthSquares % 2 === offset) {
                             angle -= (360 / totalSpots) / 2;
                         }
                         const normalizedAngle = Math.round(angle / (360 / totalSpots)) * (360 / totalSpots);
@@ -501,7 +501,6 @@ const initMeasuredTemplate = () => {
             return true;
         }
 
-
         /** @override */
         async initializeConeData(token, alt15Override = false) {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
@@ -515,6 +514,7 @@ const initMeasuredTemplate = () => {
                     drawOutline: false,
                     interval: -1,
                     label: 'Cone Start',
+                    // grab icon from item
                 };
 
                 const source = await warpgate.crosshairs.show(sourceConfig);
@@ -604,26 +604,26 @@ const initMeasuredTemplate = () => {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
             const token = getToken(itemPf);
-            super.initializeConeData(token, true);
+            await super.initializeConeData(token, true);
         }
     }
 
-    class AbilityTemplateConeSelf extends AbilityTemplateAdvanced {
+    class AbilityTemplateConeSelf extends AbilityTemplateConeBase {
         /** @override */
         async initializePlacement(itemPf) {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
             const token = getToken(itemPf);
-            super.initializeConeData(token);
+            await super.initializeConeData(token);
         }
     }
 
-    class AbilityTemplateConeTarget extends AbilityTemplateAdvanced {
+    class AbilityTemplateConeTarget extends AbilityTemplateConeBase {
         /** @override */
         async initializePlacement(itemPf) {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
-            super.initializeConeData();
+            await super.initializeConeData();
         }
     }
 

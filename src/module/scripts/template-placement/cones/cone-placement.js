@@ -18,8 +18,8 @@ export class ConePlacement {
             key: CONSTS.placement.cone.self,
             label: `Alternate 15' Cone`,
         },
-        [CONSTS.placement.useDefault]: {
-            key: CONSTS.placement.useDefault,
+        [CONSTS.placement.useSystem]: {
+            key: CONSTS.placement.useSystem,
             label: 'Use System Default',
         },
     };
@@ -61,7 +61,7 @@ export class ConePlacement {
 
         return !!placementType;
     }
-    
+
     _getSize() {
         const rollData = this.itemPf.actor._rollData;
         return typeof this.itemPf.data.data.measureTemplate.size === 'string'

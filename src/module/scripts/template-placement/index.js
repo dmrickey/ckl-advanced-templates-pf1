@@ -49,14 +49,14 @@ async function promptMeasureTemplate(wrapped, shared) {
         tokenId: getToken(this)?.id,
     };
 
-    const template = game[MODULE_NAME].AbilityTemplateAdvanced.fromData(templateData, this);
+    const template = await game[MODULE_NAME].AbilityTemplateAdvanced.fromData(templateData, this);
     if (!template) {
         return { result: false };
     }
 
-    const result = template.drawPreview();
+    const result = await template.drawPreview();
 
-    if (!template.result) {
+    if (!result.result) {
         // todo read from game setting to see if the user wants it to re-expand when cast
         await Promise.all(windows.map((x) => x.maximize()));
         return result;
