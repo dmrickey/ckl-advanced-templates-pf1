@@ -41,6 +41,7 @@
     "readme": "",
     "bugs": "",
     "changelog": "",
-    "system": [],
+    "system": ["pf1"],
+    "minimumSystemVersion": "0.80.9",
     "library": false
 }

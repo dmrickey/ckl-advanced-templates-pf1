@@ -1,14 +1,14 @@
 import ifDebug from '../utils/if-debug';
-import createCone from './cones';
-import createCircle from './circles';
-import { MODULE_NAME } from '../../consts';
-import { hideControlIconKey } from '../measured-template-pf-advanced';
+import { CONSTS, MODULE_NAME } from '../../consts';
+import { getToken } from '../utils';
 
 /**
  * Common logic and switch statement for placing all templates
  *
  * @param {Function} wrapped The base `promptMeasureTemplate`
+ *
  * @param {object} shared The shared context passed between different functions when executing an Attack
+ *
  * @returns {object} The template creation data
  */
 async function promptMeasureTemplate(wrapped, shared) {
@@ -23,50 +23,46 @@ async function promptMeasureTemplate(wrapped, shared) {
         };
     }
 
+    if (this.getFlag(MODULE_NAME, CONSTS.flags.placementType) === CONSTS.placement.useSystem) {
+        return wrapped(shared);
+    }
+
     const windows = Object.values(ui.windows).filter((x) => !!x.minimize && !x._minimized);
     await Promise.all(windows.map((x) => x.minimize()));
 
     const type = this.data.data.measureTemplate.type;
+    const token = getToken(this) || {};
 
-    const options = {
-        distance: _getSize(this, shared),
+    const templateData = {
+        _id: randomID(16),
+        distance: _getSize(this, shared) || 5,
         t: type,
-        flags: { [MODULE_NAME]: { [hideControlIconKey]: true } },
+        flags: { [MODULE_NAME]: { ...this.data.flags[MODULE_NAME], ...{ tokenId: token?.id } } },
         user: game.userId,
+        fillColor: this.data.data.measureTemplate?.overrideColor
+            ? this.data.data.measureTemplate.customColor
+            : game.user.color,
+        texture: this.data.data.measureTemplate?.overrideTexture
+            ? this.data.data.measureTemplate.customTexture
+            : null,
     };
 
-    if (this.data.data.measureTemplate?.overrideColor) {
-        options.fillColor = this.data.data.measureTemplate.customColor;
-    }
-    else {
-        options.fillColor = game.user.color;
+    const template = await game[MODULE_NAME].AbilityTemplateAdvanced.fromData(templateData, this);
+    if (!template) {
+        return { result: false };
     }
 
-    if (this.data.data.measureTemplate?.overrideTexture) {
-        options.texture = this.data.data.measureTemplate.customTexture;
+    const result = await template.drawPreview();
+
+    if (!result.result) {
+        // todo read from game setting to see if the user wants it to re-expand when cast
+        await Promise.all(windows.map((x) => x.maximize()));
+        return result;
     }
 
-    let template;
-    switch (type) {
-        case 'cone':
-            template = await createCone(this, shared, options, async () => await wrapped(shared));
-            break;
-        case 'circle':
-            template = await createCircle(this, shared, options, async () => await wrapped(shared));
-            break;
-        default:
-            ifDebug(() => console.log(`Passing template type '${type}' to system`));
-            template = await wrapped(shared);
-            break;
-    }
+    shared.template = await result.place();
 
-    await Promise.all(windows.map((x) => x.maximize()));
-
-    if (template.result) {
-        await shared.template.update({ flags: { [MODULE_NAME]: { [hideControlIconKey]: false } } });
-    }
-
-    return template;
+    return result;
 }
 
 export default promptMeasureTemplate;

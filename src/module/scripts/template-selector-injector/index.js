@@ -1,12 +1,14 @@
-import { CirclePlacement } from '../template-placement/circles/circle-placement';
-import { ConePlacement } from '../template-placement/cones/cone-placement';
+import { CirclePlacement } from '../template-placement/circle-placement';
+import { ConePlacement } from '../template-placement/cone-placement';
 import template from './template.js';
 
 /**
  * Adds advanced template options button to abilities with configured templates (that are supported)
  *
  * @param {*} sheet The actor sheet
+ *
  * @param {*} jq jquery
+ *
  * @param {*} _options unused
  */
 export default async function (sheet, jq, _options) {
