@@ -19,10 +19,9 @@
 ## General
 - duration that ties into time passing like buffs do
   - alternately (or maybe as an interim option) add a checkbox to delete templates after spell is cast
-- show rangefinding on spells (including showing cancel icon if out of range)
+- pf1 rangefinding is broken for measuring grids diagonally downward
 
 ## Settings
-- allow for option to make right click always cancel and only configure manually
 - GM setting to allow alternate 15' cone
 - GM setting to turn off logging
 

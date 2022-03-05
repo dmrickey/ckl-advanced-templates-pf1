@@ -20,6 +20,10 @@ const initMeasuredTemplate = () => {
                 && this.tokenSizeSquares.sizeSquares > this.tokenEmanationSize;
         }
 
+        get hideHighlight() {
+            return !!this.data.flags?.[MODULE_NAME]?.hideHighlight;
+        }
+
         get tokenSizeSquares() {
             const tokenId = this.data.flags?.[MODULE_NAME]?.tokenId;
             const token = canvas.tokens.placeables.find((x) => x.id === tokenId);
@@ -170,6 +174,10 @@ const initMeasuredTemplate = () => {
 
         /** @override */
         getHighlightedSquares() {
+            if (this.hideHighlight) {
+                return [];
+            }
+
             if (!this.shouldOverrideTokenEmanation) {
                 return super.getHighlightedSquares();
             }
@@ -387,18 +395,107 @@ const initMeasuredTemplate = () => {
     }
 
     class AbilityTemplateCircle extends AbilityTemplateAdvanced {
+        _maxRange;
+        _hasMaxRange;
+        _minRange;
+        _hasMinRange;
+        _tokenSquare;
+
+        _calculateTokenSquare(token) {
+            const heightSquares = Math.max(Math.round(token.data.height), 1);
+            const widthSquares = Math.max(Math.round(token.data.width), 1);
+
+            const gridSize = canvas.grid.h;
+            const { x, y, h, w } = token;
+
+            const bottom = y + h;
+            const left = x;
+            const top = y;
+            const right = x + w;
+
+            const rightSpots = [...new Array(heightSquares)].map((_, i) => ({
+                x: right,
+                y: top + gridSize * i,
+            }));
+            const leftSpots = [...new Array(heightSquares)].map((_, i) => ({
+                x: left,
+                y: bottom - gridSize * i,
+            }));
+            const topSpots = [...new Array(widthSquares)].map((_, i) => ({
+                x: left + gridSize * i,
+                y: top,
+            }));
+            const bottomSpots = [...new Array(widthSquares)].map((_, i) => ({
+                x: right - gridSize * i,
+                y: bottom,
+            }));
+            const allSpots = [
+                ...rightSpots,
+                ...bottomSpots,
+                ...leftSpots,
+                ...topSpots,
+            ];
+
+            return {
+                x: left,
+                y: top,
+                center: token.center,
+                top,
+                bottom,
+                left,
+                right,
+                h,
+                w,
+                heightSquares,
+                widthSquares,
+                allSpots,
+            };
+        }
+
         /** @override */
         async commitPreview() {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
             // game.user.updateTokenTargets();
 
+            const existingIcon = this.controlIcon?.iconSrc;
+            let isInRange = true;
+
             const updateTemplateLocation = async (crosshairs) => {
                 while (crosshairs.inFlight) {
                     await warpgate.wait(20);
+                    this.data.flags[MODULE_NAME].icon = existingIcon;
 
                     const { x, y } = crosshairs.center;
                     if (this.data.x === x && this.data.y === y) {
                         continue;
+                    }
+
+                    if (this._hasMaxRange || this._hasMinRange) {
+                        const rays = this._tokenSquare.allSpots.map((spot) => ({
+                            ray: new Ray(spot, crosshairs),
+                        }));
+                        const distances = canvas.grid.measureDistances(rays, { gridSpaces: true });
+                        const range = Math.min(...distances);
+
+                        if (this._hasMinRange && range < this._minRange
+                            || this._hasMaxRange && range > this._maxRange
+                        ) {
+                            this.data.flags[MODULE_NAME].icon = 'icons/svg/hazard.svg';
+                            this.data.flags[MODULE_NAME].hideHighlight = true;
+                            isInRange = false;
+                        }
+                        else {
+                            this.data.flags[MODULE_NAME].icon = existingIcon;
+                            this.data.flags[MODULE_NAME].hideHighlight = false;
+                            isInRange = true;
+                        }
+
+                        crosshairs.label = `${range} ft.`;
+
+                        if (this.controlIcon) {
+                            this.controlIcon.destroy();
+                        }
+                        this.controlIcon = this.addChild(this._drawControlIcon());
                     }
 
                     this.data.x = x;
@@ -409,10 +506,9 @@ const initMeasuredTemplate = () => {
             };
 
             const targetConfig = {
-                drawIcon: true,
+                drawIcon: false,
                 drawOutline: false,
                 interval: 1,
-                // todo grab icon from ItemPF
             };
             const crosshairs = await warpgate.crosshairs.show(
                 targetConfig,
@@ -421,7 +517,7 @@ const initMeasuredTemplate = () => {
                 }
             );
 
-            if (crosshairs.cancelled) {
+            if (crosshairs.cancelled || !isInRange) {
                 // game.user.updateTokenTargets();
                 return false;
             }
@@ -430,8 +526,16 @@ const initMeasuredTemplate = () => {
         }
 
         /** @override */
-        async initializePlacement(_itemPf) {
+        async initializePlacement(itemPf) {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
+
+            this._maxRange = this.data.flags?.[MODULE_NAME]?.maxRange;
+            this._hasMaxRange = !!this._maxRange && !isNaN(this._maxRange);
+            this._minRange = this.data.flags?.[MODULE_NAME]?.minRange;
+            this._hasMinRange = !!this._minRange && !isNaN(this._minRange);
+
+            const token = getToken(itemPf);
+            this._tokenSquare = this._calculateTokenSquare(token);
 
             const mouse = canvas.app.renderer.plugins.interaction.mouse;
             const position = mouse.getLocalPosition(canvas.app.stage);
@@ -532,7 +636,7 @@ const initMeasuredTemplate = () => {
             else {
                 const width = Math.max(Math.round(token.data.width), 1);
                 const height = Math.max(Math.round(token.data.height), 1);
-                this._tokenSquare = this._sourceSquare(token.center, width, height, alt15Override);
+                this._tokenSquare = this._sourceSquare(token.center, width, height);
             }
 
             const { x, y } = this._tokenSquare.allSpots[0];
