@@ -160,9 +160,9 @@ const initMeasuredTemplate = () => {
          */
         /** @override */
         _drawControlIcon() {
-            // todo add in override for icon
             const size = Math.max(Math.round((canvas.dimensions.size * 0.5) / 20) * 20, 40);
-            const icon = new ControlIcon({ texture: CONFIG.controlIcons.template, size });
+            const iconTexture = this.data.flags?.[MODULE_NAME]?.icon;
+            const icon = new ControlIcon({ texture: iconTexture || CONFIG.controlIcons.template, size });
             icon.x -= (size * 0.5);
             icon.y -= (size * 0.5);
             return icon;

@@ -32,12 +32,13 @@ async function promptMeasureTemplate(wrapped, shared) {
 
     const type = this.data.data.measureTemplate.type;
     const token = getToken(this) || {};
+    const icon = this.data.img === 'systems/pf1/icons/misc/magic-swirl.png' ? undefined : this.data.img;
 
     const templateData = {
         _id: randomID(16),
         distance: _getSize(this, shared) || 5,
         t: type,
-        flags: { [MODULE_NAME]: { ...this.data.flags[MODULE_NAME], ...{ tokenId: token?.id } } },
+        flags: { [MODULE_NAME]: { ...this.data.flags[MODULE_NAME], tokenId: token?.id, icon } },
         user: game.userId,
         fillColor: this.data.data.measureTemplate?.overrideColor
             ? this.data.data.measureTemplate.customColor
