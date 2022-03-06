@@ -23,11 +23,6 @@
 - when cursor over a token show the target ui
 - when cursor over no token show the cancel icon
 
-## General
-- duration that ties into time passing like buffs do
-- duration tracker currently on lasts until end of turnround and doesn't persist between sessions (meaning if something is supposed to be deleted at the end of this turn but the game is reloaded before the turn ends then it won't be deleted)
-  - add a checkbox to delete templates after spell is cast
-
 ## Settings
 - GM setting to allow alternate 15' cone
   - implement a way for regular and alternate 15' cone to coexist
