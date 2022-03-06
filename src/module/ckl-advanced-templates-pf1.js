@@ -1,16 +1,3 @@
-/**
- * This is your JavaScript entry file for Foundry VTT.
- * Register custom settings, sheets, and constants using the Foundry API.
- * Change this heading to be more descriptive to your module, or remove it.
- * Author: [your name]
- * Content License: [copyright and-or license] If using an existing system
- * 					you may want to put a (link to a) license or copyright
- * 					notice here (e.g. the OGL).
- * Software License: [your license] Put your desired license here, which
- * 					 determines how others may use and modify your module.
- */
-
-// Import JavaScript modules
 import { registerSettings } from './settings.js';
 import { preloadTemplates } from './preloadTemplates.js';
 
@@ -19,6 +6,7 @@ import ifDebug from './scripts/utils/if-debug';
 import promptMeasureTemplate from './scripts/template-placement/';
 import injectTemplateSelector from './scripts/template-selector-injector';
 import { initMeasuredTemplate } from './scripts/measured-template-pf-advanced';
+import { DurationTracker } from './scripts/duration-tracker.js';
 
 // Initialize module
 Hooks.once('init', async () => {
@@ -43,7 +31,9 @@ Hooks.once('setup', async () => {
 
 // When ready
 Hooks.once('ready', async () => {
-    // Do anything once the module is ready
+    Hooks.on('renderItemSheetPF', injectTemplateSelector);
+
+    DurationTracker.init();
 });
 
 // Add any additional hooks if necessary
@@ -57,5 +47,3 @@ Hooks.on('pf1.postInit', () => {
         });
     });
 });
-
-Hooks.on('renderItemSheetPF', injectTemplateSelector);

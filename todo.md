@@ -6,7 +6,6 @@
   - centered on self circle
     - disable dragging and/or make sure dragging respects placement rules
     - register for token's movement and update position
-    - if "centered on self" selected, pop up modal saying you'll have to update the placment from the Item's details page with confirm/cancel
   - ~~centered on target~~
     - ~~don't show template unless cursor is over a token~~
     - until I find a spell that actually targets like this, not gonna do it
@@ -23,7 +22,8 @@
 
 ## General
 - duration that ties into time passing like buffs do
-  - alternately (or maybe as an interim option) add a checkbox to delete templates after spell is cast (clean up at end of round)
+- duration tracker currently on lasts until end of turnround and doesn't persist between sessions (meaning if something is supposed to be deleted at the end of this turn but the game is reloaded before the turn ends then it won't be deleted)
+  - add a checkbox to delete templates after spell is cast
 
 ## Settings
 - GM setting to allow alternate 15' cone

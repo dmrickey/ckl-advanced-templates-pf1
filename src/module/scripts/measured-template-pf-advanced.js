@@ -1,23 +1,20 @@
 import { CONSTS, MODULE_NAME } from '../consts';
+import { DurationTracker } from './duration-tracker';
 import { getToken, ifDebug } from './utils';
 
+// unfortunately, since I'm extenidng a class defined in PF1, there's no way to do this in a traditional "one class per file" because
+// then it would need to exist as soon as Foundry starts. So it can't be in its own file and exported. It needs to all be defined in
+// memory at startup after PF1 has been initialized
 const initMeasuredTemplate = () => {
     ifDebug(() => console.log('init measured template override'));
     const MeasuredTemplatePF = CONFIG.MeasuredTemplate.objectClass;
 
     class MeasuredTemplatePFAdvanced extends MeasuredTemplatePF {
-        // todo read game setting to see if medium or smaller tokens are forced to pick a corner of their square to center from
-        get tokenEmanationSize() {
-            // eslint-disable-next-line
-            return false ? 1 : -1;
-        }
-
         get shouldOverrideTokenEmanation() {
             return game.settings.get('pf1', 'measureStyle')
                 && this.data.t === 'circle'
                 && this.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] === CONSTS.placement.circle.self
-                && ['burst', 'emanation'].includes(this.data.flags?.[MODULE_NAME]?.[CONSTS.flags.circle.areaType])
-                && this.tokenSizeSquares.sizeSquares > this.tokenEmanationSize;
+                && ['burst', 'emanation'].includes(this.data.flags?.[MODULE_NAME]?.[CONSTS.flags.circle.areaType]);
         }
 
         get hideHighlight() {
@@ -337,12 +334,17 @@ const initMeasuredTemplate = () => {
                         this.data.update(this.data);
                         const doc = (await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [this.data.toObject()]))[0];
                         this.document = doc;
+
+                        // todo check for flag to delete or not
+                        DurationTracker.endOfTurnCallback(async () => {
+                            await canvas.scene.deleteEmbeddedDocuments("MeasuredTemplate", [doc.id]);
+                        });
+
                         return doc;
                     },
                     delete: () => {
                         return this.document.delete();
                     },
-
                 }
                 : { result: false };
         }
