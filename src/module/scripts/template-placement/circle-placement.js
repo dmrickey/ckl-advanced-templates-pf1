@@ -27,7 +27,7 @@ export class CirclePlacement {
         const areaType = this._getAreaType();
         const currentPlacementType = this._getPlacementType();
         const movesWithToken = this.itemPf.getFlag(MODULE_NAME, CONSTS.flags.circle.movesWithToken);
-
+        const deleteAtTurnEnd = this.itemPf.getFlag(MODULE_NAME, CONSTS.flags.exireAtTurnEnd);
         const ok = 'Ok';
 
         const dialogResult = await warpgate.menu({
@@ -41,6 +41,7 @@ export class CirclePlacement {
                 { type: 'radio', label: 'Burst', options: ['areaType', areaType === 'burst'] },
                 { type: 'radio', label: 'Spread', options: ['areaType', areaType === 'spread'] },
                 { type: 'radio', label: 'Emanation', options: ['areaType', areaType === 'emanation'] },
+                { type: 'checkbox', label: 'Delete Template at end of turn', options: !!deleteAtTurnEnd },
                 // { type: 'checkbox', label: 'Attach to Token', options: !!movesWithToken }, // todo
             ],
             buttons: [
@@ -61,13 +62,14 @@ export class CirclePlacement {
         const { buttons: confirmed } = dialogResult;
 
         if (confirmed) {
-            const [_, grid, self, useDefault, __, ___, burstResult, spreadResult, emanationResult, movesWithTokenResult] = dialogResult.inputs;
+            const [_, grid, self, useDefault, __, ___, burstResult, spreadResult, emanationResult, deleteAtTurnEndResult, movesWithTokenResult] = dialogResult.inputs;
             const chosenPlacement = this._getPlacementForLabel(grid || self || useDefault);
             const flags = {
                 [MODULE_NAME]: {
                     [CONSTS.flags.placementType]: chosenPlacement,
                     [CONSTS.flags.circle.areaType]: (burstResult || spreadResult || emanationResult || '').toLowerCase(),
                     [CONSTS.flags.circle.movesWithToken]: !!movesWithTokenResult,
+                    [CONSTS.flags.exireAtTurnEnd]: !!deleteAtTurnEndResult,
                 }
             };
             await this.itemPf.update({ flags });

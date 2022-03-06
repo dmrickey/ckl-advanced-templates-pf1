@@ -1,3 +1,5 @@
+import { CONSTS, MODULE_NAME } from "../consts";
+
 class DurationTracker {
     static endOfTurn = 'endOfTurn';
 
@@ -17,6 +19,18 @@ class DurationTracker {
             }
         }
         DurationTracker.endOfTurnExpirations = [];
+
+        await DurationTracker.removeEndOfTurnTemplates();
+    }
+
+    static async removeEndOfTurnTemplates() {
+        const templateIds = canvas.templates.placeables
+            .filter((t) => !!t.data.flags?.[MODULE_NAME]?.[CONSTS.flags.exireAtTurnEnd])
+            .map((t) => t.id);
+
+        if (templateIds.length) {
+            await canvas.scene.deleteEmbeddedDocuments("MeasuredTemplate", templateIds);
+        }
     }
 
     static init() {
@@ -25,8 +39,8 @@ class DurationTracker {
         });
 
         Hooks.on('updateCombat', async (combat, changed) => {
-            if (!('turn' in changed) && changed.round !== 1
-                || game.combats.get(combat.id).data.combatants.length === 0
+            if (!('turn' in changed || 'round' in changed) && changed.round !== 1
+                || game.combats.get(combat.id).data.combatants.size === 0
             ) {
                 return;
             }

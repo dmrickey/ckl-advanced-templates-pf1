@@ -334,12 +334,6 @@ const initMeasuredTemplate = () => {
                         this.data.update(this.data);
                         const doc = (await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [this.data.toObject()]))[0];
                         this.document = doc;
-
-                        // todo check for flag to delete or not
-                        DurationTracker.endOfTurnCallback(async () => {
-                            await canvas.scene.deleteEmbeddedDocuments("MeasuredTemplate", [doc.id]);
-                        });
-
                         return doc;
                     },
                     delete: () => {

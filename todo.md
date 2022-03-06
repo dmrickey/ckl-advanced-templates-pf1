@@ -1,14 +1,17 @@
 # TODO
 
 ## Circles
-  - cones
-    - disable dragging and/or make sure dragging respects placement rules
   - centered on self circle
     - disable dragging and/or make sure dragging respects placement rules
     - register for token's movement and update position
   - ~~centered on target~~
     - ~~don't show template unless cursor is over a token~~
     - until I find a spell that actually targets like this, not gonna do it
+
+## Cones
+- disable dragging and/or make sure dragging respects placement rules
+- refactor menu to show radio buttons instead of just individual buttons (i.e. make it like the circle menu)
+  - add a checkbox for "delete at turn end" like circle
 
 ## Rays
 - originate from caster
