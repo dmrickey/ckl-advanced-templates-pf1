@@ -474,28 +474,32 @@ const initMeasuredTemplate = () => {
                         const rays = this._tokenSquare.allSpots.map((spot) => ({
                             ray: new Ray(spot, crosshairs),
                         }));
-                        const distances = canvas.grid.measureDistances(rays, { gridSpaces: true });
+                        const distances = rays.map((ray) => canvas.grid.measureDistances([ray], { gridSpaces: true })[0]);
                         const range = Math.min(...distances);
 
+                        let icon;
                         if (this._hasMinRange && range < this._minRange
                             || this._hasMaxRange && range > this._maxRange
                         ) {
-                            this.data.flags[MODULE_NAME].icon = 'icons/svg/hazard.svg';
+                            icon = 'icons/svg/hazard.svg';
                             this.data.flags[MODULE_NAME].hideHighlight = true;
                             isInRange = false;
                         }
                         else {
-                            this.data.flags[MODULE_NAME].icon = existingIcon;
+                            icon = existingIcon;
                             this.data.flags[MODULE_NAME].hideHighlight = false;
                             isInRange = true;
                         }
 
-                        crosshairs.label = `${range} ft.`;
+                        crosshairs.label = `${range} ft`;
 
-                        if (this.controlIcon) {
-                            this.controlIcon.destroy();
+                        if (icon && icon !== this.controlIcon?.iconSrc) {
+                            this.data.flags[MODULE_NAME].icon = icon;
+                            if (this.controlIcon) {
+                                this.controlIcon.destroy();
+                            }
+                            this.controlIcon = this.addChild(this._drawControlIcon());
                         }
-                        this.controlIcon = this.addChild(this._drawControlIcon());
                     }
 
                     this.data.x = x;
