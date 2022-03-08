@@ -19,6 +19,7 @@
 ### Cones
 - disable dragging and/or make sure dragging respects placement rules
 - add GM option to allow rotation
+- Add some kind of targeting indicator and/or fill highlight when targeting via "select square"
 
 ### Rays
 - originate from caster
