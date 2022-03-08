@@ -7,7 +7,6 @@ export const CONSTS = {
             self: 'self',
         },
         cone: {
-            alt15: 'alt15',
             selectTargetSquare: 'selectTargetSquare',
             self: 'self',
         },

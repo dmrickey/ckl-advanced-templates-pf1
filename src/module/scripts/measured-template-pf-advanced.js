@@ -285,9 +285,6 @@ const initMeasuredTemplate = () => {
                     break;
                 case 'cone':
                     switch (placementType) {
-                        case CONSTS.placement.cone.alt15:
-                            abilityCls = AbilityTemplateConeSelfAlt15;
-                            break;
                         case CONSTS.placement.cone.selectTargetSquare:
                             abilityCls = AbilityTemplateConeTarget;
                             break;
@@ -612,11 +609,11 @@ const initMeasuredTemplate = () => {
         }
 
         /** @override */
-        async initializeConeData(token, alt15Override = false) {
+        async initializeConeData(token) {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
             const { distance } = this.data;
-            this._is15 = distance === 15 && !alt15Override;
+            this._is15 = distance === 15;
 
             if (typeof token === 'undefined' || !token) {
                 const sourceConfig = {
@@ -655,6 +652,7 @@ const initMeasuredTemplate = () => {
             const top = center.y - h / 2;
             const right = center.x + w / 2;
 
+            // todo read from a gm setting to see if the gm wants to allow the alternate 15' option and figure how to do both simultaneously
             // 15 foot cones originate in the middle of the grid, so for every square-edge there's one origin point instead of two
             const gridOffset = this._is15 ? gridSize / 2 : 0;
             const qtyOffset = this._is15 ? 0 : 1;
@@ -705,16 +703,6 @@ const initMeasuredTemplate = () => {
                 widthSquares,
                 allSpots,
             };
-        }
-    }
-
-    class AbilityTemplateConeSelfAlt15 extends AbilityTemplateConeBase {
-        /** @override */
-        async initializePlacement(itemPf) {
-            ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
-
-            const token = getToken(itemPf);
-            await super.initializeConeData(token, true);
         }
     }
 

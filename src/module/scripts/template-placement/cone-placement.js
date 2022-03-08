@@ -14,10 +14,6 @@ export class ConePlacement {
             key: CONSTS.placement.cone.self,
             label: 'Originate from Selection',
         },
-        [CONSTS.placement.cone.alt15]: {
-            key: CONSTS.placement.cone.self,
-            label: `Alternate 15' Cone`,
-        },
         [CONSTS.placement.useSystem]: {
             key: CONSTS.placement.useSystem,
             label: 'Use System Default',
@@ -30,16 +26,10 @@ export class ConePlacement {
      * @returns {bool} True if a placement type was selected, false if it was canceled.
      */
     async showPlacementMenu() {
-        const is15Feet = this._getSize() === 15;
-        const showAlternateOption = is15Feet && false; // && read from settings to get if alternative is allowed
-
         const makeButton = ({ key: value, label }) => ({ label, value });
 
         const buttons = [];
         buttons.push(makeButton(this._placementTypes[CONSTS.placement.cone.self]));
-        if (showAlternateOption) {
-            buttons.push(makeButton(this._placementTypes[CONSTS.placement.cone.alt15]));
-        }
         buttons.push(makeButton(this._placementTypes[CONSTS.placement.cone.selectTargetSquare]));
         buttons.push(makeButton(this._placementTypes[CONSTS.placement.useSystem]));
         buttons.push({
