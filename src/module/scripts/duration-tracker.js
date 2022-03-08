@@ -47,6 +47,12 @@ class DurationTracker {
 
             await DurationTracker.expireAll();
         });
+
+        Hooks.on('updateWorldTime', async (_worldTime, delta) => {
+            if (delta) {
+                await DurationTracker.expireAll();
+            }
+        });
     }
 }
 
