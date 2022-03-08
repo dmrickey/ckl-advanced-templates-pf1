@@ -3,7 +3,7 @@
 ## Circles
   - centered on self circle
     - disable dragging to update location (also editing x/y in details since it should be stuck to token)
-    - register for token's movement and update position
+    - register for token's movement and update position ++
   - ~~centered on target~~
     - ~~don't show template unless cursor is over a token~~
     - until I find a spell that actually targets like this, not gonna do it
