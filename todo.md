@@ -31,6 +31,8 @@
   - implement a way for regular and alternate 15' cone to coexist
 - GM setting to turn off logging ++
 - GM setting for cone rotation
+- option to disable outline
+- option to disable fill color
 
 ## Lang
 - externalize all strings ++
