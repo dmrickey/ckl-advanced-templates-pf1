@@ -3,7 +3,9 @@
 ## Circles
   - centered on self circle
     - disable dragging to update location (also editing x/y in details since it should be stuck to token)
-    - register for token's movement and update position ++
+    - "attach to token" option (e.g. obscuring mist is centered on you but stays in place, if you cast silence centered on you, then it moves with you) ++
+      - register for token's movement and update position ++
+      - if token is deleted while attached, then delete template ++
   - ~~centered on target~~
     - ~~don't show template unless cursor is over a token~~
     - until I find a spell that actually targets like this, not gonna do it
