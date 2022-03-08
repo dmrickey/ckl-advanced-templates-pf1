@@ -1,6 +1,9 @@
 # TODO
 
-## Circles
+---
+
+## Targeting types
+### Circles
   - centered on self circle
     - disable dragging to update location (also editing x/y in details since it should be stuck to token)
     - "attach to token" option (e.g. obscuring mist is centered on you but stays in place, if you cast silence centered on you, then it moves with you) ++
@@ -13,20 +16,23 @@
     - make sure dragging respects template placement rules
   - Add aura ability to prompt buffs/debuffs
 
-## Cones
+### Cones
 - disable dragging and/or make sure dragging respects placement rules
 - add GM option to allow rotation
 
-## Rays
+### Rays
 - originate from caster
 - originate from selection
 - system default option
 
-## Targets (might need a new template type...)
+### Targets (might need a new template type...)
 - rangefinding
 - when cursor over a token show the target ui
 - when cursor over no token show the cancel icon
 - automatically add prompts for buffs/debuffs
+- formula for number of targets
+
+---
 
 ## Settings
 - GM setting to allow alternate 15' cone
@@ -36,8 +42,12 @@
 - option to disable outline
 - option to disable fill color
 
+---
+
 ## Lang
 - externalize all strings ++
+
+---
 
 ## Unknowns that I don't intend to look into
 - Gridless
