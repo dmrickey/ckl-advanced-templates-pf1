@@ -78,16 +78,6 @@ export class CirclePlacement {
         return !!confirmed;
     }
 
-    _getPlacementForLabel = (label) => {
-        for (const placementTypeKey in this._placementTypes) {
-            const placement = this._placementTypes[placementTypeKey];
-            if (placement.label === label) {
-                return placement.key;
-            }
-        }
-        return this._placementTypes[CONSTS.placement.circle.grid].key;
-    };
-
     _getAreaType = () => {
         let areaType = this.itemPf.getFlag(MODULE_NAME, CONSTS.flags.circle.areaType);
         if (areaType) {
@@ -105,6 +95,16 @@ export class CirclePlacement {
         }
 
         return areaType;
+    };
+
+    _getPlacementForLabel = (label) => {
+        for (const placementTypeKey in this._placementTypes) {
+            const placement = this._placementTypes[placementTypeKey];
+            if (placement.label === label) {
+                return placement.key;
+            }
+        }
+        return this._placementTypes[CONSTS.placement.circle.grid].key;
     };
 
     _getPlacementType = () => {

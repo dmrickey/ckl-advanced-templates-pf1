@@ -9,11 +9,10 @@
     - until I find a spell that actually targets like this, not gonna do it
   - target grid
     - make sure dragging respects template placement rules
+  - Add aura ability to prompt buffs/debuffs
 
 ## Cones
 - disable dragging and/or make sure dragging respects placement rules
-- refactor menu to show radio buttons instead of just individual buttons (i.e. make it like the circle menu) ++
-  - add a checkbox for "delete at turn end" like circle ++
 - add GM option to allow rotation
 
 ## Rays
@@ -25,6 +24,7 @@
 - rangefinding
 - when cursor over a token show the target ui
 - when cursor over no token show the cancel icon
+- automatically add prompts for buffs/debuffs
 
 ## Settings
 - GM setting to allow alternate 15' cone ++
