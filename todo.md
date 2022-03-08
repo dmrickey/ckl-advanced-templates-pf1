@@ -27,7 +27,7 @@
 - automatically add prompts for buffs/debuffs
 
 ## Settings
-- GM setting to allow alternate 15' cone ++
+- GM setting to allow alternate 15' cone
   - implement a way for regular and alternate 15' cone to coexist
 - GM setting to turn off logging ++
 - GM setting for cone rotation
