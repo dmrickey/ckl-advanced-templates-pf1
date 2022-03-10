@@ -42,6 +42,7 @@
 - GM setting for cone rotation
 - option to disable outline
 - option to disable fill color
+- option to target tokens within a template
 
 ---
 
