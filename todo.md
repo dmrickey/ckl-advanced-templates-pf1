@@ -36,13 +36,15 @@
 ---
 
 ## Settings
-- GM setting to allow alternate 15' cone
-  - implement a way for regular and alternate 15' cone to coexist
-- GM setting to turn off logging ++
-- GM setting for cone rotation
-- option to disable outline
-- option to disable fill color
-- option to target tokens within a template
+- client
+  - debug logging ++
+  - show outline
+  - show highlight
+  - update targets ++
+- world
+  - alternate 15' cone
+  - cone rotation
+  - allow players to configure "use system"
 
 ---
 
@@ -52,6 +54,7 @@
 ---
 
 ## Unknowns that I don't intend to look into
+- Making it work with anything that isn't PF1
 - Gridless
 - Hex Grids
 - Whether or not it runs on Forge (it probably does, I think it's limitations are only related to file paths, but I have no way of testing this)
