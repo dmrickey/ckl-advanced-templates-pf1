@@ -1,4 +1,5 @@
 import { CONSTS, MODULE_NAME } from '../consts';
+import { Settings } from '../settings';
 import { DurationTracker } from './duration-tracker';
 import { getToken, ifDebug } from './utils';
 
@@ -384,6 +385,10 @@ const initMeasuredTemplate = () => {
             const { x, y } = token.center;
             this.data.x = x;
             this.data.y = y;
+
+            if (Settings.target) {
+                game.user.updateTokenTargets(this.getTokensWithin());
+            }
         }
     }
 
@@ -448,7 +453,9 @@ const initMeasuredTemplate = () => {
         /** @override */
         async commitPreview() {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
-            // game.user.updateTokenTargets();
+            if (Settings.target) {
+                game.user.updateTokenTargets();
+            }
 
             const existingIcon = this.controlIcon?.iconSrc;
             let isInRange = true;
@@ -498,7 +505,10 @@ const initMeasuredTemplate = () => {
                     this.data.x = x;
                     this.data.y = y;
                     this.refresh();
-                    // todo grab targets
+
+                    if (Settings.target) {
+                        game.user.updateTokenTargets(this.getTokensWithin());
+                    }
                 }
             };
 
@@ -515,7 +525,9 @@ const initMeasuredTemplate = () => {
             );
 
             if (crosshairs.cancelled || !isInRange) {
-                // game.user.updateTokenTargets();
+                if (Settings.target) {
+                    game.user.updateTokenTargets();
+                }
                 return false;
             }
 
@@ -550,7 +562,10 @@ const initMeasuredTemplate = () => {
         async commitPreview() {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
 
-            // game.user.updateTokenTargets();
+            if (Settings.target) {
+                game.user.updateTokenTargets();
+            }
+
             const targetConfig = {
                 drawIcon: false,
                 drawOutline: false,
@@ -590,6 +605,9 @@ const initMeasuredTemplate = () => {
                     this.data.x = x;
                     this.data.y = y;
                     this.refresh();
+                    if (Settings.target) {
+                        game.user.updateTokenTargets(this.getTokensWithin());
+                    }
                 }
             };
 
@@ -601,7 +619,9 @@ const initMeasuredTemplate = () => {
             );
 
             if (rotateCrosshairs.cancelled) {
-                // game.user.updateTokenTargets();
+                if (Settings.target) {
+                    game.user.updateTokenTargets();
+                }
                 return false;
             }
 

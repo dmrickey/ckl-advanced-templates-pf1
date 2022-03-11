@@ -31,9 +31,17 @@ const settings = {
             name: 'Target Tokens in Template',
             hint: 'If enabled, then your targeted tokens will update as you place the template.',
             type: Boolean,
-            config: false,
+            config: true,
             default: true,
-        }
+        },
+        reExpand: {
+            key: 'reExpand',
+            name: 'Re-expand Collapsed Sheets',
+            hint: 'If enabled, any sheets that were collapsed to allow for template placement will be re-expanded after the template has been placed.',
+            type: Boolean,
+            config: false,
+            default: false,
+        },
     },
     world: {
         cone15Alternate: {
