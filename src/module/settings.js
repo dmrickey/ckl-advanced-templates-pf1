@@ -90,31 +90,39 @@ export function registerSettings() {
 }
 
 export class Settings {
-    static get debug() {
-        return game.settings.get(MODULE_NAME, 'debug');
-    }
-
-    static get outline() {
-        return game.settings.get(MODULE_NAME, 'outline');
-    }
-
-    static get highlight() {
-        return game.settings.get(MODULE_NAME, 'highlight');
-    }
-
-    static get target() {
-        return game.settings.get(MODULE_NAME, 'target');
-    }
-
     static get cone15Alternate() {
-        return game.settings.get(MODULE_NAME, 'cone15Alternate');
+        return Settings.#getSetting('cone15Alternate');
     }
 
     static get coneRotation() {
-        return game.settings.get(MODULE_NAME, 'coneRotation');
+        return Settings.#getSetting('coneRotation');
+    }
+
+    static get debug() {
+        return Settings.#getSetting('debug');
+    }
+
+    static get highlight() {
+        return Settings.#getSetting('highlight');
+    }
+
+    static get outline() {
+        return Settings.#getSetting('outline');
+    }
+
+    static get reExpand() {
+        return Settings.#getSetting('reExpand');
+    }
+
+    static get target() {
+        return Settings.#getSetting('target');
     }
 
     static get useSystem() {
-        return game.settings.get(MODULE_NAME, 'useSystem');
+        return Settings.#getSetting('useSystem');
+    }
+
+    static #getSetting(key) {
+        return game.settings.get(MODULE_NAME, key);
     }
 }

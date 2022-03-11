@@ -39,7 +39,6 @@
 - client
   - show outline
   - show highlight
-  - automatically re-expand collapsed windows after casting?
 - world
   - alternate 15' cone
   - cone rotation

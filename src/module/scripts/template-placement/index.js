@@ -1,6 +1,7 @@
 import ifDebug from '../utils/if-debug';
 import { CONSTS, MODULE_NAME } from '../../consts';
 import { getToken } from '../utils';
+import { Settings } from '../../settings';
 
 /**
  * Common logic and switch statement for placing all templates
@@ -65,9 +66,12 @@ async function promptMeasureTemplate(wrapped, shared) {
     const result = await template.drawPreview();
 
     if (!result.result) {
-        // todo read from game setting to see if the user wants it to re-expand when cast
         await Promise.all(windows.map((x) => x.maximize()));
         return result;
+    }
+
+    if (Settings.reExpand) {
+        await Promise.all(windows.map((x) => x.maximize()));
     }
 
     shared.template = await result.place();
