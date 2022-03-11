@@ -80,3 +80,33 @@ export function registerSettings() {
     initSetting('client');
     initSetting('world');
 }
+
+export class Settings {
+    static get debug() {
+        return game.settings.get(MODULE_NAME, 'debug');
+    }
+
+    static get outline() {
+        return game.settings.get(MODULE_NAME, 'outline');
+    }
+
+    static get highlight() {
+        return game.settings.get(MODULE_NAME, 'highlight');
+    }
+
+    static get target() {
+        return game.settings.get(MODULE_NAME, 'target');
+    }
+
+    static get cone15Alternate() {
+        return game.settings.get(MODULE_NAME, 'cone15Alternate');
+    }
+
+    static get coneRotation() {
+        return game.settings.get(MODULE_NAME, 'coneRotation');
+    }
+
+    static get useSystem() {
+        return game.settings.get(MODULE_NAME, 'useSystem');
+    }
+}
