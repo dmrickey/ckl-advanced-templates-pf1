@@ -7,7 +7,7 @@ const settings = {
             name: 'Enable Debug Logging',
             hint: 'If enabled, then various log messages are logged to the console to help with debugging. Only useful when something is not working as expected.',
             type: Boolean,
-            config: false,
+            config: true,
             default: false,
         },
         outline: {
