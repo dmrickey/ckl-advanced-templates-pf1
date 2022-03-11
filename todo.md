@@ -55,6 +55,6 @@
 - Making it work with anything that isn't PF1
 - Gridless
 - Hex Grids
-- Whether or not it runs on Forge (it probably does, I think it's limitations are only related to file paths, but I have no way of testing this)
+- Whether or not it runs on Forge (it probably does, I think its limitations are only related to file paths, but I have no way of testing this)
 
 ++ required for v1
