@@ -37,7 +37,6 @@
 
 ## Settings
 - client
-  - debug logging ++
   - show outline
   - show highlight
   - update targets ++
