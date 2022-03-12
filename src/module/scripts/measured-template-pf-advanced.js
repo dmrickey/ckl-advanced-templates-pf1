@@ -385,7 +385,9 @@ const initMeasuredTemplate = () => {
             this.data.y = y;
 
             if (Settings.target) {
-                game.user.updateTokenTargets(this.getTokensWithin());
+                const targets = this.getTokensWithin();
+                const ids = targets.map((t) => t.id);
+                game.user.updateTokenTargets(ids);
             }
         }
     }
@@ -509,7 +511,9 @@ const initMeasuredTemplate = () => {
                     this.refresh();
 
                     if (Settings.target) {
-                        game.user.updateTokenTargets(this.getTokensWithin());
+                        const targets = this.getTokensWithin();
+                        const ids = targets.map((t) => t.id);
+                        game.user.updateTokenTargets(ids);
                     }
                 }
             };
@@ -608,7 +612,9 @@ const initMeasuredTemplate = () => {
                     this.data.y = y;
                     this.refresh();
                     if (Settings.target) {
-                        game.user.updateTokenTargets(this.getTokensWithin());
+                        const targets = this.getTokensWithin();
+                        const ids = targets.map((t) => t.id);
+                        game.user.updateTokenTargets(ids);
                     }
                 }
             };
