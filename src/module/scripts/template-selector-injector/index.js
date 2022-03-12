@@ -1,5 +1,6 @@
 import { CirclePlacement } from '../template-placement/circle-placement';
 import { ConePlacement } from '../template-placement/cone-placement';
+import { localize } from '../utils';
 import template from './template.js';
 
 /**
@@ -25,6 +26,7 @@ export default async function (sheet, jq, _options) {
         div.innerHTML = template;
 
         const button = div.querySelector('button');
+        button.innerText = localize('templates.chooseOptions');
         button.addEventListener('click',
             async () => {
                 switch (type) {
