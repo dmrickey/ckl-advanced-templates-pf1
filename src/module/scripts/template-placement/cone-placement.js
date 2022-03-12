@@ -1,5 +1,5 @@
 import { CONSTS, MODULE_NAME } from '../../consts';
-import { ifDebug } from '../utils';
+import { ifDebug, localize, localizeF } from '../utils';
 
 export class ConePlacement {
     constructor(itemPf) {
@@ -9,15 +9,15 @@ export class ConePlacement {
     _placementTypes = {
         [CONSTS.placement.cone.self]: {
             key: CONSTS.placement.cone.self,
-            label: 'Originate from Caster',
+            label: localize('templates.cone.placement.self.label'),
         },
         [CONSTS.placement.cone.selectTargetSquare]: {
             key: CONSTS.placement.cone.selectTargetSquare,
-            label: 'Originate from Selection',
+            label: localize('templates.cone.placement.selectTargetSquare.label'),
         },
         [CONSTS.placement.useSystem]: {
             key: CONSTS.placement.useSystem,
-            label: 'Use System Default',
+            label: localize('templates.placement.useSystem.label'),
         },
     };
 
@@ -29,15 +29,15 @@ export class ConePlacement {
     async showPlacementMenu() {
         const currentPlacementType = this._getPlacementType();
         const deleteAtTurnEnd = this.itemPf.getFlag(MODULE_NAME, CONSTS.flags.exireAtTurnEnd);
-        const ok = 'Ok';
+        const ok = localize('ok');
 
         const dialogResult = await warpgate.menu({
             inputs: [
-                { type: 'info', label: `Select placement type for this ${this.itemPf.type}` },
+                { type: 'info', label: localizeF('templates.placement.selection.label', { itemType: this.itemPf.type }) },
                 { type: 'radio', label: this._placementTypes[CONSTS.placement.cone.self].label, options: ['placementType', currentPlacementType === this._placementTypes[CONSTS.placement.cone.self].key] },
                 { type: 'radio', label: this._placementTypes[CONSTS.placement.cone.selectTargetSquare].label, options: ['placementType', currentPlacementType === this._placementTypes[CONSTS.placement.cone.selectTargetSquare].key] },
                 { type: 'radio', label: this._placementTypes[CONSTS.placement.useSystem].label, options: ['placementType', currentPlacementType === this._placementTypes[CONSTS.placement.useSystem].key] },
-                { type: 'checkbox', label: 'Delete Template at end of turn', options: !!deleteAtTurnEnd },
+                { type: 'checkbox', label: localize('templates.deleteAtTurnEnd'), options: !!deleteAtTurnEnd },
             ],
             buttons: [
                 {
@@ -45,11 +45,11 @@ export class ConePlacement {
                     value: ok,
                 },
                 {
-                    label: 'Cancel'
+                    label: localize('cancel')
                 },
             ],
         }, {
-            title: `${this.itemPf.data.name} Template`,
+            title: localizeF('templates.modalTitle', { itemName: this.itemPf.data.name }),
         });
 
         ifDebug(() => console.log('cone dialogResult', dialogResult));

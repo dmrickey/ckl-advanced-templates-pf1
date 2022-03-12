@@ -1,12 +1,11 @@
 import { CONSTS, MODULE_NAME } from '../consts';
-import { DurationTracker } from './duration-tracker';
-import { getToken, ifDebug } from './utils';
+import { Settings } from '../settings';
+import { getToken, ifDebug, localize, localizeF } from './utils';
 
 // unfortunately, since I'm extenidng a class defined in PF1, there's no way to do this in a traditional "one class per file" because
 // then it would need to exist as soon as Foundry starts. So it can't be in its own file and exported. It needs to all be defined in
 // memory at startup after PF1 has been initialized
 const initMeasuredTemplate = () => {
-    ifDebug(() => console.log('init measured template override'));
     const MeasuredTemplatePF = CONFIG.MeasuredTemplate.objectClass;
 
     class MeasuredTemplatePFAdvanced extends MeasuredTemplatePF {
@@ -384,6 +383,10 @@ const initMeasuredTemplate = () => {
             const { x, y } = token.center;
             this.data.x = x;
             this.data.y = y;
+
+            if (Settings.target) {
+                game.user.updateTokenTargets(this.getTokensWithin());
+            }
         }
     }
 
@@ -448,7 +451,9 @@ const initMeasuredTemplate = () => {
         /** @override */
         async commitPreview() {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
-            // game.user.updateTokenTargets();
+            if (Settings.target) {
+                game.user.updateTokenTargets();
+            }
 
             const existingIcon = this.controlIcon?.iconSrc;
             let isInRange = true;
@@ -484,7 +489,11 @@ const initMeasuredTemplate = () => {
                             isInRange = true;
                         }
 
-                        crosshairs.label = `${range} ft`;
+                        const unit = game.settings.get('pf1', 'units') === 'imperial'
+                            ? game.i18n.localize('PF1.DistFtShort')
+                            : game.i18n.localize('PF1.DistMShort');
+                        crosshairs.label = `${range} ${unit}`;
+                        crosshairs.label = localizeF('range', { range, unit });
 
                         if (icon && icon !== this.controlIcon?.iconSrc) {
                             this.data.flags[MODULE_NAME].icon = icon;
@@ -498,7 +507,10 @@ const initMeasuredTemplate = () => {
                     this.data.x = x;
                     this.data.y = y;
                     this.refresh();
-                    // todo grab targets
+
+                    if (Settings.target) {
+                        game.user.updateTokenTargets(this.getTokensWithin());
+                    }
                 }
             };
 
@@ -515,7 +527,9 @@ const initMeasuredTemplate = () => {
             );
 
             if (crosshairs.cancelled || !isInRange) {
-                // game.user.updateTokenTargets();
+                if (Settings.target) {
+                    game.user.updateTokenTargets();
+                }
                 return false;
             }
 
@@ -550,7 +564,10 @@ const initMeasuredTemplate = () => {
         async commitPreview() {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
 
-            // game.user.updateTokenTargets();
+            if (Settings.target) {
+                game.user.updateTokenTargets();
+            }
+
             const targetConfig = {
                 drawIcon: false,
                 drawOutline: false,
@@ -590,6 +607,9 @@ const initMeasuredTemplate = () => {
                     this.data.x = x;
                     this.data.y = y;
                     this.refresh();
+                    if (Settings.target) {
+                        game.user.updateTokenTargets(this.getTokensWithin());
+                    }
                 }
             };
 
@@ -601,7 +621,9 @@ const initMeasuredTemplate = () => {
             );
 
             if (rotateCrosshairs.cancelled) {
-                // game.user.updateTokenTargets();
+                if (Settings.target) {
+                    game.user.updateTokenTargets();
+                }
                 return false;
             }
 

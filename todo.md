@@ -26,6 +26,10 @@
 - originate from selection
 - system default option
 
+### All
+  - show outline
+  - show highlight
+
 ### Targets (might need a new template type...)
 - rangefinding
 - when cursor over a token show the target ui
@@ -36,23 +40,17 @@
 ---
 
 ## Settings
-- GM setting to allow alternate 15' cone
-  - implement a way for regular and alternate 15' cone to coexist
-- GM setting to turn off logging ++
-- GM setting for cone rotation
-- option to disable outline
-- option to disable fill color
-
----
-
-## Lang
-- externalize all strings ++
+- world
+  - alternate 15' cone
+  - cone rotation
+  - allow players to configure "use system"
 
 ---
 
 ## Unknowns that I don't intend to look into
+- Making it work with anything that isn't PF1
 - Gridless
 - Hex Grids
-- Whether or not it runs on Forge (it probably does, I think it's limitations are only related to file paths, but I have no way of testing this)
+- Whether or not it runs on Forge (it probably does, I think its limitations are only related to file paths, but I have no way of testing this)
 
 ++ required for v1

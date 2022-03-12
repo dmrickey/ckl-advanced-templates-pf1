@@ -1,9 +1,9 @@
+import { MODULE_NAME } from "../../consts";
+
 const self = (me) => typeof me === 'function' ? me() : me;
 
 export default (func) => {
-    // todo read game setting
-    // eslint-disable-next-line
-    if (true) {
+    if (game.settings.get(MODULE_NAME, 'debug')) {
         return self(func);
     }
 };
