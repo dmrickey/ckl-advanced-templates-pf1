@@ -1,13 +1,11 @@
 import { CONSTS, MODULE_NAME } from '../consts';
 import { Settings } from '../settings';
-import { DurationTracker } from './duration-tracker';
-import { getToken, ifDebug } from './utils';
+import { getToken, ifDebug, localize, localizeF } from './utils';
 
 // unfortunately, since I'm extenidng a class defined in PF1, there's no way to do this in a traditional "one class per file" because
 // then it would need to exist as soon as Foundry starts. So it can't be in its own file and exported. It needs to all be defined in
 // memory at startup after PF1 has been initialized
 const initMeasuredTemplate = () => {
-    ifDebug(() => console.log('init measured template override'));
     const MeasuredTemplatePF = CONFIG.MeasuredTemplate.objectClass;
 
     class MeasuredTemplatePFAdvanced extends MeasuredTemplatePF {
@@ -491,7 +489,11 @@ const initMeasuredTemplate = () => {
                             isInRange = true;
                         }
 
-                        crosshairs.label = `${range} ft`;
+                        const unit = game.settings.get('pf1', 'units') === 'imperial'
+                            ? game.i18n.localize('PF1.DistFtShort')
+                            : game.i18n.localize('PF1.DistMShort');
+                        crosshairs.label = `${range} ${unit}`;
+                        crosshairs.label = localizeF('range', { range, unit });
 
                         if (icon && icon !== this.controlIcon?.iconSrc) {
                             this.data.flags[MODULE_NAME].icon = icon;

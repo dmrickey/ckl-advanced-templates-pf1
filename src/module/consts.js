@@ -22,5 +22,10 @@ export const CONSTS = {
         },
         exireAtTurnEnd: 'exireAtTurnEnd',
     },
+    areaType: {
+        burst: 'burst',
+        emanation: 'emanation',
+        spread: 'spread',
+    },
 };
 

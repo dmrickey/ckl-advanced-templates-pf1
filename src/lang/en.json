@@ -1,1 +1,57 @@
-{}
+{
+    "ckl-advanced-templates-pf1": {
+        "settings": {
+            "debug": {
+                "name": "Enable Debug Logging",
+                "hint": "If enabled, then various log messages are logged to the console to help with debugging. Only useful when something is not working as expected."
+            },
+            "target": {
+                "name": "Target Tokens in Template",
+                "hint": "If enabled, then your targeted tokens will update as you place the template."
+            },
+            "reExpand": {
+                "name": "Re-expand Collapsed Sheets",
+                "hint": "If enabled, any sheets that were collapsed to allow for template placement will be re-expanded after the template has been placed."
+            },
+            "cone15Alternate": {
+                "name": "Allow 15' Alternate Cone",
+                "hint": "If enabled, your players can use 15' coens that originate from a grid intersection when orienting the cone left/right/up/down instead of only the standard 15' cone grid outlines (as described by normal cone placement rules but not shown as any options in the 15' template diagrams)."
+            },
+            "coneRotation": {
+                "name": "Allow Non-Standard Cone Rotations",
+                "hint": "If enabled, your players can rotate their cone spells in any direction instead of just \"away from their token\"."
+            },
+            "useSystem": {
+                "name": "Allow System Template Placement",
+                "hint": "If disabled, only a GM will be allowed to configure a template to use \"system default\". So players will only be able to configure their own spells to use the new templte placement options. If a player reconfigures a template that a GM has set to use \"use system\" then that setting will be lost until the GM re-updates it."
+            }
+        },
+        "templates": {
+            "circle": {
+                "placement": {
+                    "grid.label": "Select Grid Placement",
+                    "self.label": "Centered on Token",
+                    "type": {
+                        "label": "Select effect type",
+                        "burst": "Burst",
+                        "spread": "Spread",
+                        "emanation": "Emanation"
+                    }
+                }
+            },
+            "cone": {
+                "placement": {
+                    "self.label": "Originate from Caster",
+                    "selectTargetSquare.label": "Originate from Selection"
+                }
+            },
+            "placement.selection.label": "Select placement type for this {itemType}",
+            "placement.useSystem.label": "Use System Default",
+            "deleteAtTurnEnd": "Delete template at end of turn",
+            "modalTitle": "{itemName} Template"
+        },
+        "ok": "Ok",
+        "cancel": "Cancel",
+        "range": "{range} {unit}"
+    }
+}

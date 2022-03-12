@@ -47,11 +47,6 @@
 
 ---
 
-## Lang
-- externalize all strings ++
-
----
-
 ## Unknowns that I don't intend to look into
 - Making it work with anything that isn't PF1
 - Gridless
