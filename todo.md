@@ -26,6 +26,10 @@
 - originate from selection
 - system default option
 
+### All
+  - show outline
+  - show highlight
+
 ### Targets (might need a new template type...)
 - rangefinding
 - when cursor over a token show the target ui
@@ -36,9 +40,6 @@
 ---
 
 ## Settings
-- client
-  - show outline
-  - show highlight
 - world
   - alternate 15' cone
   - cone rotation

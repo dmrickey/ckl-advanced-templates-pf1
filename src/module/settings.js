@@ -10,22 +10,6 @@ const settings = {
             config: true,
             default: false,
         },
-        outline: {
-            key: 'outline',
-            name: 'Show Template Outline',
-            hint: 'If disabled, then the template outline will not be shown.',
-            type: Boolean,
-            config: false,
-            default: true,
-        },
-        highlight: {
-            key: 'highlight',
-            name: 'Show Template Highlight',
-            hint: 'If disabled, then the grid highlight will not be shown for templates.',
-            type: Boolean,
-            config: false,
-            default: true,
-        },
         target: {
             key: 'target',
             name: 'Target Tokens in Template',
@@ -39,7 +23,7 @@ const settings = {
             name: 'Re-expand Collapsed Sheets',
             hint: 'If enabled, any sheets that were collapsed to allow for template placement will be re-expanded after the template has been placed.',
             type: Boolean,
-            config: false,
+            config: true,
             default: false,
         },
     },
@@ -100,14 +84,6 @@ export class Settings {
 
     static get debug() {
         return Settings.#getSetting('debug');
-    }
-
-    static get highlight() {
-        return Settings.#getSetting('highlight');
-    }
-
-    static get outline() {
-        return Settings.#getSetting('outline');
     }
 
     static get reExpand() {
