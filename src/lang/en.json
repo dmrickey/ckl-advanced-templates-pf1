@@ -47,7 +47,7 @@
             },
             "placement.selection.label": "Select placement type for this {itemType}",
             "placement.useSystem.label": "Use System Default",
-            "deleteAtTurnEnd": "Delete template at end of turn",
+            "deleteAtTurnEnd": "Delete Template at End of Turn",
             "modalTitle": "{itemName} Template",
             "chooseOptions": "Choose Options"
         },
