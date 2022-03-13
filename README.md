@@ -8,8 +8,10 @@ Spread types include burst, emanation, and spread. These are only configurable f
 
 ###Configurations
 Go into the details tab of any of your spells/abilities/items/etc. If it is configured for a Circle or Cone Measured Template, there will be a new "Choose Options" button available.
+
 ![image](https://user-images.githubusercontent.com/3664822/158039749-0fe511cf-73f9-4020-abc1-36805f8feed7.png)
 Clicking it will open the configuration menu, this is what the options look like for a Circle
+
 ![image](https://user-images.githubusercontent.com/3664822/158039760-7314bf92-a707-4bd4-853d-755407f7e485.png)
 - Placement Type
   - Select Grid Placement - This is for your standard area of effect spell, so if you're configuring something like a fireball where you choose where the spell goes, this is the option you want. This is the default option if a Circle isn't configured.
@@ -20,16 +22,17 @@ Clicking it will open the configuration menu, this is what the options look like
 - Extra options
   - Delete Template at End of Turn - When game time advanced, or when the current turn is over, the template will automatically be deleted so as to not clutter up the scene with templates that are no longer needed.
   - Attach to Token - This is for use in conjunction with "Centered on Token". This is for things like a paladin's aura or casting Silence on yourself where the template should move with the caster. There is no guard for enabling this with "select grid placement" so you will get weird behavior where the template will jump to you when you move if you enabled both of these together.
-- **None of these options have any effect if you select the *Use System Default* placement type.
+- **None of these options have any effect if you select the *Use System Default* placement type.**
 
 This is the configuration menu for a cone
+
 ![image](https://user-images.githubusercontent.com/3664822/158039955-5b8b8883-5331-45b6-b443-9fc4e3da9ef2.png)
 - Placement Type
   - Originate from Caster - This is the default placement type for cones if no option is configured. This will make the cone "stick" to the casting token and follow the cursor around the screen. It follow the rules for placing cones away from the caster and does not allow for rotating the cones at different angles--I have plans to add the ability for the GM to enable this option for players in the future.
   - Originate from Selection - Allows you to select a grid square on the map, and then choose the cone direction via the same technique just described.
   - Use System Default - see circle
 - Extra options
-  - Delete Template at End of Turn - When game time advanced, or when the current turn is over, the template will automatically be deleted so as to not clutter up the scene with templates that are no longer needed. **this has no effect if *Use System Default* is selected
+  - Delete Template at End of Turn - When game time advanced, or when the current turn is over, the template will automatically be deleted so as to not clutter up the scene with templates that are no longer needed. **This has no effect if *Use System Default* is selected**
 
 ## Game Settings
 ![image](https://user-images.githubusercontent.com/3664822/158040092-db04fb6d-7039-4c81-b144-d0ae7983b8ca.png)
