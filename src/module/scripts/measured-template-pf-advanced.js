@@ -373,12 +373,12 @@ const initMeasuredTemplate = () => {
         async initializePlacement(itemPf) {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
-            const token = getToken(itemPf) || {};
+            const token = getToken(itemPf) || { center: { x: 0, y: 0 } };
             const { x, y } = token.center;
             this.data.x = x;
             this.data.y = y;
 
-            if (Settings.target) {
+            if (Settings.target && !isNaN(x) && !isNaN(x)) {
                 const targets = this.getTokensWithin();
                 const ids = targets.map((t) => t.id);
                 game.user.updateTokenTargets(ids);
@@ -538,13 +538,16 @@ const initMeasuredTemplate = () => {
         async initializePlacement(itemPf) {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
-            this._maxRange = this.data.flags?.[MODULE_NAME]?.maxRange;
-            this._hasMaxRange = !!this._maxRange && !isNaN(this._maxRange);
-            this._minRange = this.data.flags?.[MODULE_NAME]?.minRange;
-            this._hasMinRange = !!this._minRange && !isNaN(this._minRange);
-
             const token = getToken(itemPf);
-            this._tokenSquare = this._calculateTokenSquare(token);
+
+            if (token) {
+                this._maxRange = this.data.flags?.[MODULE_NAME]?.maxRange;
+                this._hasMaxRange = !!this._maxRange && !isNaN(this._maxRange);
+                this._minRange = this.data.flags?.[MODULE_NAME]?.minRange;
+                this._hasMinRange = !!this._minRange && !isNaN(this._minRange);
+
+                this._tokenSquare = this._calculateTokenSquare(token);
+            }
 
             const mouse = canvas.app.renderer.plugins.interaction.mouse;
             const position = mouse.getLocalPosition(canvas.app.stage);
