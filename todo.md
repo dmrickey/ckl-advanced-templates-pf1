@@ -6,9 +6,6 @@
 ### Circles
   - centered on self circle
     - disable dragging to update location (also editing x/y in details since it should be stuck to token)
-    - "attach to token" option (e.g. obscuring mist is centered on you but stays in place, if you cast silence centered on you, then it moves with you) ++
-      - register for token's movement and update position ++
-      - if token is deleted while attached, then delete template ++
   - ~~centered on target~~
     - ~~don't show template unless cursor is over a token~~
     - until I find a spell that actually targets like this, not gonna do it
@@ -36,6 +33,9 @@
 - when cursor over no token show the cancel icon
 - automatically add prompts for buffs/debuffs
 - formula for number of targets
+  - show available / targeted / remaining
+  - needs to account for any extra logic like "has to be within x ft of main target"
+  - will need to be able to commit while not using all available targets
 
 ---
 
@@ -52,5 +52,3 @@
 - Gridless
 - Hex Grids
 - Whether or not it runs on Forge (it probably does, I think its limitations are only related to file paths, but I have no way of testing this)
-
-++ required for v1
