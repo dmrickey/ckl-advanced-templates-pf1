@@ -28,14 +28,14 @@ const initMeasuredTemplate = () => {
         }
 
         get tokenGridCorners() {
-            const { token, sizeSquares } = this.tokenSizeSquares;
-            const { x, y } = token;
+            const { sizeSquares } = this.tokenSizeSquares;
+            const { x, y } = this.data;
             const gridSize = canvas.grid.h;
 
-            const bottom = y + gridSize * sizeSquares;
-            const left = x;
-            const top = y;
-            const right = x + gridSize * sizeSquares;
+            const bottom = y + gridSize * sizeSquares / 2;
+            const left = x - gridSize * sizeSquares / 2;
+            const top = y - gridSize * sizeSquares / 2;
+            const right = x + gridSize * sizeSquares / 2;
 
             const rightSpots = [...new Array(sizeSquares + 1)].map((_, i) => ({
                 x: right,
@@ -196,13 +196,7 @@ const initMeasuredTemplate = () => {
 
             // Get the center of the grid position occupied by the template
             const result = [];
-
-            let origins = this.tokenGridCorners;
-            // offset origins to template center to account for token movement
-            origins = origins.map(({ x, y }) => ({
-                x: x + this.center.x - token.center.x,
-                y: y + this.center.y - token.center.y,
-            }));
+            const origins = this.tokenGridCorners;
 
             origins.forEach(({ x, y }) => {
                 const [cx, cy] = grid.getCenter(x, y);
