@@ -49,3 +49,6 @@ This is the configuration menu for a cone
 ## Installation
 
 manifest link: https://github.com/dmrickey/ckl-advanced-templates-pf1/releases/latest/download/module.json
+
+Here's a quick visual demo of how to configure some of the options and how they work (no audio was recorded)
+https://youtu.be/r7oAkXw6-zU
