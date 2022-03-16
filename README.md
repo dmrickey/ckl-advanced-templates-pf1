@@ -36,7 +36,7 @@ This is the configuration menu for a cone
   - Originate from Selection - Allows you to select a grid square on the map, and then choose the cone direction via the same technique just described.
   - Use System Default - see circle
 - Extra options
-  - Delete Template at End of Turn - When game time advanced, or when the current turn is over, the template will automatically be deleted so as to not clutter up the scene with templates that are no longer needed. **This has no effect if *Use System Default* is selected**
+  - Delete Template at End of Turn - see circle **This has no effect if *Use System Default* is selected**
 
 ## Game Settings
 
@@ -46,9 +46,19 @@ This is the configuration menu for a cone
 - Target Tokens in Template - This updates your targets as you move the template preview to show you what tokens your template will effect.
 - Re-expand Collapsed Sheets - When you start placing a template, any sheets you have open will be collapsed so you can fully see the scene to choose where to place your template. By default they remain collapsed after the template has been placed. This is mainly because if have extra things that happen (like animations) and want to be able to see those results, if the sheets re-exapnded to cover the scene you wouldn't get to see to those. If you enable this, then the sheets will be re-expanded after the template is placed.
 
+## Other Changes
+
+Here's a few random changes that don't specifically fit into the above categories
+- If your circle template has a defined min and/or max range, that will be reflected with the template preview. If you go outside of that range (there is visual feedback when you are not within range), then you will not be able to use the ability. When the range is configured like this, there is added text to show how far the template is from your token. I plan to expand this to Rays when I start implementing targeting options for spells that have individual targets and not templates.
+- I have replaced the default icons with the icons that are configured for the Item you're using (Item being a foundry term for basically any spell/item/feature/ability/etc on your character--basically if it's something in your character sheet that has it's own details window, then it's an Item). So when you're looking at the Template layer, each template will now have a specific icon that correlates with that Item instead of a sea of the same icon.
+
 ## Installation
 
 manifest link: https://github.com/dmrickey/ckl-advanced-templates-pf1/releases/latest/download/module.json
+
+Last tested versions
+Advanced Templates PF1 1.0.0
+Foundry v9 255. PF1e 80.13
 
 Here's a quick visual demo of how to configure some of the options and how they work (no audio was recorded)
 https://youtu.be/r7oAkXw6-zU
