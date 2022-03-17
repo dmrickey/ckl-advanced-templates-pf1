@@ -35,7 +35,7 @@ class DurationTracker {
 
     static init() {
         Hooks.on('deleteCombat', async (_combat) => {
-            await DurationTracker.expireAll();
+            warpgate.plugin.queueUpdate(() => DurationTracker.expireAll());
         });
 
         Hooks.on('updateCombat', async (combat, changed) => {
@@ -45,12 +45,12 @@ class DurationTracker {
                 return;
             }
 
-            await DurationTracker.expireAll();
+            warpgate.plugin.queueUpdate(() => DurationTracker.expireAll());
         });
 
         Hooks.on('updateWorldTime', async (_worldTime, delta) => {
             if (delta) {
-                await DurationTracker.expireAll();
+                warpgate.plugin.queueUpdate(() => DurationTracker.expireAll());
             }
         });
     }
