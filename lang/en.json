@@ -50,6 +50,7 @@
             "placement.selection.label": "Select placement type for this {itemType}",
             "placement.useSystem.label": "Use System Default",
             "deleteAtTurnEnd": "Delete Template at End of Turn",
+            "ignoreRange": "Ignore Range Restriction",
             "modalTitle": "{itemName} Template",
             "chooseOptions": "Choose Options"
         },

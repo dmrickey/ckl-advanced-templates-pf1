@@ -32,6 +32,7 @@ export class CirclePlacement {
         const currentPlacementType = this._getPlacementType();
         const movesWithToken = this.itemPf.getFlag(MODULE_NAME, CONSTS.flags.circle.movesWithToken);
         const deleteAtTurnEnd = this.itemPf.getFlag(MODULE_NAME, CONSTS.flags.exireAtTurnEnd);
+        const ignoreRange = this.itemPf.getFlag(MODULE_NAME, CONSTS.flags.ignoreRange);
         const ok = localize("ok");
 
         const dialogResult = await warpgate.menu({
@@ -47,6 +48,7 @@ export class CirclePlacement {
                 { type: 'radio', label: localize('templates.circle.placement.type.emanation'), options: ['areaType', areaType === 'emanation'] },
                 { type: 'radio', label: localize('templates.circle.placement.type.spread'), options: ['areaType', areaType === 'spread'] },
                 { type: 'checkbox', label: localize('templates.deleteAtTurnEnd'), options: !!deleteAtTurnEnd },
+                { type: 'checkbox', label: localize('templates.ignoreRange'), options: !!ignoreRange },
                 { type: 'checkbox', label: localize('templates.circle.placement.attachToToken'), options: !!movesWithToken },
             ],
             buttons: [
@@ -67,7 +69,7 @@ export class CirclePlacement {
         const { buttons: confirmed } = dialogResult;
 
         if (confirmed) {
-            const [_, grid, self, splash, useDefault, __, ___, burstResult, emanationResult, spreadResult, deleteAtTurnEndResult, movesWithTokenResult] = dialogResult.inputs;
+            const [_, grid, self, splash, useDefault, __, ___, burstResult, emanationResult, spreadResult, deleteAtTurnEndResult, ignoreRangeResult, movesWithTokenResult] = dialogResult.inputs;
             const chosenPlacement = this._getPlacementForLabel(grid || self || splash || useDefault);
             const chosenAreaType = (burstResult && CONSTS.areaType.burst)
                 || (spreadResult && CONSTS.areaType.spread)
@@ -79,6 +81,7 @@ export class CirclePlacement {
                     [CONSTS.flags.circle.areaType]: chosenAreaType,
                     [CONSTS.flags.circle.movesWithToken]: !!movesWithTokenResult,
                     [CONSTS.flags.exireAtTurnEnd]: !!deleteAtTurnEndResult,
+                    [CONSTS.flags.ignoreRange]: !!ignoreRangeResult,
                 }
             };
             await this.itemPf.update({ flags });

@@ -17,7 +17,7 @@ const initMeasuredTemplate = () => {
         }
 
         get hideHighlight() {
-            return !!this.data.flags?.[MODULE_NAME]?.hideHighlight;
+            return !!this.data.flags?.[MODULE_NAME]?.[CONSTS.flags.hideHighlight];
         }
 
         get tokenSizeSquares() {
@@ -467,7 +467,7 @@ const initMeasuredTemplate = () => {
                         continue;
                     }
 
-                    if (this._hasMaxRange || this._hasMinRange) {
+                    if ((this._hasMaxRange || this._hasMinRange) && !this.data.flags[MODULE_NAME].ignoreRange) {
                         const rays = this._tokenSquare.allSpots.map((spot) => ({
                             ray: new Ray(spot, crosshairs),
                         }));
@@ -479,12 +479,12 @@ const initMeasuredTemplate = () => {
                             || this._hasMaxRange && range > this._maxRange
                         ) {
                             icon = 'icons/svg/hazard.svg';
-                            this.data.flags[MODULE_NAME].hideHighlight = true;
+                            this.data.flags[MODULE_NAME][CONSTS.flags.hideHighlight] = true;
                             isInRange = false;
                         }
                         else {
                             icon = existingIcon;
-                            this.data.flags[MODULE_NAME].hideHighlight = false;
+                            this.data.flags[MODULE_NAME][CONSTS.flags.hideHighlight] = false;
                             isInRange = true;
                         }
 
@@ -593,7 +593,7 @@ const initMeasuredTemplate = () => {
                     const found = !!canvas.tokens.placeables.map(x => x.bounds).find(b => boundsContains(b, mouseCoords));
                     crosshairs.interval = found ? -1 : 1;
 
-                    if (this._hasMaxRange || this._hasMinRange) {
+                    if ((this._hasMaxRange || this._hasMinRange) && !this.data.flags[MODULE_NAME].ignoreRange) {
                         const rays = this._tokenSquare.allSpots.map((spot) => ({
                             ray: new Ray(spot, crosshairs),
                         }));
@@ -605,12 +605,12 @@ const initMeasuredTemplate = () => {
                             || this._hasMaxRange && range > this._maxRange
                         ) {
                             icon = 'icons/svg/hazard.svg';
-                            this.data.flags[MODULE_NAME].hideHighlight = true;
+                            this.data.flags[MODULE_NAME][CONSTS.flags.hideHighlight] = true;
                             isInRange = false;
                         }
                         else {
                             icon = existingIcon;
-                            this.data.flags[MODULE_NAME].hideHighlight = false;
+                            this.data.flags[MODULE_NAME][CONSTS.flags.hideHighlight] = false;
                             isInRange = true;
                         }
 

@@ -22,6 +22,8 @@ export const CONSTS = {
         cone: {
         },
         exireAtTurnEnd: 'exireAtTurnEnd',
+        ignoreRange: 'ignoreRange',
+        hideHighlight: 'hideHighlight',
     },
     areaType: {
         burst: 'burst',
