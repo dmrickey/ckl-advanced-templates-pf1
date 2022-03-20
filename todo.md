@@ -11,6 +11,8 @@
     - until I find a spell that actually targets like this, not gonna do it
   - target grid
     - make sure dragging respects template placement rules
+  - splash weapon
+    - work like the "grid" option, but will also change to the expected template if you hover over a token
   - Add aura ability to prompt buffs/debuffs
 
 ### Cones

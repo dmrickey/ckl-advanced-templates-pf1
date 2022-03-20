@@ -42,7 +42,7 @@ export class CirclePlacement {
                 { type: 'radio', label: localize('templates.circle.placement.type.emanation'), options: ['areaType', areaType === 'emanation'] },
                 { type: 'radio', label: localize('templates.circle.placement.type.spread'), options: ['areaType', areaType === 'spread'] },
                 { type: 'checkbox', label: localize('templates.deleteAtTurnEnd'), options: !!deleteAtTurnEnd },
-                { type: 'checkbox', label: 'Attach to Token', options: !!movesWithToken },
+                { type: 'checkbox', label: localize('templates.circle.placement.attachToToken'), options: !!movesWithToken },
             ],
             buttons: [
                 {

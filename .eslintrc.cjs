@@ -1,58 +1,40 @@
-module.exports = {
-    parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-    },
-
-    env: {
-        browser: true,
-    },
-
-    extends: [
-        'eslint:recommended',
-        // '@typhonjs-fvtt/eslint-config-foundry.js/0.8.0',
-        'plugin:jest/recommended',
-        // 'plugin:prettier/recommended',
-        '@typhonjs-config/eslint-config/esm/2022/browser',
-        '@typhonjs-fvtt/eslint-config-foundry.js'
+/**
+ * Loads https://github.com/typhonjs-node-config/typhonjs-config-eslint/blob/master/3.0/basic/es8/server/node/.eslintrc
+ * Loads https://github.com/typhonjs-fvtt/eslint-config-foundry.js/blob/main/0.8.0.js
+ *
+ * NPM: https://www.npmjs.com/package/typhonjs-config-eslint
+ * NPM: https://www.npmjs.com/package/@typhonjs-fvtt/eslint-config-foundry.js
+ */
+{
+    // ESLint configs are prone to particular choices, so if the first config below doesn't work for you then replace
+    // with one that you do prefer. The second config defines globals defined in `foundry.js` for use w/ `no-shadow`.
+    "extends": [
+        "@typhonjs-config/eslint-config/esm/2022/browser",
+        "@typhonjs-fvtt/eslint-config-foundry.js"
     ],
 
-    plugins: ['jest'],
-
-    // choices or 'off', 'warn', and 'error'
-    rules: {
-        // Specify any specific ESLint rules.
-        'brace-style': [2, 'stroustrup'],
-        'no-unused-vars': ['off', { 'argsIgnorePattern': '^_' }],
-        'space-before-function-paren': ['error', { 'anonymous': 'always', 'named': 'never', 'asyncArrow': 'always' }],
-        'indent': ['error', 4, { 'SwitchCase': 1 }],
-        'operator-linebreak': ['error', 'before'],
+        // Defines / overrides a few more environment parameters not provided in the configs above.
+        "env": {
+        "jquery": true
     },
 
-    ignorePatterns: [
-        '.eslintrc.cjs',
-        'gulpfile.js',
-    ],
-
-    globals: {
-        'libWrapper': 'readonly',
-        'PIXI': 'readonly',
-        'warpgate': 'readonly',
-        'RollPF': 'readonly',
-    },
-
-    overrides: [
-        {
-            files: ['./*.js', './*.cjs'],
-            env: {
-                node: true,
-            },
-        },
-        {
-            files: ['./test/**/*.js'],
-            env: {
-                'jest/globals': true,
-            },
-        },
-    ],
-};
+    // Prevents overwriting any built in globals particularly from `@typhonjs-fvtt/eslint-config-foundry.js`, but also
+    // node & browser environments. `event / window.event` shadowing is allowed due to being a common variable name and
+    // an uncommonly used browser feature.
+    //
+    // Note: if you are using Typescript you must use `@typescript-eslint/no-shadow`
+    "rules": {
+        "no-shadow": ["error", {
+            "builtinGlobals": true,
+            "hoist": "all",
+            "allow": [
+                "document",
+                "event",
+                "name",
+                "parent",
+                "status",
+                "top"
+            ]
+        }]
+    }
+}

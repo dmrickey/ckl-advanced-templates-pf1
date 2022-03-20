@@ -36,7 +36,8 @@
                         "burst": "Burst",
                         "spread": "Spread",
                         "emanation": "Emanation"
-                    }
+                    },
+                    "attachToToken": "Attach to Token"
                 }
             },
             "cone": {

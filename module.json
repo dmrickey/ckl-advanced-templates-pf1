@@ -13,8 +13,12 @@
     "minimumCoreVersion": "9",
     "compatibleCoreVersion": "9",
     "scripts": [],
-    "esmodules": ["module/ckl-advanced-templates-pf1.js"],
-    "styles": ["styles/ckl-advanced-templates-pf1.css"],
+    "esmodules": [
+        "./dist/ckl-advanced-templates-pf1.js"
+    ],
+    "styles": [
+        "./dist/ckl-advanced-templates-pf1.css"
+    ],
     "packs": [],
     "dependencies": [
         {
@@ -41,7 +45,9 @@
     "readme": "",
     "bugs": "",
     "changelog": "",
-    "system": ["pf1"],
+    "system": [
+        "pf1"
+    ],
     "minimumSystemVersion": "0.80.9",
     "library": false
 }
