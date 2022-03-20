@@ -14,16 +14,18 @@ Go into the details tab of any of your spells/abilities/items/etc. If it is conf
 
 Clicking it will open the configuration menu, this is what the options look like for a Circle
 
-![image](https://user-images.githubusercontent.com/3664822/158039760-7314bf92-a707-4bd4-853d-755407f7e485.png)
+![image](https://user-images.githubusercontent.com/3664822/159150855-f5d7c2d1-dd0f-40d0-992f-596174880562.png)
 
 - Placement Type
   - Select Grid Placement - This is for your standard area of effect spell, so if you're configuring something like a fireball where you choose where the spell goes, this is the option you want. This is the default option if a Circle isn't configured.
   - Centered on Token - This is for something like a cleric's Channel ability or Obscuring Mist. This is for when you don't need to make a choice on where to place the circle, and the template will be automatically placed at your token
+  - Splash Weapon - This will target a grid intersection unless you hover over a token, then it will target the token and the adjacent squares to allow for splash damage.
   - Use System Default - This is for if there's a special case not covered by the above options and you need the spell to use PF1's default method where it can be placed anywhere on the grid
 - Effect Type
   - Rules-wise, each of these behave different regarding walls or how they effect if they're cast from a "centered on token" spell. Currently, I do not take walls into account at all and selecting this will only change how "Centered on Token" behaves. In the future, I may add the ability for these to follow the rules regarding walls, so if they're configured now, at that point they would automatically work with walls as expected.
 - Extra options
   - Delete Template at End of Turn - When game time advanced, or when the current turn is over, the template will automatically be deleted so as to not clutter up the scene with templates that are no longer needed.
+  - Ignore Range Restriction - This is most useful for splash weapons which have a defined range increment, but as a ranged weapon can be thrown beyond the range with an attack penalty. You would leave this disabled for spells as spells (normally) don't have options that will let you ignore the defined range.
   - Attach to Token - This is for use in conjunction with "Centered on Token". This is for things like a paladin's aura or casting Silence on yourself where the template should move with the caster. There is no guard for enabling this with "select grid placement" so you will get weird behavior where the template will jump to you when you move if you enabled both of these together.
 - **None of these options have any effect if you select the *Use System Default* placement type.**
 
@@ -62,4 +64,11 @@ Foundry v9 255
 PF1e 80.13
 
 Here's a quick visual demo of how to configure some of the options and how they work (no audio was recorded)
-https://youtu.be/r7oAkXw6-zU
+https://youtu.be/r7oAkXw6-zU 
+
+<details>
+  <summary>Here's an example of placing a bomb</summary>
+  
+https://user-images.githubusercontent.com/3664822/159150950-cec5c5cb-4be2-486b-80c9-f5cbb305a9fa.mp4
+  
+</details>
