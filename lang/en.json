@@ -31,6 +31,7 @@
                 "placement": {
                     "grid.label": "Select Grid Placement",
                     "self.label": "Centered on Token",
+                    "splash.label": "Splash Weapon",
                     "type": {
                         "label": "Select effect type",
                         "burst": "Burst",

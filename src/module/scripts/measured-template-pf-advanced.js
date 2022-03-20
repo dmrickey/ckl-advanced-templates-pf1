@@ -270,6 +270,9 @@ const initMeasuredTemplate = () => {
                         case CONSTS.placement.circle.self:
                             abilityCls = AbilityTemplateCircleSelf;
                             break;
+                        case CONSTS.placement.circle.splash:
+                            abilityCls = AbilityTemplateCircleSplash;
+                            break;
                         case CONSTS.placement.circle.grid:
                         default:
                             abilityCls = AbilityTemplateCircle;
@@ -554,6 +557,110 @@ const initMeasuredTemplate = () => {
             const { x, y } = position;
             this.data.x = x;
             this.data.y = y;
+        }
+    }
+
+    class AbilityTemplateCircleSplash extends AbilityTemplateCircle {
+        /** @override */
+        async commitPreview() {
+            ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
+            if (Settings.target) {
+                game.user.updateTokenTargets();
+            }
+
+            const existingIcon = this.controlIcon?.iconSrc;
+            let isInRange = true;
+
+            const updateTemplateLocation = async (crosshairs) => {
+                while (crosshairs.inFlight) {
+                    await warpgate.wait(20);
+
+                    this.data.flags[MODULE_NAME].icon = existingIcon;
+
+                    const { x, y } = crosshairs.center;
+                    if (this.data.x === x && this.data.y === y) {
+                        continue;
+                    }
+
+                    let mouse = canvas.app.renderer.plugins.interaction.mouse;
+                    let mouseCoords = mouse.getLocalPosition(canvas.app.stage);
+                    const boundsContains = (bounds, point) =>
+                        bounds.left <= point.x
+                        && point.x <= bounds.right
+                        && bounds.top <= point.y
+                        && point.y <= bounds.bottom;
+
+                    const found = !!canvas.tokens.placeables.map(x => x.bounds).find(b => boundsContains(b, mouseCoords));
+                    crosshairs.interval = found ? -1 : 1;
+
+                    if (this._hasMaxRange || this._hasMinRange) {
+                        const rays = this._tokenSquare.allSpots.map((spot) => ({
+                            ray: new Ray(spot, crosshairs),
+                        }));
+                        const distances = rays.map((ray) => canvas.grid.measureDistances([ray], { gridSpaces: true })[0]);
+                        const range = Math.min(...distances);
+
+                        let icon;
+                        if (this._hasMinRange && range < this._minRange
+                            || this._hasMaxRange && range > this._maxRange
+                        ) {
+                            icon = 'icons/svg/hazard.svg';
+                            this.data.flags[MODULE_NAME].hideHighlight = true;
+                            isInRange = false;
+                        }
+                        else {
+                            icon = existingIcon;
+                            this.data.flags[MODULE_NAME].hideHighlight = false;
+                            isInRange = true;
+                        }
+
+                        const unit = game.settings.get('pf1', 'units') === 'imperial'
+                            ? game.i18n.localize('PF1.DistFtShort')
+                            : game.i18n.localize('PF1.DistMShort');
+                        crosshairs.label = `${range} ${unit}`;
+                        crosshairs.label = localizeF('range', { range, unit });
+
+                        if (icon && icon !== this.controlIcon?.iconSrc) {
+                            this.data.flags[MODULE_NAME].icon = icon;
+                            if (this.controlIcon) {
+                                this.controlIcon.destroy();
+                            }
+                            this.controlIcon = this.addChild(this._drawControlIcon());
+                        }
+                    }
+
+                    this.data.x = x;
+                    this.data.y = y;
+                    this.refresh();
+
+                    if (Settings.target) {
+                        const targets = this.getTokensWithin();
+                        const ids = targets.map((t) => t.id);
+                        game.user.updateTokenTargets(ids);
+                    }
+                }
+            };
+
+            const targetConfig = {
+                drawIcon: false,
+                drawOutline: false,
+                interval: 1,
+            };
+            const crosshairs = await warpgate.crosshairs.show(
+                targetConfig,
+                {
+                    show: updateTemplateLocation
+                }
+            );
+
+            if (crosshairs.cancelled || !isInRange) {
+                if (Settings.target) {
+                    game.user.updateTokenTargets();
+                }
+                return false;
+            }
+
+            return true;
         }
     }
 

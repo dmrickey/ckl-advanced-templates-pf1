@@ -5,6 +5,7 @@ export const CONSTS = {
         circle: {
             grid: 'grid',
             self: 'self',
+            splash: 'splash',
         },
         cone: {
             selectTargetSquare: 'selectTargetSquare',

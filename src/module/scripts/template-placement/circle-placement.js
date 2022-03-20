@@ -17,6 +17,10 @@ export class CirclePlacement {
             key: CONSTS.placement.circle.self,
             label: localize('templates.circle.placement.self.label'),
         },
+        [CONSTS.placement.circle.splash]: {
+            key: CONSTS.placement.circle.splash,
+            label: localize('templates.circle.placement.splash.label'),
+        },
         [CONSTS.placement.useSystem]: {
             key: CONSTS.placement.useSystem,
             label: localize('templates.placement.useSystem.label'),
@@ -35,6 +39,7 @@ export class CirclePlacement {
                 { type: 'info', label: localizeF('templates.placement.selection.label', { itemType: this.itemPf.type }) },
                 { type: 'radio', label: this._placementTypes[CONSTS.placement.circle.grid].label, options: ['placementType', currentPlacementType === this._placementTypes[CONSTS.placement.circle.grid].key] },
                 { type: 'radio', label: this._placementTypes[CONSTS.placement.circle.self].label, options: ['placementType', currentPlacementType === this._placementTypes[CONSTS.placement.circle.self].key] },
+                { type: 'radio', label: this._placementTypes[CONSTS.placement.circle.splash].label, options: ['placementType', currentPlacementType === this._placementTypes[CONSTS.placement.circle.splash].key] },
                 { type: 'radio', label: this._placementTypes[CONSTS.placement.useSystem].label, options: ['placementType', currentPlacementType === this._placementTypes[CONSTS.placement.useSystem].key] },
                 { type: 'info', label: '<hr style="width: 100%;" />' },
                 { type: 'info', label: localize('templates.circle.placement.type.label') },
@@ -62,8 +67,8 @@ export class CirclePlacement {
         const { buttons: confirmed } = dialogResult;
 
         if (confirmed) {
-            const [_, grid, self, useDefault, __, ___, burstResult, emanationResult, spreadResult, deleteAtTurnEndResult, movesWithTokenResult] = dialogResult.inputs;
-            const chosenPlacement = this._getPlacementForLabel(grid || self || useDefault);
+            const [_, grid, self, splash, useDefault, __, ___, burstResult, emanationResult, spreadResult, deleteAtTurnEndResult, movesWithTokenResult] = dialogResult.inputs;
+            const chosenPlacement = this._getPlacementForLabel(grid || self || splash || useDefault);
             const chosenAreaType = (burstResult && CONSTS.areaType.burst)
                 || (spreadResult && CONSTS.areaType.spread)
                 || (emanationResult && CONSTS.areaType.emanation)
