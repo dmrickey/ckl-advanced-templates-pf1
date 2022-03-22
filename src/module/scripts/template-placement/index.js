@@ -24,14 +24,17 @@ async function promptMeasureTemplate(wrapped, shared) {
         };
     }
 
-    if (this.getFlag(MODULE_NAME, CONSTS.flags.placementType) === CONSTS.placement.useSystem) {
+    const type = this.data.data.measureTemplate.type;
+
+    if (this.getFlag(MODULE_NAME, CONSTS.flags.placementType) === CONSTS.placement.useSystem
+        || !['cone', 'circle'].includes(type)
+    ) {
         return wrapped(shared);
     }
 
     const windows = Object.values(ui.windows).filter((x) => !!x.minimize && !x._minimized);
     await Promise.all(windows.map((x) => x.minimize()));
 
-    const type = this.data.data.measureTemplate.type;
     const token = getToken(this) || {};
     const icon = this.data.img === 'systems/pf1/icons/misc/magic-swirl.png' ? undefined : this.data.img;
     const { minRange, maxRange } = this;
