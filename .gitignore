@@ -3,4 +3,5 @@
 template-svelte-esm.lock
 .vscode/**/*
 !.vscode/extensions.json
+dist/*
 node_modules/
