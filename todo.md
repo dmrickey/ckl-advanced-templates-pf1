@@ -27,7 +27,10 @@
 
 ### All
   - show outline
-  - show highlight
+  - show highlight (fill)
+  - configure fill alpha
+  - configure texture alpha
+  - configure texture scale
 
 ### Targets (might need a new template type...)
 - rangefinding

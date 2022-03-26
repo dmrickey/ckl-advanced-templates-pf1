@@ -80,7 +80,7 @@ const initMeasuredTemplate = () => {
 
         /** @override */
         refresh() {
-            if (!this.shouldOverrideTokenEmanation) {
+            if (!['circle', 'cone'].includes(this.data.t)) {
                 return super.refresh();
             }
 
@@ -125,8 +125,31 @@ const initMeasuredTemplate = () => {
 
             // Fill Color or Texture
             if (this.texture) {
+                let { distance } = this.data;
+                distance *= (d.size / d.distance);
+
+                let xOffset = true;
+                let yOffset = true;
+
+                if (this.shouldOverrideTokenEmanation) {
+                    const { sizeSquares } = this.tokenSizeSquares;
+                    distance += d.size * sizeSquares / 2;
+                }
+                else if (this.data.t === 'cone') {
+                    distance /= 2;
+                    xOffset = false;
+                }
+
+                const tileTexture = false; // todo
+                const scale = tileTexture ? 1 : distance * 2 / this.texture.width;
+                const offset = tileTexture ? 0 : distance;
                 this.template.beginTextureFill({
-                    texture: this.texture
+                    texture: this.texture,
+                    matrix: new PIXI.Matrix()
+                        .scale(scale, scale)
+                        .translate(xOffset ? -offset : 0, yOffset ? -offset : 0)
+                        .rotate(this.data.direction * Math.PI / 180),
+                    alpha: .5,
                 });
             }
             else {
@@ -174,10 +197,7 @@ const initMeasuredTemplate = () => {
                 return [];
             }
 
-            if (!this.shouldOverrideTokenEmanation) {
-                return super.getHighlightedSquares();
-            }
-
+            if (this.shouldOverrideTokenEmanation) {
             if (!this.id || !this.shape) {
                 return [];
             }
@@ -242,6 +262,9 @@ const initMeasuredTemplate = () => {
 
             const filtered = [...(new Set(result.map(JSON.stringify)))].map(JSON.parse);
             return filtered;
+        }
+
+            return super.getHighlightedSquares();
         }
     }
 
