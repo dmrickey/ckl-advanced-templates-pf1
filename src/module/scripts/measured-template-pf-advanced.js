@@ -191,71 +191,71 @@ const initMeasuredTemplate = () => {
             }
 
             if (this.shouldOverrideTokenEmanation) {
-            if (!this.id || !this.shape) {
-                return [];
-            }
+                if (!this.id || !this.shape) {
+                    return [];
+                }
 
-            const { token, sizeSquares } = this.tokenSizeSquares;
-            if (!token || sizeSquares < 2) {
-                return super.getHighlightedSquares();
-            }
+                const { token, sizeSquares } = this.tokenSizeSquares;
+                if (!token || sizeSquares < 2) {
+                    return super.getHighlightedSquares();
+                }
 
-            const grid = canvas.grid;
-            const d = canvas.dimensions;
+                const grid = canvas.grid;
+                const d = canvas.dimensions;
 
-            // Get number of rows and columns
-            const nr = Math.ceil((this.data.distance * 1.5) / d.distance / (d.size / grid.h));
-            const nc = Math.ceil((this.data.distance * 1.5) / d.distance / (d.size / grid.w));
+                // Get number of rows and columns
+                const nr = Math.ceil((this.data.distance * 1.5) / d.distance / (d.size / grid.h));
+                const nc = Math.ceil((this.data.distance * 1.5) / d.distance / (d.size / grid.w));
 
-            // Get the center of the grid position occupied by the template
-            const result = [];
-            const origins = this.tokenGridCorners;
+                // Get the center of the grid position occupied by the template
+                const result = [];
+                const origins = this.tokenGridCorners;
 
-            origins.forEach(({ x, y }) => {
-                const [cx, cy] = grid.getCenter(x, y);
-                const [col0, row0] = grid.grid.getGridPositionFromPixels(cx, cy);
+                origins.forEach(({ x, y }) => {
+                    const [cx, cy] = grid.getCenter(x, y);
+                    const [col0, row0] = grid.grid.getGridPositionFromPixels(cx, cy);
 
-                const measureDistance = function (p0, p1) {
-                    const gs = canvas.dimensions.size;
-                    const ray = new Ray(p0, p1);
-                    // How many squares do we travel across to get there? If 2.3, we should count that as 3 instead of 2; hence, Math.ceil
-                    const nx = Math.ceil(Math.abs(ray.dx / gs));
-                    const ny = Math.ceil(Math.abs(ray.dy / gs));
+                    const measureDistance = function (p0, p1) {
+                        const gs = canvas.dimensions.size;
+                        const ray = new Ray(p0, p1);
+                        // How many squares do we travel across to get there? If 2.3, we should count that as 3 instead of 2; hence, Math.ceil
+                        const nx = Math.ceil(Math.abs(ray.dx / gs));
+                        const ny = Math.ceil(Math.abs(ray.dy / gs));
 
-                    // Get the number of straight and diagonal moves
-                    const nDiagonal = Math.min(nx, ny);
-                    const nStraight = Math.abs(ny - nx);
+                        // Get the number of straight and diagonal moves
+                        const nDiagonal = Math.min(nx, ny);
+                        const nStraight = Math.abs(ny - nx);
 
-                    // Diagonals in PF pretty much count as 1.5 times a straight
-                    const distance = Math.floor(nDiagonal * 1.5 + nStraight);
-                    const distanceOnGrid = distance * canvas.dimensions.distance;
-                    return distanceOnGrid;
-                };
+                        // Diagonals in PF pretty much count as 1.5 times a straight
+                        const distance = Math.floor(nDiagonal * 1.5 + nStraight);
+                        const distanceOnGrid = distance * canvas.dimensions.distance;
+                        return distanceOnGrid;
+                    };
 
-                for (let a = -nc; a < nc; a++) {
-                    for (let b = -nr; b < nr; b++) {
-                        // Position of cell's top-left corner, in pixels
-                        const [gx, gy] = canvas.grid.grid.getPixelsFromGridPosition(col0 + a, row0 + b);
-                        // Position of cell's center, in pixels
-                        const [cellCenterX, cellCenterY] = [gx + d.size * 0.5, gy + d.size * 0.5];
+                    for (let a = -nc; a < nc; a++) {
+                        for (let b = -nr; b < nr; b++) {
+                            // Position of cell's top-left corner, in pixels
+                            const [gx, gy] = canvas.grid.grid.getPixelsFromGridPosition(col0 + a, row0 + b);
+                            // Position of cell's center, in pixels
+                            const [cellCenterX, cellCenterY] = [gx + d.size * 0.5, gy + d.size * 0.5];
 
-                        // Determine point of origin
-                        const origin = { x, y };
+                            // Determine point of origin
+                            const origin = { x, y };
 
-                        // Determine point we're measuring the distance to - always in the center of a grid square
-                        const destination = { x: cellCenterX, y: cellCenterY };
+                            // Determine point we're measuring the distance to - always in the center of a grid square
+                            const destination = { x: cellCenterX, y: cellCenterY };
 
-                        const distance = measureDistance(destination, origin);
-                        if (distance <= this.data.distance) {
-                            result.push({ x: gx, y: gy });
+                            const distance = measureDistance(destination, origin);
+                            if (distance <= this.data.distance) {
+                                result.push({ x: gx, y: gy });
+                            }
                         }
                     }
-                }
-            });
+                });
 
-            const filtered = [...(new Set(result.map(JSON.stringify)))].map(JSON.parse);
-            return filtered;
-        }
+                const filtered = [...(new Set(result.map(JSON.stringify)))].map(JSON.parse);
+                return filtered;
+            }
 
             return super.getHighlightedSquares();
         }
@@ -697,8 +697,23 @@ const initMeasuredTemplate = () => {
                 drawOutline: false,
             };
 
+            let currentOffsetAngle = 0;
             let currentSpotIndex = 0;
             const updateTemplateRotation = async (crosshairs) => {
+                let offsetAngle = 0;
+                // todo add GM setting to enable this
+                canvas.app.view.onwheel = (event) => {
+                    // Avoid zooming the browser window
+                    if (event.ctrlKey) {
+                        event.preventDefault();
+                    }
+                    event.stopPropagation();
+
+                    // todo configure snap distance (default to 45)
+                    const snap = 5;
+                    offsetAngle += snap * Math.sign(event.deltaY);
+                };
+
                 while (crosshairs.inFlight) {
                     await warpgate.wait(100);
 
@@ -719,24 +734,29 @@ const initMeasuredTemplate = () => {
                     const ray = new Ray(this._tokenSquare.center, crosshairs);
                     const angle = radToNormalizedAngle(ray.angle);
                     const spotIndex = Math.ceil(angle / 360 * totalSpots);
-                    if (spotIndex === currentSpotIndex) {
+                    if (spotIndex === currentSpotIndex && offsetAngle === currentOffsetAngle) {
                         continue;
                     }
 
+                    currentOffsetAngle = offsetAngle;
                     currentSpotIndex = spotIndex;
+
                     const spot = this._tokenSquare.allSpots[currentSpotIndex];
                     const { direction, x, y } = spot;
 
-                    this.data.direction = direction;
+                    this.data.direction = direction + offsetAngle;
                     this.data.x = x;
                     this.data.y = y;
                     this.refresh();
+
                     if (Settings.target) {
                         const targets = this.getTokensWithin();
                         const ids = targets.map((t) => t.id);
                         game.user.updateTokenTargets(ids);
                     }
                 }
+
+                canvas.app.view.onwheel = null;
             };
 
             const rotateCrosshairs = await warpgate.crosshairs.show(
