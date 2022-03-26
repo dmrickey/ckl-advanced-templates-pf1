@@ -125,17 +125,10 @@ const initMeasuredTemplate = () => {
 
             // Fill Color or Texture
             if (this.texture) {
-                let { distance } = this.data;
-                distance *= (d.size / d.distance);
-
                 let xOffset = true;
                 let yOffset = true;
 
-                if (this.shouldOverrideTokenEmanation) {
-                    const { sizeSquares } = this.tokenSizeSquares;
-                    distance += d.size * sizeSquares / 2;
-                }
-                else if (this.data.t === 'cone') {
+                if (this.data.t === 'cone') {
                     distance /= 2;
                     xOffset = false;
                 }
@@ -148,7 +141,7 @@ const initMeasuredTemplate = () => {
                     matrix: new PIXI.Matrix()
                         .scale(scale, scale)
                         .translate(xOffset ? -offset : 0, yOffset ? -offset : 0)
-                        .rotate(this.data.direction * Math.PI / 180),
+                        .rotate(direction),
                     alpha: .5,
                 });
             }
