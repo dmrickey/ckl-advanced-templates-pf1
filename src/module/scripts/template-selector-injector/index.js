@@ -1,3 +1,4 @@
+import ConeSettings from '../../view/cone-settings/cone-settings';
 import { CirclePlacement } from '../template-placement/circle-placement';
 import { ConePlacement } from '../template-placement/cone-placement';
 import { localize } from '../utils';
@@ -38,6 +39,8 @@ export default async function (sheet, jq, _options) {
                         break;
                     case 'cone':
                         {
+                            await ConeSettings.show({ itemPf: item });
+                            // todo replace below with above
                             const placement = new ConePlacement(item);
                             await placement.showPlacementMenu();
                         }
