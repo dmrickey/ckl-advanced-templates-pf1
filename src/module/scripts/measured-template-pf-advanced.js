@@ -84,7 +84,6 @@ const initMeasuredTemplate = () => {
                 return super.refresh();
             }
 
-            /* ALL OF THIS IS THE ORIGINAL METHOD EXCEPT FOR THE PARTS IN MY IF(SHOULDOVERRIDE) BLOCKS */
             const d = canvas.dimensions;
             this.position.set(this.data.x, this.data.y);
 
@@ -104,7 +103,12 @@ const initMeasuredTemplate = () => {
             // Get the Template shape
             switch (this.data.t) {
                 case 'circle':
-                    this.shape = this._getCircleShape(distance);
+                    if (this.shouldOverrideTokenEmanation) {
+                        this._getEmanationShape();
+                    }
+                    else {
+                        this.shape = this._getCircleShape(distance);
+                    }
                     break;
                 case 'cone':
                     this.shape = this._getConeShape(direction, this.data.angle, distance);
@@ -116,13 +120,11 @@ const initMeasuredTemplate = () => {
                     this.shape = this._getRayShape(direction, distance, width);
                     break;
             }
-            if (this.shouldOverrideTokenEmanation) {
-                this._getEmanationShape();
-            }
 
             // Draw the Template outline
             this.template.clear().lineStyle(this._borderThickness, this.borderColor, 0.75).beginFill(0x000000, 0.0);
 
+            // this is a bit overridden
             // Fill Color or Texture
             if (this.texture) {
                 let xOffset = true;
