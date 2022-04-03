@@ -20,7 +20,7 @@ const s_TYPHONJS_MODULE_LIB = false;
 
 // Creates a standard configuration for PostCSS with autoprefixer & postcss-preset-env.
 const postcssMain = postcssConfig({
-    extract: 'ckl-advanced-templates-pf1-esm.css',
+    extract: 'ckl-advanced-templates-pf1.css',
     compress: s_COMPRESS,
     sourceMap: s_SOURCEMAPS
 });
