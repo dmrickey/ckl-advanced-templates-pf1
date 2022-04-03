@@ -1,5 +1,5 @@
 import { CONSTS, MODULE_NAME } from '../../consts';
-import { ifDebug, localize, localizeF } from '../utils';
+import { ifDebug, localize } from '../utils';
 
 export class ConePlacement {
     constructor(itemPf) {
@@ -33,7 +33,7 @@ export class ConePlacement {
 
         const dialogResult = await warpgate.menu({
             inputs: [
-                { type: 'info', label: localizeF('templates.placement.selection.label', { itemType: this.itemPf.type }) },
+                { type: 'info', label: localize('templates.placement.selection.label', { itemType: this.itemPf.type }) },
                 { type: 'radio', label: this._placementTypes[CONSTS.placement.cone.self].label, options: ['placementType', currentPlacementType === this._placementTypes[CONSTS.placement.cone.self].key] },
                 { type: 'radio', label: this._placementTypes[CONSTS.placement.cone.selectTargetSquare].label, options: ['placementType', currentPlacementType === this._placementTypes[CONSTS.placement.cone.selectTargetSquare].key] },
                 { type: 'radio', label: this._placementTypes[CONSTS.placement.useSystem].label, options: ['placementType', currentPlacementType === this._placementTypes[CONSTS.placement.useSystem].key] },
@@ -49,7 +49,7 @@ export class ConePlacement {
                 },
             ],
         }, {
-            title: localizeF('templates.modalTitle', { itemName: this.itemPf.data.name }),
+            title: localize('templates.modalTitle', { itemName: this.itemPf.data.name }),
         });
 
         ifDebug(() => console.log('cone dialogResult', dialogResult));

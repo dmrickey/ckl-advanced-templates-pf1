@@ -1,5 +1,5 @@
 import { CONSTS, MODULE_NAME } from '../../consts';
-import { ifDebug, localize, localizeF } from '../utils';
+import { ifDebug, localize } from '../utils';
 
 export class CirclePlacement {
     // emanation or burst "centered on you" spreads from edge - not center
@@ -37,7 +37,7 @@ export class CirclePlacement {
 
         const dialogResult = await warpgate.menu({
             inputs: [
-                { type: 'info', label: localizeF('templates.placement.selection.label', { itemType: this.itemPf.type }) },
+                { type: 'info', label: localize('templates.placement.selection.label', { itemType: this.itemPf.type }) },
                 { type: 'radio', label: this._placementTypes[CONSTS.placement.circle.grid].label, options: ['placementType', currentPlacementType === this._placementTypes[CONSTS.placement.circle.grid].key] },
                 { type: 'radio', label: this._placementTypes[CONSTS.placement.circle.self].label, options: ['placementType', currentPlacementType === this._placementTypes[CONSTS.placement.circle.self].key] },
                 { type: 'radio', label: this._placementTypes[CONSTS.placement.circle.splash].label, options: ['placementType', currentPlacementType === this._placementTypes[CONSTS.placement.circle.splash].key] },
@@ -61,7 +61,7 @@ export class CirclePlacement {
                 },
             ],
         }, {
-            title: localizeF('templates.modalTitle', { itemName: this.itemPf.data.name }),
+            title: localize('templates.modalTitle', { itemName: this.itemPf.data.name }),
         });
 
         ifDebug(() => console.log('circle dialogResult', dialogResult));

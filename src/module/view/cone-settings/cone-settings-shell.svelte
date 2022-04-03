@@ -2,7 +2,7 @@
 
 <script>
     import { ApplicationShell } from "@typhonjs-fvtt/runtime/svelte/component/core";
-    import { tLocalize, tLocalizeF } from "../../scripts/utils/localize";
+    import { tLocalize } from "../../scripts/utils";
 
     export let elementRoot;
     export let itemPf;
@@ -17,6 +17,6 @@
 <ApplicationShell bind:elementRoot>
     <main>
         {@debug itemPf}
-        <label>{tLocalizeF("templates.placement.selection.label", { itemType: itemPf.type })}</label>
+        <label>{tLocalize("templates.placement.selection.label", { itemType: itemPf.name })}</label>
     </main>
 </ApplicationShell>
