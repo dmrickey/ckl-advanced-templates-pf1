@@ -28,7 +28,7 @@ export class ConePlacement {
      */
     async showPlacementMenu() {
         const currentPlacementType = this._getPlacementType();
-        const deleteAtTurnEnd = this.itemPf.getFlag(MODULE_NAME, CONSTS.flags.exireAtTurnEnd);
+        const deleteAtTurnEnd = this.itemPf.getFlag(MODULE_NAME, CONSTS.flags.expireAtTurnEnd);
         const ok = localize('ok');
 
         const dialogResult = await warpgate.menu({
@@ -62,7 +62,7 @@ export class ConePlacement {
             const flags = {
                 [MODULE_NAME]: {
                     [CONSTS.flags.placementType]: chosenPlacement,
-                    [CONSTS.flags.exireAtTurnEnd]: !!deleteAtTurnEndResult,
+                    [CONSTS.flags.expireAtTurnEnd]: !!deleteAtTurnEndResult,
                 }
             };
             await this.itemPf.update({ flags });

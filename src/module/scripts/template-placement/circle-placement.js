@@ -31,7 +31,7 @@ export class CirclePlacement {
         const areaType = this._getAreaType();
         const currentPlacementType = this._getPlacementType();
         const movesWithToken = this.itemPf.getFlag(MODULE_NAME, CONSTS.flags.circle.movesWithToken);
-        const deleteAtTurnEnd = this.itemPf.getFlag(MODULE_NAME, CONSTS.flags.exireAtTurnEnd);
+        const deleteAtTurnEnd = this.itemPf.getFlag(MODULE_NAME, CONSTS.flags.expireAtTurnEnd);
         const ignoreRange = this.itemPf.getFlag(MODULE_NAME, CONSTS.flags.ignoreRange);
         const ok = localize("ok");
 
@@ -80,7 +80,7 @@ export class CirclePlacement {
                     [CONSTS.flags.placementType]: chosenPlacement,
                     [CONSTS.flags.circle.areaType]: chosenAreaType,
                     [CONSTS.flags.circle.movesWithToken]: !!movesWithTokenResult,
-                    [CONSTS.flags.exireAtTurnEnd]: !!deleteAtTurnEndResult,
+                    [CONSTS.flags.expireAtTurnEnd]: !!deleteAtTurnEndResult,
                     [CONSTS.flags.ignoreRange]: !!ignoreRangeResult,
                 }
             };
