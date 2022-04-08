@@ -108,8 +108,16 @@
         <div class="form-group">
             <label>{helper.localize("PF1.CustomColor")}</label>
             <div class="form-fields">
-                <input type="text" bind:value={itemPf.data.data.measureTemplate.customColor} />
-                <input type="color" bind:value={itemPf.data.data.measureTemplate.customColor} />
+                <input
+                    disabled={!colorOverrideEnabled}
+                    type="text"
+                    bind:value={itemPf.data.data.measureTemplate.customColor}
+                />
+                <input
+                    disabled={!colorOverrideEnabled}
+                    type="color"
+                    bind:value={itemPf.data.data.measureTemplate.customColor}
+                />
             </div>
         </div>
     </div>
