@@ -29,32 +29,38 @@
 
 <form class="pf1">
     <!-- override texture (same as vanilla plus scale/alpha) -->
-    <div class="form-group">
+    <div class="form-group right-me">
         <label class="checkbox">
-            <input type="checkbox" bind:checked={itemPf.data.data.measureTemplate.overrideTexture} />
             {helper.localize("PF1.OverrideTexture")}
+            <input type="checkbox" bind:checked={itemPf.data.data.measureTemplate.overrideTexture} />
         </label>
     </div>
 
     <!-- override texture options -->
     <div class="bordered">
         <div class="form-group">
-            <label>
+            <label for="customTexture">
                 {helper.localize("PF1.CustomTexture")}
+            </label>
+            <div class="form-fields">
                 <input
-                    disabled={!textureOverrideEnabled}
                     type="text"
+                    disabled={!textureOverrideEnabled}
+                    id="customTexture"
                     value={itemPf.data.data.measureTemplate.customTexture}
                 />
-            </label>
-            <button disabled={!textureOverrideEnabled}>browse**</button>
+                <button disabled={!textureOverrideEnabled}>
+                    <i class="fas fa-file-import fa-fw" />
+                </button>
+            </div>
         </div>
 
         <!-- texture alpha override (default .5) (.1 to 1)-->
         <div class="form-group">
-            <label>Texture Alpha**</label>
+            <label for="textureAlpha">Texture Alpha**</label>
             <div class="form-fields">
                 <input
+                    id="textureAlpha"
                     type="number"
                     disabled={!textureOverrideEnabled}
                     max={textureAlphaMax}
@@ -74,10 +80,11 @@
 
         <!-- texture scale override (default 1) (.1 to 10)-->
         <div class="form-group">
-            <label>Texture Scale**</label>
+            <label for="textureScale">Texture Scale**</label>
             <div class="form-fields">
                 <input
                     type="number"
+                    id="textureScale"
                     disabled={!textureOverrideEnabled}
                     max={textureScaleMax}
                     min={textureScaleMin}
@@ -96,19 +103,20 @@
     </div>
 
     <!-- override color (same as vanilla) -->
-    <div class="form-group">
+    <div class="form-group right-me">
         <label class="checkbox">
-            <input type="checkbox" bind:checked={itemPf.data.data.measureTemplate.overrideColor} />
             {helper.localize("PF1.OverrideColor")}
+            <input type="checkbox" bind:checked={itemPf.data.data.measureTemplate.overrideColor} />
         </label>
     </div>
 
     <!-- override color options (same as vanilla) -->
     <div class="bordered">
         <div class="form-group">
-            <label>{helper.localize("PF1.CustomColor")}</label>
+            <label for="colorOverride">{helper.localize("PF1.CustomColor")}</label>
             <div class="form-fields">
                 <input
+                    id="colorOverride"
                     disabled={!colorOverrideEnabled}
                     type="text"
                     bind:value={itemPf.data.data.measureTemplate.customColor}
@@ -124,10 +132,11 @@
 
     <!-- texture alpha override (default .5) (0 to 1)-->
     <div class="form-group">
-        <label>Color Alpha**</label>
+        <label for="colorAlpha">Color Alpha**</label>
         <div class="form-fields">
             <input
                 type="number"
+                id="colorAlpha"
                 max={colorAlphaMax}
                 min={colorAlphaMin}
                 bind:value={itemPf.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}
@@ -164,7 +173,23 @@
         border-radius: 14px;
         padding: 0 0.5rem;
     }
-    input:disabled {
+
+    .right-me {
+        justify-content: flex-end;
+    }
+
+    input:disabled:not([type="range"]),
+    input:disabled:hover:not([type="range"]) {
+        border: 1px solid #7a7971;
         box-shadow: none !important;
+        color: #7a7971;
+    }
+
+    input[type="range"]:disabled:hover {
+        cursor: default !important;
+    }
+
+    button {
+        width: fit-content;
     }
 </style>
