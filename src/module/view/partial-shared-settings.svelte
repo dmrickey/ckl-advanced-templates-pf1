@@ -4,7 +4,7 @@
     import { TJSDocument } from "@typhonjs-fvtt/runtime/svelte/store";
     import { getContext } from "svelte";
     import { CONSTS, MODULE_NAME } from "../consts";
-    import { localize, tLocalize } from "../scripts/utils";
+    import { localize } from "../scripts/utils";
     import * as helper from "@typhonjs-fvtt/runtime/svelte/helper";
 
     export let itemPf;
@@ -162,9 +162,10 @@
         <!-- delete at turn end -->
         <label class="checkbox">
             <input type="checkbox" bind:checked={itemPf.data.flags[MODULE_NAME][CONSTS.flags.expireAtTurnEnd]} />
-            {tLocalize("templates.deleteAtTurnEnd")}
+            {localize("templates.deleteAtTurnEnd")}
         </label>
     </div>
+    <button>{localize("ok")}</button>
 </form>
 
 <style>

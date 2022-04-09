@@ -4,7 +4,7 @@
     import { TJSDocument } from "@typhonjs-fvtt/runtime/svelte/store";
     import { getContext } from "svelte";
     import { CONSTS, MODULE_NAME } from "../../consts";
-    import { localize, tLocalize } from "../../scripts/utils";
+    import { localize } from "../../scripts/utils";
     import SharedSettings from "../partial-shared-settings.svelte";
 
     export let itemPf = void 0;
@@ -88,7 +88,7 @@
 <main>
     {@debug $doc}
 
-    <div>{tLocalize("templates.placement.selection.label", { itemType: $doc.type })}</div>
+    <div>{localize("templates.placement.selection.label", { itemType: $doc.type })}</div>
     {#each placements as placement}
         <label>
             <input
