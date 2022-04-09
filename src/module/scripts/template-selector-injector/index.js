@@ -41,8 +41,8 @@ export default async function (sheet, jq, _options) {
                         {
                             await ConeSettingsWrapper.show({ itemPf: item });
                             // todo replace below with above
-                            const placement = new ConePlacement(item);
-                            await placement.showPlacementMenu();
+                            // const placement = new ConePlacement(item);
+                            // await placement.showPlacementMenu();
                         }
                         break;
                 }

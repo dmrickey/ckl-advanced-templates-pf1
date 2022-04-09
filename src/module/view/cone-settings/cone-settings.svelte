@@ -12,9 +12,7 @@
     const { application } = getContext("external");
 
     // Wrap the item document / if the item is deleted close the dialog / application.
-    const doc = new TJSDocument(itemPf, { delete: application.close.bind(application) });
-
-    let updateOptions;
+    // const doc = new TJSDocument(itemPf, { delete: application.close.bind(application) });
 
     const placements = [
         {
@@ -30,65 +28,55 @@
             label: localize("templates.placement.useSystem.label"),
         },
     ];
-    let currentPlacement;
 
-    $: {
-        const flags = itemPf.data.flags[MODULE_NAME];
-        updateOptions = {
+    const flags = itemPf.data.flags[MODULE_NAME];
+    const updateOptions = {
+        data: {
             data: {
-                data: {
-                    measureTemplate: {
-                        customColor: itemPf.data.data.measureTemplate.customColor || game.user.color,
-                        customTexture: itemPf.data.data.measureTemplate.customTexture,
-                        overrideColor: itemPf.data.data.measureTemplate.overrideColor,
-                        overrideTexture: itemPf.data.data.measureTemplate.overrideTexture,
-                    },
-                },
-                flags: {
-                    [MODULE_NAME]: {
-                        [CONSTS.flags.colorAlpha]:
-                            !!flags?.[CONSTS.flags.colorAlpha] || flags?.[CONSTS.flags.colorAlpha] === 0
-                                ? flags?.[CONSTS.flags.colorAlpha]
-                                : 0.5,
-                        [CONSTS.flags.expireAtTurnEnd]: !!flags?.[CONSTS.flags.expireAtTurnEnd],
-                        [CONSTS.flags.hideOutline]: !!flags?.[CONSTS.flags.hideOutline],
-                        [CONSTS.flags.placementType]:
-                            flags?.[CONSTS.flags.placementType] || CONSTS.placement.cone.selectTargetSquare,
-                        [CONSTS.flags.textureAlpha]:
-                            !!flags?.[CONSTS.flags.textureAlpha] || flags?.[CONSTS.flags.textureAlpha] === 0
-                                ? flags?.[CONSTS.flags.colorAlpha]
-                                : 0.5,
-                        [CONSTS.flags.textureScale]:
-                            !!flags?.[CONSTS.flags.textureScale] || flags?.[CONSTS.flags.textureScale] === 0
-                                ? flags?.[CONSTS.flags.colorAlpha]
-                                : 1,
-                    },
+                measureTemplate: {
+                    customColor: itemPf.data.data.measureTemplate.customColor || game.user.color,
+                    customTexture: itemPf.data.data.measureTemplate.customTexture,
+                    overrideColor: itemPf.data.data.measureTemplate.overrideColor,
+                    overrideTexture: itemPf.data.data.measureTemplate.overrideTexture,
                 },
             },
-        };
-        // // Store the update options to print in the template.
-        // updateOptions = JSON.stringify(doc.updateOptions, null, 2);
+            flags: {
+                [MODULE_NAME]: {
+                    [CONSTS.flags.colorAlpha]:
+                        !!flags?.[CONSTS.flags.colorAlpha] || flags?.[CONSTS.flags.colorAlpha] === 0
+                            ? flags?.[CONSTS.flags.colorAlpha]
+                            : 0.5,
+                    [CONSTS.flags.expireAtTurnEnd]: !!flags?.[CONSTS.flags.expireAtTurnEnd],
+                    [CONSTS.flags.hideOutline]: !!flags?.[CONSTS.flags.hideOutline],
+                    [CONSTS.flags.placementType]:
+                        flags?.[CONSTS.flags.placementType] || CONSTS.placement.cone.selectTargetSquare,
+                    [CONSTS.flags.textureAlpha]:
+                        !!flags?.[CONSTS.flags.textureAlpha] || flags?.[CONSTS.flags.textureAlpha] === 0
+                            ? flags?.[CONSTS.flags.colorAlpha]
+                            : 0.5,
+                    [CONSTS.flags.textureScale]:
+                        !!flags?.[CONSTS.flags.textureScale] || flags?.[CONSTS.flags.textureScale] === 0
+                            ? flags?.[CONSTS.flags.colorAlpha]
+                            : 1,
+                },
+            },
+        },
+    };
+    // // Store the update options to print in the template.
+    // updateOptions = JSON.stringify(doc.updateOptions, null, 2);
 
-        // For the reactive statement to take you do need to reference the doc. This is an example.
-        // You'll likely do more here for your implementation.
-        console.log($doc);
-    }
-
-    $: {
-        // update options changed?
-        console.log(updateOptions);
-    }
+    // For the reactive statement to take you do need to reference the doc. This is an example.
+    // You'll likely do more here for your implementation.
+    console.log(itemPf);
 
     function applyTemplate() {
-        console.log("Do something here");
-        application.close();
+        console.log(updateOptions);
+        // application.close();
     }
 </script>
 
 <main>
-    {@debug $doc}
-
-    <div>{localize("templates.placement.selection.label", { itemType: $doc.type })}</div>
+    <div>{localize("templates.placement.selection.label", { itemType: itemPf.type })}</div>
     {#each placements as placement}
         <label>
             <input
@@ -101,7 +89,7 @@
         </label>
     {/each}
     <!-- <SharedSettings {itemPf} /> -->
-    <SharedSettings itemPf={updateOptions} />
+    <SharedSettings itemPf={updateOptions} on:submitTemplate={applyTemplate} />
 </main>
 
 <style>

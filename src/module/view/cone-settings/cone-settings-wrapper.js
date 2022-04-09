@@ -8,10 +8,14 @@ const show = ({ itemPf = {} }) => {
                 class: ConeSettings,
                 props: { itemPf }
             },
-            draggable: true,
-            modal: false,
+            draggable: false,
+            modal: true,
             title: itemPf.name,
-            zIndex: null,
+
+            // draggable: true,
+            // modal: false,
+            // title: itemPf.name,
+            // zIndex: null,
         });
 
     dialog.render(true, { focus: true });

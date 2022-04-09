@@ -2,9 +2,9 @@
 
 <script>
     import { TJSDocument } from "@typhonjs-fvtt/runtime/svelte/store";
-    import { getContext } from "svelte";
+    import { createEventDispatcher, getContext } from "svelte";
     import { CONSTS, MODULE_NAME } from "../consts";
-    import { localize } from "../scripts/utils";
+    import { clamp, localize } from "../scripts/utils";
     import * as helper from "@typhonjs-fvtt/runtime/svelte/helper";
 
     export let itemPf;
@@ -16,18 +16,40 @@
     const textureScaleMin = 0.1;
     const textureScaleMax = 10;
 
+    const dispatch = createEventDispatcher();
+
     let textureOverrideEnabled;
     let colorOverrideEnabled;
+
+    const currentUserColor = game.user.color;
 
     $: {
         colorOverrideEnabled = itemPf.data.data.measureTemplate.overrideColor;
         textureOverrideEnabled = itemPf.data.data.measureTemplate.overrideTexture;
     }
 
-    function setDefault() {}
+    function handleSubmit() {
+        itemPf.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha] = clamp(
+            itemPf.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha],
+            colorAlphaMin,
+            colorAlphaMax
+        );
+        itemPf.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha] = clamp(
+            itemPf.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha],
+            textureAlphaMin,
+            textureAlphaMax
+        );
+        itemPf.data.flags[MODULE_NAME][CONSTS.flags.textureScale] = clamp(
+            itemPf.data.flags[MODULE_NAME][CONSTS.flags.textureScale],
+            textureScaleMin,
+            textureScaleMax
+        );
+
+        dispatch("submitTemplate");
+    }
 </script>
 
-<form class="pf1">
+<form class="pf1" on:submit|preventDefault={handleSubmit} novalidate>
     <!-- override texture (same as vanilla plus scale/alpha) -->
     <div class="form-group right-me">
         <label class="checkbox">
@@ -114,23 +136,34 @@
     <div class="bordered">
         <div class="form-group">
             <label for="colorOverride">{helper.localize("PF1.CustomColor")}</label>
-            <div class="form-fields">
-                <input
-                    id="colorOverride"
-                    disabled={!colorOverrideEnabled}
-                    type="text"
-                    bind:value={itemPf.data.data.measureTemplate.customColor}
-                />
-                <input
-                    disabled={!colorOverrideEnabled}
-                    type="color"
-                    bind:value={itemPf.data.data.measureTemplate.customColor}
-                />
-            </div>
+            {#if colorOverrideEnabled}
+                <div class="form-fields">
+                    <input id="colorOverride" type="text" bind:value={itemPf.data.data.measureTemplate.customColor} />
+                    <div class="input-border">
+                        <input
+                            style="opacity: {itemPf.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}"
+                            type="color"
+                            bind:value={itemPf.data.data.measureTemplate.customColor}
+                        />
+                    </div>
+                </div>
+            {:else}
+                <div class="form-fields">
+                    <input disabled type="text" value={currentUserColor} />
+                    <div class="input-border" disabled>
+                        <input
+                            style="opacity: {itemPf.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}"
+                            disabled
+                            type="color"
+                            value={currentUserColor}
+                        />
+                    </div>
+                </div>
+            {/if}
         </div>
     </div>
 
-    <!-- texture alpha override (default .5) (0 to 1)-->
+    <!-- color alpha override (default .5) (0 to 1)-->
     <div class="form-group">
         <label for="colorAlpha">Color Alpha**</label>
         <div class="form-fields">
@@ -168,7 +201,22 @@
     <button>{localize("ok")}</button>
 </form>
 
-<style>
+<style lang="scss">
+    .input-border {
+        box-sizing: border-box;
+        border: 1px solid black;
+        border-radius: 4px;
+
+        > * {
+            border: unset !important;
+            width: 100%;
+        }
+
+        &[disabled] {
+            border: 1px solid #7a7971;
+        }
+    }
+
     .bordered {
         border: 5px solid #1c6ea4;
         border-radius: 14px;
