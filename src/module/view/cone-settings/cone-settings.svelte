@@ -70,30 +70,38 @@
     console.log(itemPf);
 
     function applyTemplate() {
-        console.log(updateOptions);
+        console.log(updateOptions); // set to log debug
+        // todo save
         // application.close();
     }
 </script>
 
-<main>
-    <div>{localize("templates.placement.selection.label", { itemType: itemPf.type })}</div>
-    {#each placements as placement}
-        <label>
-            <input
-                type="radio"
-                bind:group={updateOptions.data.flags[MODULE_NAME][CONSTS.flags.placementType]}
-                name="placements"
-                value={placement.value}
-            />
-            {placement.label}
-        </label>
-    {/each}
-    <!-- <SharedSettings {itemPf} /> -->
-    <SharedSettings itemPf={updateOptions} on:submitTemplate={applyTemplate} />
-</main>
+<form class="pf1" novalidate>
+    <div class="form-group">
+        <label>{localize("templates.placement.selection.label", { itemType: itemPf.type })}</label>
+    </div>
+    <div class="form-group">
+        todo - make a column instead of two columns
+        {#each placements as placement}
+            <!-- <div class="form-fields"> -->
+            <label>
+                <input
+                    type="radio"
+                    bind:group={updateOptions.data.flags[MODULE_NAME][CONSTS.flags.placementType]}
+                    name="placements"
+                    value={placement.value}
+                />
+                {placement.label}
+            </label>
+            <!-- </div> -->
+        {/each}
+    </div>
+</form>
+<!-- <SharedSettings {itemPf} /> -->
+<SharedSettings itemPf={updateOptions} on:submitTemplate={applyTemplate} />
 
 <style>
-    main {
+    form {
         display: flex;
         flex-direction: column;
     }

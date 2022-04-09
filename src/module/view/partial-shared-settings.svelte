@@ -69,7 +69,7 @@
                     type="text"
                     disabled={!textureOverrideEnabled}
                     id="customTexture"
-                    value={itemPf.data.data.measureTemplate.customTexture}
+                    bind:value={itemPf.data.data.measureTemplate.customTexture}
                 />
                 <button disabled={!textureOverrideEnabled}>
                     <i class="fas fa-file-import fa-fw" />
@@ -198,7 +198,10 @@
             {localize("templates.deleteAtTurnEnd")}
         </label>
     </div>
-    <button>{localize("ok")}</button>
+    <div class="form-group">
+        <button>{localize("cancel")}</button>
+        <button>{localize("ok")}</button>
+    </div>
 </form>
 
 <style lang="scss">
