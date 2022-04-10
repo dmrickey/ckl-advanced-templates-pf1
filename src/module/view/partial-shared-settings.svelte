@@ -26,16 +26,21 @@
         textureOverrideEnabled = itemPf.data.data.measureTemplate.overrideTexture;
     }
 
-    const selectTexture = () => {
+    const selectTexture = async () => {
         const current = itemPf.data.data.measureTemplate.customTexture;
-        const fp = new FilePicker({
+        const picker = new FilePicker({
             type: "imagevideo",
             current,
             callback: (path) => {
                 itemPf.data.data.measureTemplate.customTexture = path;
             },
         });
-        fp.browse(current);
+
+        setTimeout(() => {
+            picker.element[0].style.zIndex = `${Number.MAX_SAFE_INTEGER}`;
+        }, 100);
+
+        await picker.browse(current);
     };
 
     const handleSubmit = () => {
@@ -81,7 +86,11 @@
                     id="customTexture"
                     bind:value={itemPf.data.data.measureTemplate.customTexture}
                 />
-                <button disabled={!textureOverrideEnabled} on:click={selectTexture}>
+                <button
+                    class="file-picker-button"
+                    disabled={!textureOverrideEnabled}
+                    on:click|preventDefault={selectTexture}
+                >
                     <i class="fas fa-file-import fa-fw" />
                 </button>
             </div>
@@ -145,8 +154,8 @@
     <!-- override color options (same as vanilla) -->
     <div class="optional-border">
         <div class="form-group">
-            <label for="colorOverride">{localizeFull("PF1.CustomColor")}</label>
             {#if colorOverrideEnabled}
+                <label for="colorOverride">{localizeFull("PF1.CustomColor")}</label>
                 <div class="form-fields">
                     <input id="colorOverride" type="text" bind:value={itemPf.data.data.measureTemplate.customColor} />
                     <div class="input-border">
@@ -158,6 +167,8 @@
                     </div>
                 </div>
             {:else}
+                <!-- todo swap this out for "Player Color" from core when I find that key -->
+                <label for="colorOverride">{localizeFull("PF1.CustomColor")}</label>
                 <div class="form-fields">
                     <input disabled type="text" value={currentUserColor} />
                     <div class="input-border" disabled>
@@ -174,7 +185,7 @@
     </div>
 
     <!-- color alpha override (default .5) (0 to 1)-->
-    <div class="form-group">
+    <div class="form-group no-border">
         <label for="colorAlpha">Color Alpha**</label>
         <div class="form-fields">
             <input
@@ -195,7 +206,7 @@
     </div>
 
     <!-- hide outline -->
-    <div class="form-group stacked">
+    <div class="form-group stacked no-border">
         <label class="checkbox">
             <input type="checkbox" bind:checked={itemPf.data.flags[MODULE_NAME][CONSTS.flags.hideOutline]} />
             <!-- todo localize -->
@@ -208,13 +219,22 @@
             {localize("templates.deleteAtTurnEnd")}
         </label>
     </div>
+
     <div class="form-group">
-        <button on:click={() => dispatch("cancel")}>{localize("cancel")}</button>
-        <button>{localize("ok")}</button>
+        <button on:click|preventDefault={() => dispatch("cancel")}>{localize("cancel")}</button>
+        <button type="submit">{localize("ok")}</button>
     </div>
 </form>
 
 <style lang="scss">
+    .file-picker-button {
+        max-width: fit-content;
+    }
+
+    .form-group label {
+        max-width: 35%;
+    }
+
     .input-border {
         box-sizing: border-box;
         border: 1px solid black;
@@ -231,8 +251,14 @@
     }
 
     .optional-border {
-        border: 2px solid #1c6ea4;
-        border-radius: 8px;
+        border: 2px solid rgb(127, 143, 153);
+        border-radius: 6px;
+        padding: 0 0.5rem;
+    }
+
+    .no-border {
+        // this is just so that the spacing for items without a border match those that do
+        border: 2px solid transparent;
         padding: 0 0.5rem;
     }
 
