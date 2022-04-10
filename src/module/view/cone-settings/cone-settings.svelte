@@ -1,18 +1,14 @@
 <svelte:options accessors={true} />
 
 <script>
-    import { TJSDocument } from "@typhonjs-fvtt/runtime/svelte/store";
     import { getContext } from "svelte";
     import { CONSTS, MODULE_NAME } from "../../consts";
-    import { localize } from "../../scripts/utils";
+    import { ifDebug, localize } from "../../scripts/utils";
     import SharedSettings from "../partial-shared-settings.svelte";
 
     export let itemPf = void 0;
 
     const { application } = getContext("external");
-
-    // Wrap the item document / if the item is deleted close the dialog / application.
-    // const doc = new TJSDocument(itemPf, { delete: application.close.bind(application) });
 
     const placements = [
         {
@@ -52,28 +48,27 @@
                         flags?.[CONSTS.flags.placementType] || CONSTS.placement.cone.selectTargetSquare,
                     [CONSTS.flags.textureAlpha]:
                         !!flags?.[CONSTS.flags.textureAlpha] || flags?.[CONSTS.flags.textureAlpha] === 0
-                            ? flags?.[CONSTS.flags.colorAlpha]
+                            ? flags?.[CONSTS.flags.textureAlpha]
                             : 0.5,
                     [CONSTS.flags.textureScale]:
                         !!flags?.[CONSTS.flags.textureScale] || flags?.[CONSTS.flags.textureScale] === 0
-                            ? flags?.[CONSTS.flags.colorAlpha]
+                            ? flags?.[CONSTS.flags.textureScale]
                             : 1,
                 },
             },
         },
     };
-    // // Store the update options to print in the template.
-    // updateOptions = JSON.stringify(doc.updateOptions, null, 2);
 
-    // For the reactive statement to take you do need to reference the doc. This is an example.
-    // You'll likely do more here for your implementation.
-    console.log(itemPf);
+    ifDebug(() => console.log("Opening cone settings for:", itemPf));
 
-    function applyTemplate() {
-        console.log(updateOptions); // set to log debug
-        // todo save
-        // application.close();
-    }
+    const applyTemplate = async () => {
+        ifDebug(() => console.log("Applying options:", updateOptions));
+        await itemPf.update(updateOptions.data);
+        application.close();
+    };
+    const onCancel = () => {
+        application.close();
+    };
 </script>
 
 <form class="pf1" novalidate>
@@ -98,7 +93,7 @@
     </div>
 </form>
 <!-- <SharedSettings {itemPf} /> -->
-<SharedSettings itemPf={updateOptions} on:submitTemplate={applyTemplate} />
+<SharedSettings itemPf={updateOptions} on:submitTemplate={applyTemplate} on:cancel={onCancel} />
 
 <style>
     form {

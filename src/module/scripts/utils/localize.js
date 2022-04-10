@@ -7,4 +7,9 @@ const localize = (key, opts = {}) =>
         ? game.i18n.localize(`${MODULE_NAME}.${key}`)
         : game.i18n.format(`${MODULE_NAME}.${key}`, opts);
 
-export { localize };
+const localizeFull = (key, opts = {}) =>
+    isEmptyObject(opts)
+        ? game.i18n.localize(key)
+        : game.i18n.format(key, opts);
+
+export { localize, localizeFull };

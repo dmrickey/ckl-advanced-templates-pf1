@@ -1,11 +1,9 @@
 <svelte:options accessors={true} />
 
 <script>
-    import { TJSDocument } from "@typhonjs-fvtt/runtime/svelte/store";
-    import { createEventDispatcher, getContext } from "svelte";
+    import { createEventDispatcher } from "svelte";
     import { CONSTS, MODULE_NAME } from "../consts";
-    import { clamp, localize } from "../scripts/utils";
-    import * as helper from "@typhonjs-fvtt/runtime/svelte/helper";
+    import { clamp, localize, localizeFull } from "../scripts/utils";
 
     export let itemPf;
 
@@ -28,7 +26,19 @@
         textureOverrideEnabled = itemPf.data.data.measureTemplate.overrideTexture;
     }
 
-    function handleSubmit() {
+    const selectTexture = () => {
+        const current = itemPf.data.data.measureTemplate.customTexture;
+        const fp = new FilePicker({
+            type: "imagevideo",
+            current,
+            callback: (path) => {
+                itemPf.data.data.measureTemplate.customTexture = path;
+            },
+        });
+        fp.browse(current);
+    };
+
+    const handleSubmit = () => {
         itemPf.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha] = clamp(
             itemPf.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha],
             colorAlphaMin,
@@ -46,23 +56,23 @@
         );
 
         dispatch("submitTemplate");
-    }
+    };
 </script>
 
 <form class="pf1" on:submit|preventDefault={handleSubmit} novalidate>
     <!-- override texture (same as vanilla plus scale/alpha) -->
     <div class="form-group right-me">
         <label class="checkbox">
-            {helper.localize("PF1.OverrideTexture")}
+            {localizeFull("PF1.OverrideTexture")}
             <input type="checkbox" bind:checked={itemPf.data.data.measureTemplate.overrideTexture} />
         </label>
     </div>
 
     <!-- override texture options -->
-    <div class="bordered">
+    <div class="optional-border">
         <div class="form-group">
             <label for="customTexture">
-                {helper.localize("PF1.CustomTexture")}
+                {localizeFull("PF1.CustomTexture")}
             </label>
             <div class="form-fields">
                 <input
@@ -71,7 +81,7 @@
                     id="customTexture"
                     bind:value={itemPf.data.data.measureTemplate.customTexture}
                 />
-                <button disabled={!textureOverrideEnabled}>
+                <button disabled={!textureOverrideEnabled} on:click={selectTexture}>
                     <i class="fas fa-file-import fa-fw" />
                 </button>
             </div>
@@ -127,15 +137,15 @@
     <!-- override color (same as vanilla) -->
     <div class="form-group right-me">
         <label class="checkbox">
-            {helper.localize("PF1.OverrideColor")}
+            {localizeFull("PF1.OverrideColor")}
             <input type="checkbox" bind:checked={itemPf.data.data.measureTemplate.overrideColor} />
         </label>
     </div>
 
     <!-- override color options (same as vanilla) -->
-    <div class="bordered">
+    <div class="optional-border">
         <div class="form-group">
-            <label for="colorOverride">{helper.localize("PF1.CustomColor")}</label>
+            <label for="colorOverride">{localizeFull("PF1.CustomColor")}</label>
             {#if colorOverrideEnabled}
                 <div class="form-fields">
                     <input id="colorOverride" type="text" bind:value={itemPf.data.data.measureTemplate.customColor} />
@@ -199,7 +209,7 @@
         </label>
     </div>
     <div class="form-group">
-        <button>{localize("cancel")}</button>
+        <button on:click={() => dispatch("cancel")}>{localize("cancel")}</button>
         <button>{localize("ok")}</button>
     </div>
 </form>
@@ -220,9 +230,9 @@
         }
     }
 
-    .bordered {
-        border: 5px solid #1c6ea4;
-        border-radius: 14px;
+    .optional-border {
+        border: 2px solid #1c6ea4;
+        border-radius: 8px;
         padding: 0 0.5rem;
     }
 
