@@ -1,29 +1,13 @@
-<svelte:options accessors={true} />
-
 <script>
     import { getContext } from "svelte";
-    import { CONSTS, MODULE_NAME } from "../../consts";
-    import { ifDebug, localize } from "../../scripts/utils";
-    import SharedSettings from "../partial-shared-settings.svelte";
+    import SharedSettings from "./shared-settings.svelte";
+    import { CONSTS, MODULE_NAME } from "../consts";
+    import { ifDebug, localize } from "../scripts/utils";
 
     export let itemPf = void 0;
+    export let TemplateApplication = void 0;
 
     const { application } = getContext("external");
-
-    const placements = [
-        {
-            value: CONSTS.placement.cone.self,
-            label: localize("templates.cone.placement.self.label"),
-        },
-        {
-            value: CONSTS.placement.cone.selectTargetSquare,
-            label: localize("templates.cone.placement.selectTargetSquare.label"),
-        },
-        {
-            value: CONSTS.placement.useSystem,
-            label: localize("templates.placement.useSystem.label"),
-        },
-    ];
 
     const flags = itemPf.data.flags[MODULE_NAME];
     const updateOptions = {
@@ -59,7 +43,7 @@
         },
     };
 
-    ifDebug(() => console.log("Opening cone settings for:", itemPf));
+    ifDebug(() => console.log("Opening settings for:", itemPf));
 
     const applyTemplate = async () => {
         ifDebug(() => console.log("Applying options:", updateOptions));
@@ -73,39 +57,12 @@
 
 <form class="pf1" novalidate>
     <h3 class="form-header">{localize("templates.placement.selection.label", { itemType: itemPf.type })}</h3>
-    <div class="form-group column">
-        {#each placements as placement}
-            <label class="checkbox">
-                <input
-                    type="radio"
-                    bind:group={updateOptions.data.flags[MODULE_NAME][CONSTS.flags.placementType]}
-                    name="placements"
-                    value={placement.value}
-                />
-                {placement.label}
-            </label>
-        {/each}
-    </div>
+    <svelte:component this={TemplateApplication} itemPf={updateOptions} />
+    <SharedSettings itemPf={updateOptions} on:submitTemplate={applyTemplate} on:cancel={onCancel} />
 </form>
-<SharedSettings itemPf={updateOptions} on:submitTemplate={applyTemplate} on:cancel={onCancel} />
 
 <style lang="scss">
-    .column {
-        display: flex;
-        flex-direction: column;
-        text-align: center;
-    }
-
     h3.form-header {
         text-align: center;
-    }
-
-    form {
-        display: flex;
-        flex-direction: column;
-    }
-
-    input:disabled {
-        box-shadow: none !important;
     }
 </style>

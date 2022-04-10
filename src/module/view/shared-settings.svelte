@@ -3,7 +3,7 @@
 <script>
     import { createEventDispatcher } from "svelte";
     import { CONSTS, MODULE_NAME } from "../consts";
-    import { clamp, localize, localizeFull } from "../scripts/utils";
+    import { clamp, ifDebug, localize, localizeFull } from "../scripts/utils";
 
     export let itemPf;
 
@@ -20,6 +20,8 @@
     let colorOverrideEnabled;
 
     const currentUserColor = game.user.color;
+
+    ifDebug(() => console.log("Opening shared settings for:", itemPf));
 
     $: {
         colorOverrideEnabled = itemPf.data.data.measureTemplate.overrideColor;
@@ -168,6 +170,7 @@
                 </div>
             {:else}
                 <!-- todo swap this out for "Player Color" from core when I find that key -->
+                <!-- <label for="colorOverride">{localizeFull("Core.PLAYERS.PlayerColor")}</label> -->
                 <label for="colorOverride">{localizeFull("PF1.CustomColor")}</label>
                 <div class="form-fields">
                     <input disabled type="text" value={currentUserColor} />
