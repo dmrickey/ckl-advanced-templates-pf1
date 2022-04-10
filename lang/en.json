@@ -47,12 +47,16 @@
                     "selectTargetSquare.label": "Originate from Selection"
                 }
             },
-            "placement.selection.label": "Select template options for this {itemType}",
-            "placement.useSystem.label": "Use System Default",
+            "chooseOptions": "Choose Options",
+            "colorAlpha.label": "Color Alpha",
             "deleteAtTurnEnd": "Delete Template at End of Turn",
+            "hideOutline.label": "Hide Outline",
             "ignoreRange": "Ignore Range Restriction",
             "modalTitle": "{itemName} Template",
-            "chooseOptions": "Choose Options"
+            "placement.selection.label": "Select template options for this {itemType}",
+            "placement.useSystem.label": "Use System Default",
+            "textureAlpha.label": "Texture Alpha",
+            "textureScale.label": "Texture Scale"
         },
         "ok": "Ok",
         "cancel": "Cancel",

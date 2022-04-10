@@ -16,6 +16,10 @@ const _show = (app, itemPf = {}) => {
             draggable: false,
             modal: true,
             title: itemPf.name,
+            // draggable: true,
+            // modal: false,
+            // title: itemPf.name,
+            // zIndex: null,
         });
 
     dialog.render(true, { focus: true });

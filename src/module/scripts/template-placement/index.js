@@ -29,6 +29,7 @@ async function promptMeasureTemplate(wrapped, shared) {
     if (this.getFlag(MODULE_NAME, CONSTS.flags.placementType) === CONSTS.placement.useSystem
         || !['cone', 'circle'].includes(type)
     ) {
+        // todo assign flags to created template
         return wrapped(shared);
     }
 

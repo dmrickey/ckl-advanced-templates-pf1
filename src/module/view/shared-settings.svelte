@@ -5,7 +5,7 @@
     import { CONSTS, MODULE_NAME } from "../consts";
     import { clamp, ifDebug, localize, localizeFull } from "../scripts/utils";
 
-    export let itemPf;
+    export let updates;
 
     const colorAlphaMin = 0;
     const colorAlphaMax = 1;
@@ -21,20 +21,20 @@
 
     const currentUserColor = game.user.color;
 
-    ifDebug(() => console.log("Opening shared settings for:", itemPf));
+    ifDebug(() => console.log("Opening shared settings for:", updates));
 
     $: {
-        colorOverrideEnabled = itemPf.data.data.measureTemplate.overrideColor;
-        textureOverrideEnabled = itemPf.data.data.measureTemplate.overrideTexture;
+        colorOverrideEnabled = updates.data.data.measureTemplate.overrideColor;
+        textureOverrideEnabled = updates.data.data.measureTemplate.overrideTexture;
     }
 
     const selectTexture = async () => {
-        const current = itemPf.data.data.measureTemplate.customTexture;
+        const current = updates.data.data.measureTemplate.customTexture;
         const picker = new FilePicker({
             type: "imagevideo",
             current,
             callback: (path) => {
-                itemPf.data.data.measureTemplate.customTexture = path;
+                updates.data.data.measureTemplate.customTexture = path;
             },
         });
 
@@ -46,18 +46,18 @@
     };
 
     const handleSubmit = () => {
-        itemPf.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha] = clamp(
-            itemPf.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha],
+        updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha] = clamp(
+            updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha],
             colorAlphaMin,
             colorAlphaMax
         );
-        itemPf.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha] = clamp(
-            itemPf.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha],
+        updates.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha] = clamp(
+            updates.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha],
             textureAlphaMin,
             textureAlphaMax
         );
-        itemPf.data.flags[MODULE_NAME][CONSTS.flags.textureScale] = clamp(
-            itemPf.data.flags[MODULE_NAME][CONSTS.flags.textureScale],
+        updates.data.flags[MODULE_NAME][CONSTS.flags.textureScale] = clamp(
+            updates.data.flags[MODULE_NAME][CONSTS.flags.textureScale],
             textureScaleMin,
             textureScaleMax
         );
@@ -71,7 +71,7 @@
     <div class="form-group right-me">
         <label class="checkbox">
             {localizeFull("PF1.OverrideTexture")}
-            <input type="checkbox" bind:checked={itemPf.data.data.measureTemplate.overrideTexture} />
+            <input type="checkbox" bind:checked={updates.data.data.measureTemplate.overrideTexture} />
         </label>
     </div>
 
@@ -86,7 +86,7 @@
                     type="text"
                     disabled={!textureOverrideEnabled}
                     id="customTexture"
-                    bind:value={itemPf.data.data.measureTemplate.customTexture}
+                    bind:value={updates.data.data.measureTemplate.customTexture}
                 />
                 <button
                     class="file-picker-button"
@@ -100,7 +100,7 @@
 
         <!-- texture alpha override (default .5) (.1 to 1)-->
         <div class="form-group">
-            <label for="textureAlpha">Texture Alpha**</label>
+            <label for="textureAlpha">{localize("templates.textureAlpha.label")}</label>
             <div class="form-fields">
                 <input
                     id="textureAlpha"
@@ -108,7 +108,7 @@
                     disabled={!textureOverrideEnabled}
                     max={textureAlphaMax}
                     min={textureAlphaMin}
-                    bind:value={itemPf.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha]}
+                    bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha]}
                 />
                 <input
                     type="range"
@@ -116,14 +116,14 @@
                     max={textureAlphaMax}
                     min={textureAlphaMin}
                     step="0.05"
-                    bind:value={itemPf.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha]}
+                    bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha]}
                 />
             </div>
         </div>
 
         <!-- texture scale override (default 1) (.1 to 10)-->
         <div class="form-group">
-            <label for="textureScale">Texture Scale**</label>
+            <label for="textureScale">{localize("templates.textureScale.label")}</label>
             <div class="form-fields">
                 <input
                     type="number"
@@ -131,7 +131,7 @@
                     disabled={!textureOverrideEnabled}
                     max={textureScaleMax}
                     min={textureScaleMin}
-                    bind:value={itemPf.data.flags[MODULE_NAME][CONSTS.flags.textureScale]}
+                    bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureScale]}
                 />
                 <input
                     type="range"
@@ -139,7 +139,7 @@
                     max={textureScaleMax}
                     min={textureScaleMin}
                     step="0.1"
-                    bind:value={itemPf.data.flags[MODULE_NAME][CONSTS.flags.textureScale]}
+                    bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureScale]}
                 />
             </div>
         </div>
@@ -149,7 +149,7 @@
     <div class="form-group right-me">
         <label class="checkbox">
             {localizeFull("PF1.OverrideColor")}
-            <input type="checkbox" bind:checked={itemPf.data.data.measureTemplate.overrideColor} />
+            <input type="checkbox" bind:checked={updates.data.data.measureTemplate.overrideColor} />
         </label>
     </div>
 
@@ -159,12 +159,12 @@
             {#if colorOverrideEnabled}
                 <label for="colorOverride">{localizeFull("PF1.CustomColor")}</label>
                 <div class="form-fields">
-                    <input id="colorOverride" type="text" bind:value={itemPf.data.data.measureTemplate.customColor} />
+                    <input id="colorOverride" type="text" bind:value={updates.data.data.measureTemplate.customColor} />
                     <div class="input-border">
                         <input
-                            style="opacity: {itemPf.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}"
+                            style="opacity: {updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}"
                             type="color"
-                            bind:value={itemPf.data.data.measureTemplate.customColor}
+                            bind:value={updates.data.data.measureTemplate.customColor}
                         />
                     </div>
                 </div>
@@ -176,7 +176,7 @@
                     <input disabled type="text" value={currentUserColor} />
                     <div class="input-border" disabled>
                         <input
-                            style="opacity: {itemPf.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}"
+                            style="opacity: {updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}"
                             disabled
                             type="color"
                             value={currentUserColor}
@@ -189,36 +189,35 @@
 
     <!-- color alpha override (default .5) (0 to 1)-->
     <div class="form-group no-border">
-        <label for="colorAlpha">Color Alpha**</label>
+        <label for="colorAlpha">{localize("templates.colorAlpha.label")}</label>
         <div class="form-fields">
             <input
                 type="number"
                 id="colorAlpha"
                 max={colorAlphaMax}
                 min={colorAlphaMin}
-                bind:value={itemPf.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}
+                bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}
             />
             <input
                 type="range"
                 max={colorAlphaMax}
                 min={colorAlphaMin}
                 step="0.05"
-                bind:value={itemPf.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}
+                bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}
             />
         </div>
     </div>
 
-    <!-- hide outline -->
     <div class="form-group stacked no-border">
+        <!-- hide outline -->
         <label class="checkbox">
-            <input type="checkbox" bind:checked={itemPf.data.flags[MODULE_NAME][CONSTS.flags.hideOutline]} />
-            <!-- todo localize -->
-            Hide Outline**
+            <input type="checkbox" bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.hideOutline]} />
+            {localize("templates.hideOutline.label")}
         </label>
 
         <!-- delete at turn end -->
         <label class="checkbox">
-            <input type="checkbox" bind:checked={itemPf.data.flags[MODULE_NAME][CONSTS.flags.expireAtTurnEnd]} />
+            <input type="checkbox" bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.expireAtTurnEnd]} />
             {localize("templates.deleteAtTurnEnd")}
         </label>
     </div>

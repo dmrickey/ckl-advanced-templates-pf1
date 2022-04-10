@@ -28,8 +28,7 @@
                             : 0.5,
                     [CONSTS.flags.expireAtTurnEnd]: !!flags?.[CONSTS.flags.expireAtTurnEnd],
                     [CONSTS.flags.hideOutline]: !!flags?.[CONSTS.flags.hideOutline],
-                    [CONSTS.flags.placementType]:
-                        flags?.[CONSTS.flags.placementType] || CONSTS.placement.cone.selectTargetSquare,
+                    [CONSTS.flags.placementType]: flags?.[CONSTS.flags.placementType],
                     [CONSTS.flags.textureAlpha]:
                         !!flags?.[CONSTS.flags.textureAlpha] || flags?.[CONSTS.flags.textureAlpha] === 0
                             ? flags?.[CONSTS.flags.textureAlpha]
@@ -57,8 +56,8 @@
 
 <form class="pf1" novalidate>
     <h3 class="form-header">{localize("templates.placement.selection.label", { itemType: itemPf.type })}</h3>
-    <svelte:component this={TemplateApplication} itemPf={updateOptions} />
-    <SharedSettings itemPf={updateOptions} on:submitTemplate={applyTemplate} on:cancel={onCancel} />
+    <svelte:component this={TemplateApplication} {itemPf} updates={updateOptions} />
+    <SharedSettings updates={updateOptions} on:submitTemplate={applyTemplate} on:cancel={onCancel} />
 </form>
 
 <style lang="scss">

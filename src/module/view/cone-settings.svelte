@@ -4,7 +4,7 @@
     import { CONSTS, MODULE_NAME } from "../consts";
     import { ifDebug, localize } from "../scripts/utils";
 
-    export let itemPf = void 0;
+    export let updates = void 0;
 
     const placements = [
         {
@@ -21,9 +21,10 @@
         },
     ];
 
-    itemPf.data.flags[MODULE_NAME][CONSTS.flags.placementType] ||= CONSTS.placement.cone.selectTargetSquare;
+    // initialize cone options
+    updates.data.flags[MODULE_NAME][CONSTS.flags.placementType] ||= CONSTS.placement.cone.selectTargetSquare;
 
-    ifDebug(() => console.log("Opening cone settings for:", itemPf));
+    ifDebug(() => console.log("Opening cone settings for:", updates));
 </script>
 
 <form class="pf1" novalidate>
@@ -32,7 +33,7 @@
             <label class="checkbox">
                 <input
                     type="radio"
-                    bind:group={itemPf.data.flags[MODULE_NAME][CONSTS.flags.placementType]}
+                    bind:group={updates.data.flags[MODULE_NAME][CONSTS.flags.placementType]}
                     name="placements"
                     value={placement.value}
                 />
@@ -52,9 +53,5 @@
     form {
         display: flex;
         flex-direction: column;
-    }
-
-    input:disabled {
-        box-shadow: none !important;
     }
 </style>
