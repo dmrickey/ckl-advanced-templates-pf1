@@ -72,14 +72,10 @@
 </script>
 
 <form class="pf1" novalidate>
-    <div class="form-group">
-        <label>{localize("templates.placement.selection.label", { itemType: itemPf.type })}</label>
-    </div>
-    <div class="form-group">
-        todo - make a column instead of two columns
+    <h3 class="form-header">{localize("templates.placement.selection.label", { itemType: itemPf.type })}</h3>
+    <div class="form-group column">
         {#each placements as placement}
-            <!-- <div class="form-fields"> -->
-            <label>
+            <label class="checkbox">
                 <input
                     type="radio"
                     bind:group={updateOptions.data.flags[MODULE_NAME][CONSTS.flags.placementType]}
@@ -88,14 +84,22 @@
                 />
                 {placement.label}
             </label>
-            <!-- </div> -->
         {/each}
     </div>
 </form>
-<!-- <SharedSettings {itemPf} /> -->
 <SharedSettings itemPf={updateOptions} on:submitTemplate={applyTemplate} on:cancel={onCancel} />
 
-<style>
+<style lang="scss">
+    .column {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    h3.form-header {
+        text-align: center;
+    }
+
     form {
         display: flex;
         flex-direction: column;
