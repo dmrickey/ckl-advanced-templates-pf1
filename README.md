@@ -14,7 +14,7 @@ Go into the details tab of any of your spells/abilities/items/etc. If it is conf
 
 Clicking it will open the configuration menu, this is what the options look like for a Circle
 
-![image](https://user-images.githubusercontent.com/3664822/159150855-f5d7c2d1-dd0f-40d0-992f-596174880562.png)
+![image](https://user-images.githubusercontent.com/3664822/162764540-1ca601e7-dc5a-4444-b493-5e458e9ca08c.png)
 
 - Placement Type
   - Select Grid Placement - This is for your standard area of effect spell, so if you're configuring something like a fireball where you choose where the spell goes, this is the option you want. This is the default option if a Circle isn't configured.
@@ -23,22 +23,29 @@ Clicking it will open the configuration menu, this is what the options look like
   - Use System Default - This is for if there's a special case not covered by the above options and you need the spell to use PF1's default method where it can be placed anywhere on the grid
 - Effect Type
   - Rules-wise, each of these behave different regarding walls or how they effect if they're cast from a "centered on token" spell. Currently, I do not take walls into account at all and selecting this will only change how "Centered on Token" behaves. In the future, I may add the ability for these to follow the rules regarding walls, so if they're configured now, at that point they would automatically work with walls as expected.
+- Override Texture
+  - Custom Texture - This is the same as what's provided in the item's Details, but paired with a couple extra options.
+  - Texture Alpha - Allows you to alter the transparency of the texture. `1` is completely opaque while values closer to `0` are more transparent
+  - Texture Scale - Allows you to alter how large the texture is. `1` is the texture's normal scale. Values closer to `0` will be smaller. `2` is twice as big, `3` is three times as big, etc. The maximum value is 10. As is the case with pf1, the texture will not extend beyond the outline of the template.
+- Override Color
+  - Custom Color - This is the same as what's provided in the item's Details, but re-shown here to show how it interacts with Color Alpha. If this is turned off, then this will also show you that it will use your player fill color.
+- Color Alpha - Allows you to alter the transparency of the template's fill color. `1` is completely opaque while `0` is completely transparent. If you want to turn the fill color off, then set this to `0`. As you change this value, the color shown just above will adjust to show you the effect of this value.
 - Extra options
-  - Delete Template at End of Turn - When game time advanced, or when the current turn is over, the template will automatically be deleted so as to not clutter up the scene with templates that are no longer needed.
-  - Ignore Range Restriction - This is most useful for splash weapons which have a defined range increment, but as a ranged weapon can be thrown beyond the range with an attack penalty. You would leave this disabled for spells as spells (normally) don't have options that will let you ignore the defined range.
+  - Hide Outline - Enable this if you don't want to see the template's outline border. So if the fill color is good enough or if you're using a texture that completely fills the template, then it could look better to just leave the outline turned off.
+  - Delete Template at End of Turn - When the game time is advanced, or when the current turn is over, the template will automatically be deleted so as to not clutter up the scene with templates that are no longer needed.
+  - Ignore Range Restriction - This is most useful for ranged weapons that can be thrown beyond the range with an attack penalty. You would (normally) leave this disabled for spells as spells (usually) don't have options that will let you ignore the defined range.
   - Attach to Token - This is for use in conjunction with "Centered on Token". This is for things like a paladin's aura or casting Silence on yourself where the template should move with the caster. There is no guard for enabling this with "select grid placement" so you will get weird behavior where the template will jump to you when you move if you enabled both of these together.
-- **None of these options have any effect if you select the *Use System Default* placement type.**
 
 This is the configuration menu for a cone
 
-![image](https://user-images.githubusercontent.com/3664822/158039955-5b8b8883-5331-45b6-b443-9fc4e3da9ef2.png)
+![image](https://user-images.githubusercontent.com/3664822/162764602-9cf48a13-1cca-4a0e-a0a4-2e5402297a11.png)
 
 - Placement Type
   - Originate from Caster - This is the default placement type for cones if no option is configured. This will make the cone "stick" to the casting token and follow the cursor around the screen. It follow the rules for placing cones away from the caster and does not allow for rotating the cones at different angles--I have plans to add the ability for the GM to enable this option for players in the future.
   - Originate from Selection - Allows you to select a grid square on the map, and then choose the cone direction via the same technique just described.
   - Use System Default - see circle
 - Extra options
-  - Delete Template at End of Turn - see circle **This has no effect if *Use System Default* is selected**
+  - For the remaining options, see circle
 
 ## Game Settings
 
