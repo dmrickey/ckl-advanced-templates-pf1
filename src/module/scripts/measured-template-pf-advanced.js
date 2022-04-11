@@ -130,14 +130,17 @@ const initMeasuredTemplate = () => {
                 let xOffset = true;
                 let yOffset = true;
 
+                const scaleOverride = this.data.flags[MODULE_NAME][CONSTS.flags.textureScale] || 1;
+                let textureSize = distance * scaleOverride;
+
                 if (this.data.t === 'cone') {
-                    distance /= 2;
+                    textureSize /= 2;
                     xOffset = false;
                 }
 
                 const tileTexture = false; // todo
-                const scale = tileTexture ? 1 : distance * 2 / this.texture.width;
-                const offset = tileTexture ? 0 : distance;
+                const scale = tileTexture ? 1 : textureSize * 2 / this.texture.width;
+                const offset = tileTexture ? 0 : (textureSize);
                 this.template.beginTextureFill({
                     texture: this.texture,
                     matrix: new PIXI.Matrix()
