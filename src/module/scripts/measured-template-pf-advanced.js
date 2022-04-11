@@ -121,8 +121,12 @@ const initMeasuredTemplate = () => {
                     break;
             }
 
+            const outlineAlpha = this.data.flags[MODULE_NAME][CONSTS.flags.hideOutline]
+                ? 0
+                : 0.75;
+
             // Draw the Template outline
-            this.template.clear().lineStyle(this._borderThickness, this.borderColor, 0.75).beginFill(0x000000, 0.0);
+            this.template.clear().lineStyle(this._borderThickness, this.borderColor, outlineAlpha).beginFill(0x000000, 0.0);
 
             // this is a bit overridden
             // Fill Color or Texture
