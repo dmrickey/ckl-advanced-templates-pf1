@@ -264,6 +264,45 @@ const initMeasuredTemplate = () => {
 
             return super.getHighlightedSquares();
         }
+
+        // only override is adding alpha
+        // Highlight grid in PF1 style
+        highlightGrid() {
+            if (
+                !game.settings.get("pf1", "measureStyle") ||
+                !["circle", "cone", "ray"].includes(this.data.t) ||
+                canvas.grid.type !== CONST.GRID_TYPES.SQUARE
+            ) {
+                return super.highlightGrid();
+            }
+
+            const grid = canvas.grid;
+            const bc = this.borderColor;
+            const fc = this.fillColor;
+
+            // Only highlight for objects which have a defined shape
+            if (!this.id || !this.shape) {
+                return;
+            }
+
+            // Clear existing highlight
+            const hl = this.getHighlightLayer();
+            hl.clear();
+
+            const alpha = this.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha];
+
+            // Get grid squares to highlight
+            const highlightSquares = this.getHighlightedSquares();
+            for (const s of highlightSquares) {
+                grid.grid.highlightGridPosition(hl, {
+                    x: s.x,
+                    y: s.y,
+                    alpha,
+                    color: fc,
+                    border: bc,
+                });
+            }
+        }
     }
 
     CONFIG.MeasuredTemplate.objectClass = MeasuredTemplatePFAdvanced;
