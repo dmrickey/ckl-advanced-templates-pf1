@@ -121,7 +121,7 @@ const initMeasuredTemplate = () => {
                     break;
             }
 
-            const outlineAlpha = this.data.flags[MODULE_NAME][CONSTS.flags.hideOutline]
+            const outlineAlpha = this.data.flags[MODULE_NAME]?.[CONSTS.flags.hideOutline]
                 ? 0
                 : 0.75;
 
@@ -134,7 +134,8 @@ const initMeasuredTemplate = () => {
                 let xOffset = true;
                 let yOffset = true;
 
-                const scaleOverride = this.data.flags[MODULE_NAME][CONSTS.flags.textureScale] || 1;
+                const textureAlpha = this.data.flags[MODULE_NAME]?.[CONSTS.flags.textureAlpha] || 0.5;
+                const scaleOverride = this.data.flags[MODULE_NAME]?.[CONSTS.flags.textureScale] || 1;
                 let textureSize = distance * scaleOverride;
 
                 if (this.data.t === 'cone') {
@@ -151,7 +152,7 @@ const initMeasuredTemplate = () => {
                         .scale(scale, scale)
                         .translate(xOffset ? -offset : 0, yOffset ? -offset : 0)
                         .rotate(direction),
-                    alpha: .5,
+                    alpha: textureAlpha,
                 });
             }
             else {
@@ -293,7 +294,8 @@ const initMeasuredTemplate = () => {
             const hl = this.getHighlightLayer();
             hl.clear();
 
-            const alpha = this.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha];
+            // highlightGridPosition has a default so undefined is fine to pass in
+            const alpha = this.data.flags[MODULE_NAME]?.[CONSTS.flags.colorAlpha];
 
             // Get grid squares to highlight
             const highlightSquares = this.getHighlightedSquares();
