@@ -41,6 +41,8 @@
             </label>
         {/each}
     </div>
+
+    <slot />
 </form>
 
 <style lang="scss">

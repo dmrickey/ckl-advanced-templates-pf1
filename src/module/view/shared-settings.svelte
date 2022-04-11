@@ -1,7 +1,6 @@
 <svelte:options accessors={true} />
 
 <script>
-    import { createEventDispatcher } from "svelte";
     import { CONSTS, MODULE_NAME } from "../consts";
     import { clamp, ifDebug, localize, localizeFull } from "../scripts/utils";
 
@@ -13,8 +12,6 @@
     const textureAlphaMax = 1;
     const textureScaleMin = 0.1;
     const textureScaleMax = 10;
-
-    const dispatch = createEventDispatcher();
 
     let textureOverrideEnabled;
     let colorOverrideEnabled;
@@ -45,28 +42,30 @@
         await picker.browse(current);
     };
 
-    const handleSubmit = () => {
+    const clampColorAlpha = () => {
         updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha] = clamp(
             updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha],
             colorAlphaMin,
             colorAlphaMax
         );
+    };
+    const clampTextureAlpha = () => {
         updates.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha] = clamp(
             updates.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha],
             textureAlphaMin,
             textureAlphaMax
         );
+    };
+    const clampTextureScale = () => {
         updates.data.flags[MODULE_NAME][CONSTS.flags.textureScale] = clamp(
             updates.data.flags[MODULE_NAME][CONSTS.flags.textureScale],
             textureScaleMin,
             textureScaleMax
         );
-
-        dispatch("submitTemplate");
     };
 </script>
 
-<form class="pf1" on:submit|preventDefault={handleSubmit} novalidate>
+<form class="pf1" on:submit|preventDefault novalidate>
     <!-- override texture (same as vanilla plus scale/alpha) -->
     <div class="form-group right-me">
         <label class="checkbox">
@@ -109,6 +108,7 @@
                     max={textureAlphaMax}
                     min={textureAlphaMin}
                     bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha]}
+                    on:input={clampTextureAlpha}
                 />
                 <input
                     type="range"
@@ -117,6 +117,7 @@
                     min={textureAlphaMin}
                     step="0.05"
                     bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha]}
+                    on:input={clampTextureAlpha}
                 />
             </div>
         </div>
@@ -132,6 +133,7 @@
                     max={textureScaleMax}
                     min={textureScaleMin}
                     bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureScale]}
+                    on:input={clampTextureScale}
                 />
                 <input
                     type="range"
@@ -140,6 +142,7 @@
                     min={textureScaleMin}
                     step="0.1"
                     bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureScale]}
+                    on:input={clampTextureScale}
                 />
             </div>
         </div>
@@ -160,7 +163,7 @@
                 <label for="colorOverride">{localizeFull("PF1.CustomColor")}</label>
                 <div class="form-fields">
                     <input id="colorOverride" type="text" bind:value={updates.data.data.measureTemplate.customColor} />
-                    <div class="input-border">
+                    <div class="color-input-border">
                         <input
                             style="opacity: {updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}"
                             type="color"
@@ -174,7 +177,7 @@
                 <label for="colorOverride">{localizeFull("PF1.CustomColor")}</label>
                 <div class="form-fields">
                     <input disabled type="text" value={currentUserColor} />
-                    <div class="input-border" disabled>
+                    <div class="color-input-border" disabled>
                         <input
                             style="opacity: {updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}"
                             disabled
@@ -197,6 +200,7 @@
                 max={colorAlphaMax}
                 min={colorAlphaMin}
                 bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}
+                on:input={clampColorAlpha}
             />
             <input
                 type="range"
@@ -221,11 +225,6 @@
             {localize("templates.deleteAtTurnEnd")}
         </label>
     </div>
-
-    <div class="form-group">
-        <button on:click|preventDefault={() => dispatch("cancel")}>{localize("cancel")}</button>
-        <button type="submit">{localize("ok")}</button>
-    </div>
 </form>
 
 <style lang="scss">
@@ -237,18 +236,14 @@
         max-width: 35%;
     }
 
-    .input-border {
+    .color-input-border {
         box-sizing: border-box;
-        border: 1px solid black;
-        border-radius: 4px;
+        border: 1px solid #7a7971;
 
         > * {
+            background-color: transparent;
             border: unset !important;
             width: 100%;
-        }
-
-        &[disabled] {
-            border: 1px solid #7a7971;
         }
     }
 

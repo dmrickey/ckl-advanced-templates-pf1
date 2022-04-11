@@ -54,10 +54,16 @@
     };
 </script>
 
-<form class="pf1" novalidate>
+<form class="pf1" novalidate on:submit|preventDefault={applyTemplate}>
     <h3 class="form-header">{localize("templates.placement.selection.label", { itemType: itemPf.type })}</h3>
-    <svelte:component this={TemplateApplication} {itemPf} updates={updateOptions} />
-    <SharedSettings updates={updateOptions} on:submitTemplate={applyTemplate} on:cancel={onCancel} />
+    <svelte:component this={TemplateApplication} {itemPf} updates={updateOptions}>
+        <SharedSettings updates={updateOptions} />
+    </svelte:component>
+
+    <div class="form-group">
+        <button on:click|preventDefault={onCancel}>{localize("cancel")}</button>
+        <button type="submit">{localize("ok")}</button>
+    </div>
 </form>
 
 <style lang="scss">

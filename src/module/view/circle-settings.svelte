@@ -79,7 +79,9 @@
         {/each}
     </div>
 
-    <div class="form-group stacked">
+    <slot />
+
+    <div class="form-group stacked no-border">
         <!-- ignore range -->
         <label class="checkbox">
             <input type="checkbox" bind:checked={itemPf.data.flags[MODULE_NAME][CONSTS.flags.ignoreRange]} />
@@ -113,5 +115,11 @@
     form {
         display: flex;
         flex-direction: column;
+    }
+
+    .no-border {
+        // this is just so that the spacing for items without a border match those that do
+        border: 2px solid transparent;
+        padding: 0 0.5rem;
     }
 </style>
