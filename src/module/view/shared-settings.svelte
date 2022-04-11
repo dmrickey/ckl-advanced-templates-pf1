@@ -172,9 +172,7 @@
                     </div>
                 </div>
             {:else}
-                <!-- todo swap this out for "Player Color" from core when I find that key -->
-                <!-- <label for="colorOverride">{localizeFull("Core.PLAYERS.PlayerColor")}</label> -->
-                <label for="colorOverride">{localizeFull("PF1.CustomColor")}</label>
+                <label for="colorOverride">{localizeFull("PLAYERS.PlayerColor")}</label>
                 <div class="form-fields">
                     <input disabled type="text" value={currentUserColor} />
                     <div class="color-input-border" disabled>
