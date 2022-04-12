@@ -274,9 +274,9 @@ const initMeasuredTemplate = () => {
         // Highlight grid in PF1 style
         highlightGrid() {
             if (
-                !game.settings.get("pf1", "measureStyle") ||
-                !["circle", "cone", "ray"].includes(this.data.t) ||
-                canvas.grid.type !== CONST.GRID_TYPES.SQUARE
+                !game.settings.get("pf1", "measureStyle")
+                || !["circle", "cone", "ray"].includes(this.data.t)
+                || canvas.grid.type !== CONST.GRID_TYPES.SQUARE
             ) {
                 return super.highlightGrid();
             }
@@ -339,9 +339,12 @@ const initMeasuredTemplate = () => {
                         case CONSTS.placement.circle.splash:
                             abilityCls = AbilityTemplateCircleSplash;
                             break;
+                        case CONSTS.placement.useSystem:
+                            abilityCls = AbilityTemplateCircleAnywhere;
+                            break;
                         case CONSTS.placement.circle.grid:
                         default:
-                            abilityCls = AbilityTemplateCircle;
+                            abilityCls = AbilityTemplateCircleGrid;
                             break;
                     }
                     break;
@@ -455,12 +458,14 @@ const initMeasuredTemplate = () => {
         }
     }
 
-    class AbilityTemplateCircle extends AbilityTemplateAdvanced {
+    class AbilityTemplateCircleGrid extends AbilityTemplateAdvanced {
         _maxRange;
         _hasMaxRange;
         _minRange;
         _hasMinRange;
         _tokenSquare;
+
+        _gridInterval() { return 1; }
 
         _calculateTokenSquare(token) {
             const heightSquares = Math.max(Math.round(token.data.height), 1);
@@ -584,7 +589,7 @@ const initMeasuredTemplate = () => {
             const targetConfig = {
                 drawIcon: false,
                 drawOutline: false,
-                interval: 1,
+                interval: this._gridInterval(),
             };
             const crosshairs = await warpgate.crosshairs.show(
                 targetConfig,
@@ -626,7 +631,12 @@ const initMeasuredTemplate = () => {
         }
     }
 
-    class AbilityTemplateCircleSplash extends AbilityTemplateCircle {
+    class AbilityTemplateCircleAnywhere extends AbilityTemplateCircleGrid {
+        /** @override */
+        _gridInterval() { return 2; }
+    }
+
+    class AbilityTemplateCircleSplash extends AbilityTemplateCircleGrid {
         /** @override */
         async commitPreview() {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));

@@ -26,8 +26,8 @@ async function promptMeasureTemplate(wrapped, shared) {
 
     const type = this.data.data.measureTemplate.type;
 
-    if (this.getFlag(MODULE_NAME, CONSTS.flags.placementType) === CONSTS.placement.useSystem
-        || !['cone', 'circle'].includes(type)
+    if (!['cone', 'circle'].includes(type)
+        || (type === 'cone' && this.getFlag(MODULE_NAME, CONSTS.flags.placementType) === CONSTS.placement.useSystem)
     ) {
         // todo assign flags to created template
         return wrapped(shared);
