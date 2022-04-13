@@ -39,10 +39,14 @@
     ];
 
     // initialize circle options
-    updates.data.flags[MODULE_NAME][CONSTS.flags.placementType] ||= CONSTS.placement.circle.grid;
+    updates.data.flags[MODULE_NAME][CONSTS.flags.placementType] ||=
+        itemPf.data.flags[MODULE_NAME]?.[CONSTS.flags.placementType] || CONSTS.placement.circle.grid;
     updates.data.flags[MODULE_NAME][CONSTS.flags.circle.areaType] ||=
-        itemPf.data.flags[MODULE_NAME][CONSTS.flags.circle.areaType] || CONSTS.areaType.burst;
-    // don't need to initialize `ignore range` or `attach to token` because they're booleans
+        itemPf.data.flags[MODULE_NAME]?.[CONSTS.flags.circle.areaType] || CONSTS.areaType.burst;
+    updates.data.flags[MODULE_NAME][CONSTS.flags.ignoreRange] ||=
+        itemPf.data.flags[MODULE_NAME]?.[CONSTS.flags.ignoreRange] || false;
+    updates.data.flags[MODULE_NAME][CONSTS.flags.circle.movesWithToken] ||=
+        itemPf.data.flags[MODULE_NAME]?.[CONSTS.flags.circle.movesWithToken] || false;
 
     ifDebug(() => console.log("Opening circle settings for:", updates));
 </script>
@@ -84,13 +88,17 @@
     <div class="form-group stacked no-border">
         <!-- ignore range -->
         <label class="checkbox">
-            <input type="checkbox" bind:checked={itemPf.data.flags[MODULE_NAME][CONSTS.flags.ignoreRange]} />
+            <input type="checkbox" bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.ignoreRange]} />
             {localize("templates.ignoreRange")}
         </label>
 
         <!-- Attach to token -->
         <label class="checkbox">
-            <input type="checkbox" bind:checked={itemPf.data.flags[MODULE_NAME][CONSTS.flags.circle.movesWithToken]} />
+            <input
+                type="checkbox"
+                disabled={updates.data.flags[MODULE_NAME][CONSTS.flags.placementType] !== CONSTS.placement.circle.self}
+                bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.circle.movesWithToken]}
+            />
             {localize("templates.circle.placement.attachToToken")}
         </label>
     </div>
