@@ -21,6 +21,14 @@
 - originate from selection
 - system default option
 
+### All
+- Outline
+  - Add color option
+  - Add alpha option
+  - Add thickness option
+  - Add option to hide ruler text (`_refreshRulerText()`)
+  - Also alter destination points?
+
 ### Targets (might need a new template type...)
 - rangefinding
 - when cursor over a token show the target ui
