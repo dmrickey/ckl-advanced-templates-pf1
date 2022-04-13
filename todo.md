@@ -36,6 +36,7 @@
 ## Settings
 - world
   - allow players to configure "use system"
+  - Build a custom form for updating cone rotation to only allow valid angles
 
 ---
 
