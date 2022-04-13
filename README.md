@@ -20,7 +20,7 @@ Clicking it will open the configuration menu, this is what the options look like
   - Select Grid Placement - This is for your standard area of effect spell, so if you're configuring something like a fireball where you choose where the spell goes, this is the option you want. This is the default option if a Circle isn't configured.
   - Centered on Token - This is for something like a cleric's Channel ability or Obscuring Mist. This is for when you don't need to make a choice on where to place the circle, and the template will be automatically placed at your token
   - Splash Weapon - This will target a grid intersection unless you hover over a token, then it will target the token and the adjacent squares to allow for splash damage.
-  - Use System Default - This is for if there's a special case not covered by the above options and you need the spell to use PF1's default method where it can be placed anywhere on the grid
+  - Use System Default - This is set up to mimic Foundry's default circle placement where it can be placed anywhere on the grid.
 - Effect Type
   - Rules-wise, each of these behave different regarding walls or how they effect if they're cast from a "centered on token" spell. Currently, I do not take walls into account at all and selecting this will only change how "Centered on Token" behaves. In the future, I may add the ability for these to follow the rules regarding walls, so if they're configured now, at that point they would automatically work with walls as expected.
 - Override Texture
