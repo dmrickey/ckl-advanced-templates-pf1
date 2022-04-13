@@ -26,7 +26,7 @@ Clicking it will open the configuration menu, this is what the options look like
 - Override Texture
   - Custom Texture - This is the same as what's provided in the item's Details, but paired with a couple extra options.
   - Texture Alpha - Allows you to alter the transparency of the texture. `1` is completely opaque while values closer to `0` are more transparent
-  - Texture Scale - Allows you to alter how large the texture is. `1` is the texture's normal scale. Values closer to `0` will be smaller. `2` is twice as big, `3` is three times as big, etc. The maximum value is 10. As is the case with pf1, the texture will not extend beyond the outline of the template.
+  - Texture Scale - Allows you to alter how large the texture is. `1` is the texture's normal scale. Values closer to `0` will be smaller. `2` is twice as big, `3` is three times as big, etc. The maximum value is `10`. As is the case with pf1, the texture will not extend beyond the outline of the template.
 - Override Color
   - Custom Color - This is the same as what's provided in the item's Details, but re-shown here to show how it interacts with Color Alpha. If this is turned off, then this will also show you that it will use your player fill color.
 - Color Alpha - Allows you to alter the transparency of the template's fill color. `1` is completely opaque while `0` is completely transparent. If you want to turn the fill color off, then set this to `0`. As you change this value, the color shown just above will adjust to show you the effect of this value.
