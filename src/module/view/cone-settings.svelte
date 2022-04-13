@@ -4,6 +4,7 @@
     import { CONSTS, MODULE_NAME } from "../consts";
     import { ifDebug, localize } from "../scripts/utils";
 
+    export let itemPf = void 0;
     export let updates = void 0;
 
     const placements = [
@@ -22,7 +23,8 @@
     ];
 
     // initialize cone options
-    updates.data.flags[MODULE_NAME][CONSTS.flags.placementType] ||= CONSTS.placement.cone.selectTargetSquare;
+    updates.data.flags[MODULE_NAME][CONSTS.flags.placementType] ||=
+        itemPf.data.flags[MODULE_NAME]?.[CONSTS.flags.placementType] || CONSTS.placement.cone.selectTargetSquare;
 
     ifDebug(() => console.log("Opening cone settings for:", updates));
 </script>
