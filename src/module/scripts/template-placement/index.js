@@ -26,16 +26,6 @@ async function promptMeasureTemplate(wrapped, shared) {
 
     const type = this.data.data.measureTemplate.type;
 
-    if (!['cone', 'circle'].includes(type)
-        || (type === 'cone' && this.getFlag(MODULE_NAME, CONSTS.flags.placementType) === CONSTS.placement.useSystem)
-    ) {
-        // todo assign flags to created template
-        return wrapped(shared);
-    }
-
-    const windows = Object.values(ui.windows).filter((x) => !!x.minimize && !x._minimized);
-    await Promise.all(windows.map((x) => x.minimize()));
-
     const token = getToken(this) || {};
     const icon = this.data.img === 'systems/pf1/icons/misc/magic-swirl.png' ? undefined : this.data.img;
     const { minRange, maxRange } = this;
@@ -61,6 +51,19 @@ async function promptMeasureTemplate(wrapped, shared) {
             ? this.data.data.measureTemplate.customTexture
             : null,
     };
+
+    if (!['cone', 'circle'].includes(type)
+        || (type === 'cone' && this.data.flags[MODULE_NAME]?.[CONSTS.flags.placementType] === CONSTS.placement.useSystem)
+    ) {
+        const wrappedResult = await wrapped(shared);
+        if (shared.template) {
+            await shared.template.update({ flags: templateData.flags });
+        }
+        return wrappedResult;
+    }
+
+    const windows = Object.values(ui.windows).filter((x) => !!x.minimize && !x._minimized);
+    await Promise.all(windows.map((x) => x.minimize()));
 
     const template = await game[MODULE_NAME].AbilityTemplateAdvanced.fromData(templateData, this);
     if (!template) {
