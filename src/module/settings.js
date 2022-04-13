@@ -1,101 +1,111 @@
 import { MODULE_NAME } from "./consts";
 
+const keys = {
+    debug: 'debug',
+    target: 'target',
+    reExpand: 'reExpand',
+    cone15Alternate: 'cone15Alternate',
+    coneRotation: 'coneRotation',
+    useSystem: 'useSystem',
+};
+
 const settings = {
-    client: {
-        debug: {
-            key: 'debug',
-            name: `${MODULE_NAME}.settings.debug.name`,
-            hint: `${MODULE_NAME}.settings.debug.hint`,
-            type: Boolean,
-            config: true,
-            default: false,
-        },
-        target: {
-            key: 'target',
-            name: `${MODULE_NAME}.settings.target.name`,
-            hint: `${MODULE_NAME}.settings.target.hint`,
-            type: Boolean,
-            config: true,
-            default: true,
-        },
-        reExpand: {
-            key: 'reExpand',
-            name: `${MODULE_NAME}.settings.reExpand.name`,
-            hint: `${MODULE_NAME}.settings.reExpand.hint`,
-            type: Boolean,
-            config: true,
-            default: false,
-        },
+    [keys.debug]: {
+        config: true,
+        default: false,
+        type: Boolean,
+        scope: 'client',
     },
-    world: {
-        cone15Alternate: {
-            key: 'cone15Alternate',
-            name: `${MODULE_NAME}.settings.cone15Alternate.name`,
-            hint: `${MODULE_NAME}.settings.cone15Alternate.hint`,
-            type: Boolean,
-            config: false,
-            default: false,
-        },
-        coneRotation: {
-            key: 'coneRotation',
-            name: `${MODULE_NAME}.settings.coneRotation.name`,
-            hint: `${MODULE_NAME}.settings.coneRotation.hint`,
-            type: Boolean,
-            config: false,
-            default: false,
-        },
-        useSystem: {
-            key: 'useSystem',
-            name: `${MODULE_NAME}.settings.useSystem.name`,
-            hint: `${MODULE_NAME}.settings.useSystem.hint`,
-            type: Boolean,
-            config: false,
-            default: false,
-        },
+    [keys.target]: {
+        config: true,
+        default: true,
+        type: Boolean,
+        scope: 'client',
+    },
+    [keys.reExpand]: {
+        config: true,
+        default: false,
+        type: Boolean,
+        scope: 'client',
+    },
+    [keys.cone15Alternate]: {
+        config: false,
+        default: false,
+        type: Boolean,
+        scope: 'world',
+    },
+    [keys.coneRotation]: {
+        config: true,
+        default: 0,
+        type: Number,
+        scope: 'world',
+    },
+    [keys.useSystem]: {
+        config: false,
+        default: false,
+        type: Boolean,
+        scope: 'world',
     },
 };
 
-const initSetting = (scope) =>
-    Object.keys(settings[scope])
-        .map((key) => settings[scope][key])
-        .forEach((setting) =>
-            game.settings.register(MODULE_NAME, setting.key, {
-                ...setting,
-                scope,
+const initSettings = () =>
+    Object.keys(settings)
+        .forEach((key) => {
+            game.settings.register(MODULE_NAME, key, {
+                name: `${MODULE_NAME}.settings.${key}.name`,
+                hint: `${MODULE_NAME}.settings.${key}.hint`,
+                ...settings[key],
             })
-        );
+        });
 
 /**
  * Setup module-specific settings
  */
 export function registerSettings() {
-    initSetting('client');
-    initSetting('world');
+    initSettings();
 }
 
 export class Settings {
-    static get cone15Alternate() {
-        return Settings.#getSetting('cone15Alternate');
+    /**
+     * GM: allows users to place cones per the rules text in addition to the rules picture
+     */
+    static get [keys.cone15Alternate]() {
+        return Settings.#getSetting(keys.cone15Alternate);
     }
 
-    static get coneRotation() {
-        return Settings.#getSetting('coneRotation');
+    /**
+     * GM: Gets the degrees the user are allowed to rotate a cone
+     */
+    static get [keys.coneRotation]() {
+        return Settings.#getSetting(keys.coneRotation);
     }
 
-    static get debug() {
-        return Settings.#getSetting('debug');
+    /**
+     * User: displays extra console logs that I placed during development
+     */
+    static get [keys.debug]() {
+        return Settings.#getSetting(keys.debug);
     }
 
-    static get reExpand() {
-        return Settings.#getSetting('reExpand');
+    /**
+     * User: automatically re-expand collapsed sheets after placing a template
+     */
+    static get [keys.reExpand]() {
+        return Settings.#getSetting(keys.reExpand);
     }
 
-    static get target() {
-        return Settings.#getSetting('target');
+    /**
+     * User: automatically target tokens when placing a template
+     */
+    static get [keys.target]() {
+        return Settings.#getSetting(keys.target);
     }
 
-    static get useSystem() {
-        return Settings.#getSetting('useSystem');
+    /**
+     * GM: allows user to use the "use system" option (currently unused)
+     */
+    static get [keys.useSystem]() {
+        return Settings.#getSetting(keys.useSystem);
     }
 
     static #getSetting(key) {

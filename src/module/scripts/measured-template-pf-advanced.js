@@ -761,18 +761,19 @@ const initMeasuredTemplate = () => {
             let currentSpotIndex = 0;
             const updateTemplateRotation = async (crosshairs) => {
                 let offsetAngle = 0;
-                // todo add GM setting to enable this
-                canvas.app.view.onwheel = (event) => {
-                    // Avoid zooming the browser window
-                    if (event.ctrlKey) {
-                        event.preventDefault();
-                    }
-                    event.stopPropagation();
 
-                    // todo configure snap distance (default to 45)
-                    const snap = 5;
-                    offsetAngle += snap * Math.sign(event.deltaY);
-                };
+                const snap = Settings.coneRotation;
+                if (snap) {
+                    canvas.app.view.onwheel = (event) => {
+                        // Avoid zooming the browser window
+                        if (event.ctrlKey) {
+                            event.preventDefault();
+                        }
+                        event.stopPropagation();
+
+                        offsetAngle += snap * Math.sign(event.deltaY);
+                    };
+                }
 
                 while (crosshairs.inFlight) {
                     await warpgate.wait(100);

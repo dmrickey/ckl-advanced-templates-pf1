@@ -21,7 +21,9 @@ export const CONSTS = {
         },
         cone: {
         },
+        allowConeRotation: 'allowConeRotation',
         colorAlpha: 'colorAlpha',
+        coneRotationAngle: 'coneRotationAngle',
         expireAtTurnEnd: 'exireAtTurnEnd',
         ignoreRange: 'ignoreRange',
         hideHighlight: 'hideHighlight',
