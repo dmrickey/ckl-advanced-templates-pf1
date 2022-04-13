@@ -38,7 +38,7 @@ Clicking it will open the configuration menu, this is what the options look like
 
 This is the configuration menu for a cone
 
-![image](https://user-images.githubusercontent.com/3664822/162764602-9cf48a13-1cca-4a0e-a0a4-2e5402297a11.png)
+![image](https://user-images.githubusercontent.com/3664822/163085523-d79358b1-ec81-4d45-bd73-0a8b72285a44.png)
 
 - Placement Type
   - Originate from Caster - This is the default placement type for cones if no option is configured. This will make the cone "stick" to the casting token and follow the cursor around the screen. It follow the rules for placing cones away from the caster and does not allow for rotating the cones at different angles--I have plans to add the ability for the GM to enable this option for players in the future.
