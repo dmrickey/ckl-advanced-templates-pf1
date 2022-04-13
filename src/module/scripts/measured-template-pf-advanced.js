@@ -782,7 +782,11 @@ const initMeasuredTemplate = () => {
                     const radToNormalizedAngle = (rad) => {
                         let angle = (rad * 180 / Math.PI) % 360;
                         // offset the angle for even-sided tokens, because it's centered in the grid it's just wonky without the offset
-                        const offset = this._is15 ? 0 : 1;
+                        const offset = this._is15
+                            ? Settings.cone15Alternate
+                                ? 0.5
+                                : 0
+                            : 1;
                         if (this._tokenSquare.heightSquares % 2 === offset && this._tokenSquare.widthSquares % 2 === offset) {
                             angle -= (360 / totalSpots) / 2;
                         }
@@ -872,7 +876,7 @@ const initMeasuredTemplate = () => {
         }
 
         _sourceSquare(center, widthSquares, heightSquares) {
-            const gridSize = canvas.grid.h;
+            let gridSize = canvas.grid.h;
             const h = gridSize * heightSquares;
             const w = gridSize * widthSquares;
 
@@ -881,27 +885,43 @@ const initMeasuredTemplate = () => {
             const top = center.y - h / 2;
             const right = center.x + w / 2;
 
-            // todo read from a gm setting to see if the gm wants to allow the alternate 15' option and figure how to do both simultaneously
             // 15 foot cones originate in the middle of the grid, so for every square-edge there's one origin point instead of two
-            const gridOffset = this._is15 ? gridSize / 2 : 0;
-            const qtyOffset = this._is15 ? 0 : 1;
+            const gridOffset = this._is15 && !Settings.cone15Alternate
+                ? gridSize / 2
+                : 0;
 
-            const rightSpots = [...new Array(heightSquares + qtyOffset)].map((_, i) => ({
+            // "cheat" by cutting gridsize in half since we're essentially allowing two placement spots per grid square
+            if (this._is15 && Settings.cone15Alternate) {
+                gridSize /= 2;
+            }
+
+            const heightSpots = this._is15 && Settings.cone15Alternate
+                ? heightSquares * 2 + 1
+                : this._is15
+                    ? heightSquares
+                    : heightSquares + 1;
+            const widthSpots = this._is15 && Settings.cone15Alternate
+                ? widthSquares * 2 + 1
+                : this._is15
+                    ? widthSquares
+                    : widthSquares + 1;
+
+            const rightSpots = [...new Array(widthSpots)].map((_, i) => ({
                 direction: 0,
                 x: right,
                 y: top + gridSize * i + gridOffset,
             }));
-            const bottomSpots = [...new Array(widthSquares + qtyOffset)].map((_, i) => ({
+            const bottomSpots = [...new Array(heightSpots)].map((_, i) => ({
                 direction: 90,
                 x: right - gridSize * i - gridOffset,
                 y: bottom,
             }));
-            const leftSpots = [...new Array(heightSquares + qtyOffset)].map((_, i) => ({
+            const leftSpots = [...new Array(widthSpots)].map((_, i) => ({
                 direction: 180,
                 x: left,
                 y: bottom - gridSize * i - gridOffset,
             }));
-            const topSpots = [...new Array(widthSquares + qtyOffset)].map((_, i) => ({
+            const topSpots = [...new Array(heightSpots)].map((_, i) => ({
                 direction: 270,
                 x: left + gridSize * i + gridOffset,
                 y: top,

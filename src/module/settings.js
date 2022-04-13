@@ -29,7 +29,7 @@ const settings = {
         scope: 'client',
     },
     [keys.cone15Alternate]: {
-        config: false,
+        config: true,
         default: false,
         type: Boolean,
         scope: 'world',
@@ -69,42 +69,42 @@ export class Settings {
     /**
      * GM: allows users to place cones per the rules text in addition to the rules picture
      */
-    static get [keys.cone15Alternate]() {
+    static get cone15Alternate() {
         return Settings.#getSetting(keys.cone15Alternate);
     }
 
     /**
      * GM: Gets the degrees the user are allowed to rotate a cone
      */
-    static get [keys.coneRotation]() {
+    static get coneRotation() {
         return Settings.#getSetting(keys.coneRotation);
     }
 
     /**
      * User: displays extra console logs that I placed during development
      */
-    static get [keys.debug]() {
+    static get debug() {
         return Settings.#getSetting(keys.debug);
     }
 
     /**
      * User: automatically re-expand collapsed sheets after placing a template
      */
-    static get [keys.reExpand]() {
+    static get reExpand() {
         return Settings.#getSetting(keys.reExpand);
     }
 
     /**
      * User: automatically target tokens when placing a template
      */
-    static get [keys.target]() {
+    static get target() {
         return Settings.#getSetting(keys.target);
     }
 
     /**
      * GM: allows user to use the "use system" option (currently unused)
      */
-    static get [keys.useSystem]() {
+    static get useSystem() {
         return Settings.#getSetting(keys.useSystem);
     }
 
