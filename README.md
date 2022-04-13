@@ -43,17 +43,24 @@ This is the configuration menu for a cone
 - Placement Type
   - Originate from Caster - This is the default placement type for cones if no option is configured. This will make the cone "stick" to the casting token and follow the cursor around the screen. It follow the rules for placing cones away from the caster and does not allow for rotating the cones at different angles--I have plans to add the ability for the GM to enable this option for players in the future.
   - Originate from Selection - Allows you to select a grid square on the map, and then choose the cone direction via the same technique just described.
-  - Use System Default - see circle
+  - Use System Default - see circle for full description. There's a caveat here, if you have a custom texture or a Color Alpha set, it won't show up as expected until _after_ the cone has been placed.
 - Extra options
   - For the remaining options, see circle
 
 ## Game Settings
 
-![image](https://user-images.githubusercontent.com/3664822/158040092-db04fb6d-7039-4c81-b144-d0ae7983b8ca.png)
+![image](https://user-images.githubusercontent.com/3664822/163084801-6bf5adde-d21c-42bc-8474-f0db2967b538.png)
+
+# Player Settings
 
 - Enable Debug Logging - this is a bunch of random log messages that I added in during development. If you have a problem, turning this on and reproducing it could provide me with useful info to know what went wrong.
 - Target Tokens in Template - This updates your targets as you move the template preview to show you what tokens your template will effect.
 - Re-expand Collapsed Sheets - When you start placing a template, any sheets you have open will be collapsed so you can fully see the scene to choose where to place your template. By default they remain collapsed after the template has been placed. This is mainly because if have extra things that happen (like animations) and want to be able to see those results, if the sheets re-exapnded to cover the scene you wouldn't get to see to those. If you enable this, then the sheets will be re-expanded after the template is placed.
+
+# GM Settings
+
+- Allow 15' Alternate Cone - The rules text says spells originate from a grid intersection. The graphic for showing valid cone placement and the Paizo FAQ indicates that the 15' cone is an exception to this and that the graphic is correct. If you want to allow your players (and yourself) to also use an alternate (and wider) 15' cone (though it's not really a cone any more..) then enable this option
+- ALlow Non-Standard Cone Rotations - The rules say that cones are cast away from the caster, leaving this disabled is rules as written. However, if you want your players (or yourself) to be able to cast a cone from the corner of your square but the rotate it so it cuts across in front of you, then enable this option. For best results, set it to `22.5`, `15`, or `5`. `45` is also a completely valid value if you want the cone to be able to be rotated and don't want "weird" shapes mixed in at different angles--setting it to `45` will basically rotate through legal cones at illegal angles.
 
 ## Other Changes
 
