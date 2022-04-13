@@ -25,7 +25,7 @@ class DurationTracker {
 
     static async removeEndOfTurnTemplates() {
         const templateIds = canvas.templates.placeables
-            .filter((t) => !!t.data.flags?.[MODULE_NAME]?.[CONSTS.flags.exireAtTurnEnd])
+            .filter((t) => !!t.data.flags?.[MODULE_NAME]?.[CONSTS.flags.expireAtTurnEnd])
             .map((t) => t.id);
 
         if (templateIds.length) {

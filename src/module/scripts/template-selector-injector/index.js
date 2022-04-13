@@ -1,5 +1,7 @@
-import { CirclePlacement } from '../template-placement/circle-placement';
-import { ConePlacement } from '../template-placement/cone-placement';
+import {
+    showConeSettings,
+    showCircleSettings
+} from '../../view/show-template-settings';
 import { localize } from '../utils';
 import template from './template.js';
 
@@ -32,14 +34,12 @@ export default async function (sheet, jq, _options) {
                 switch (type) {
                     case 'circle':
                         {
-                            const placement = new CirclePlacement(item);
-                            await placement.showPlacementMenu();
+                            showCircleSettings(item);
                         }
                         break;
                     case 'cone':
                         {
-                            const placement = new ConePlacement(item);
-                            await placement.showPlacementMenu();
+                            showConeSettings(item);
                         }
                         break;
                 }

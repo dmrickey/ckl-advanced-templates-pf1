@@ -19,11 +19,11 @@
             },
             "coneRotation": {
                 "name": "Allow Non-Standard Cone Rotations",
-                "hint": "If enabled, your players can rotate their cone spells in any direction instead of just \"away from their token\"."
+                "hint": "Set this number to allow your players to rotate cones with the mouse wheel. The number determins each incremental rotation. 0 means the cone will always be pointed \"away from the caster\". For best results, set this to a 45 or lower and it should be a divisor of 45 (e.g. 45, 22.5, 9, 5, etc)\n\nI do not recommend this option. It goes against the intent of the Pathfinder mechanics and I cannot provide a good placement experience without a good bit of rework to my existing cone-placement logic."
             },
             "useSystem": {
                 "name": "Allow System Template Placement",
-                "hint": "If disabled, only a GM will be allowed to configure a template to use \"system default\". So players will only be able to configure their own spells to use the new templte placement options. If a player reconfigures a template that a GM has set to use \"use system\" then that setting will be lost until the GM re-updates it."
+                "hint": "If enabled, templates can be configured with \"use default\". Enable this option if this mod does not provide a placement option that satisfies a given need. If that's the case please let me know so I can provide a new template placement option."
             }
         },
         "templates": {
@@ -47,12 +47,16 @@
                     "selectTargetSquare.label": "Originate from Selection"
                 }
             },
-            "placement.selection.label": "Select placement type for this {itemType}",
-            "placement.useSystem.label": "Use System Default",
+            "chooseOptions": "Choose Options",
+            "colorAlpha.label": "Color Alpha",
             "deleteAtTurnEnd": "Delete Template at End of Turn",
+            "hideOutline.label": "Hide Outline",
             "ignoreRange": "Ignore Range Restriction",
             "modalTitle": "{itemName} Template",
-            "chooseOptions": "Choose Options"
+            "placement.selection.label": "Select template options for this {itemType}",
+            "placement.useSystem.label": "Use System Default",
+            "textureAlpha.label": "Texture Alpha",
+            "textureScale.label": "Texture Scale"
         },
         "ok": "Ok",
         "cancel": "Cancel",

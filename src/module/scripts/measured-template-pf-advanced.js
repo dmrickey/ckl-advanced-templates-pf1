@@ -1,6 +1,6 @@
 import { CONSTS, MODULE_NAME } from '../consts';
 import { Settings } from '../settings';
-import { getToken, ifDebug, localize, localizeF } from './utils';
+import { getToken, ifDebug, localize } from './utils';
 
 // unfortunately, since I'm extenidng a class defined in PF1, there's no way to do this in a traditional "one class per file" because
 // then it would need to exist as soon as Foundry starts. So it can't be in its own file and exported. It needs to all be defined in
@@ -121,8 +121,12 @@ const initMeasuredTemplate = () => {
                     break;
             }
 
+            const outlineAlpha = this.data.flags[MODULE_NAME]?.[CONSTS.flags.hideOutline]
+                ? 0
+                : 0.75;
+
             // Draw the Template outline
-            this.template.clear().lineStyle(this._borderThickness, this.borderColor, 0.75).beginFill(0x000000, 0.0);
+            this.template.clear().lineStyle(this._borderThickness, this.borderColor, outlineAlpha).beginFill(0x000000, 0.0);
 
             // this is a bit overridden
             // Fill Color or Texture
@@ -130,21 +134,25 @@ const initMeasuredTemplate = () => {
                 let xOffset = true;
                 let yOffset = true;
 
+                const textureAlpha = this.data.flags[MODULE_NAME]?.[CONSTS.flags.textureAlpha] || 0.5;
+                const scaleOverride = this.data.flags[MODULE_NAME]?.[CONSTS.flags.textureScale] || 1;
+                let textureSize = distance * scaleOverride;
+
                 if (this.data.t === 'cone') {
-                    distance /= 2;
+                    textureSize /= 2;
                     xOffset = false;
                 }
 
                 const tileTexture = false; // todo
-                const scale = tileTexture ? 1 : distance * 2 / this.texture.width;
-                const offset = tileTexture ? 0 : distance;
+                const scale = tileTexture ? 1 : textureSize * 2 / this.texture.width;
+                const offset = tileTexture ? 0 : (textureSize);
                 this.template.beginTextureFill({
                     texture: this.texture,
                     matrix: new PIXI.Matrix()
                         .scale(scale, scale)
                         .translate(xOffset ? -offset : 0, yOffset ? -offset : 0)
                         .rotate(direction),
-                    alpha: .5,
+                    alpha: textureAlpha,
                 });
             }
             else {
@@ -261,6 +269,46 @@ const initMeasuredTemplate = () => {
 
             return super.getHighlightedSquares();
         }
+
+        // only override is adding alpha
+        // Highlight grid in PF1 style
+        highlightGrid() {
+            if (
+                !game.settings.get("pf1", "measureStyle")
+                || !["circle", "cone", "ray"].includes(this.data.t)
+                || canvas.grid.type !== CONST.GRID_TYPES.SQUARE
+            ) {
+                return super.highlightGrid();
+            }
+
+            const grid = canvas.grid;
+            const bc = this.borderColor;
+            const fc = this.fillColor;
+
+            // Only highlight for objects which have a defined shape
+            if (!this.id || !this.shape) {
+                return;
+            }
+
+            // Clear existing highlight
+            const hl = this.getHighlightLayer();
+            hl.clear();
+
+            // highlightGridPosition has a default so undefined is fine to pass in
+            const alpha = this.data.flags[MODULE_NAME]?.[CONSTS.flags.colorAlpha];
+
+            // Get grid squares to highlight
+            const highlightSquares = this.getHighlightedSquares();
+            for (const s of highlightSquares) {
+                grid.grid.highlightGridPosition(hl, {
+                    x: s.x,
+                    y: s.y,
+                    alpha,
+                    color: fc,
+                    border: bc,
+                });
+            }
+        }
     }
 
     CONFIG.MeasuredTemplate.objectClass = MeasuredTemplatePFAdvanced;
@@ -291,9 +339,12 @@ const initMeasuredTemplate = () => {
                         case CONSTS.placement.circle.splash:
                             abilityCls = AbilityTemplateCircleSplash;
                             break;
+                        case CONSTS.placement.useSystem:
+                            abilityCls = AbilityTemplateCircleAnywhere;
+                            break;
                         case CONSTS.placement.circle.grid:
                         default:
-                            abilityCls = AbilityTemplateCircle;
+                            abilityCls = AbilityTemplateCircleGrid;
                             break;
                     }
                     break;
@@ -407,12 +458,14 @@ const initMeasuredTemplate = () => {
         }
     }
 
-    class AbilityTemplateCircle extends AbilityTemplateAdvanced {
+    class AbilityTemplateCircleGrid extends AbilityTemplateAdvanced {
         _maxRange;
         _hasMaxRange;
         _minRange;
         _hasMinRange;
         _tokenSquare;
+
+        _gridInterval() { return 1; }
 
         _calculateTokenSquare(token) {
             const heightSquares = Math.max(Math.round(token.data.height), 1);
@@ -510,7 +563,7 @@ const initMeasuredTemplate = () => {
                             ? game.i18n.localize('PF1.DistFtShort')
                             : game.i18n.localize('PF1.DistMShort');
                         crosshairs.label = `${range} ${unit}`;
-                        crosshairs.label = localizeF('range', { range, unit });
+                        crosshairs.label = localize('range', { range, unit });
 
                         if (icon && icon !== this.controlIcon?.iconSrc) {
                             this.data.flags[MODULE_NAME].icon = icon;
@@ -536,7 +589,7 @@ const initMeasuredTemplate = () => {
             const targetConfig = {
                 drawIcon: false,
                 drawOutline: false,
-                interval: 1,
+                interval: this._gridInterval(),
             };
             const crosshairs = await warpgate.crosshairs.show(
                 targetConfig,
@@ -578,7 +631,12 @@ const initMeasuredTemplate = () => {
         }
     }
 
-    class AbilityTemplateCircleSplash extends AbilityTemplateCircle {
+    class AbilityTemplateCircleAnywhere extends AbilityTemplateCircleGrid {
+        /** @override */
+        _gridInterval() { return 2; }
+    }
+
+    class AbilityTemplateCircleSplash extends AbilityTemplateCircleGrid {
         /** @override */
         async commitPreview() {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
@@ -636,7 +694,7 @@ const initMeasuredTemplate = () => {
                             ? game.i18n.localize('PF1.DistFtShort')
                             : game.i18n.localize('PF1.DistMShort');
                         crosshairs.label = `${range} ${unit}`;
-                        crosshairs.label = localizeF('range', { range, unit });
+                        crosshairs.label = localize('range', { range, unit });
 
                         if (icon && icon !== this.controlIcon?.iconSrc) {
                             this.data.flags[MODULE_NAME].icon = icon;
@@ -703,18 +761,19 @@ const initMeasuredTemplate = () => {
             let currentSpotIndex = 0;
             const updateTemplateRotation = async (crosshairs) => {
                 let offsetAngle = 0;
-                // todo add GM setting to enable this
-                canvas.app.view.onwheel = (event) => {
-                    // Avoid zooming the browser window
-                    if (event.ctrlKey) {
-                        event.preventDefault();
-                    }
-                    event.stopPropagation();
 
-                    // todo configure snap distance (default to 45)
-                    const snap = 5;
-                    offsetAngle += snap * Math.sign(event.deltaY);
-                };
+                const snap = Settings.coneRotation;
+                if (snap) {
+                    canvas.app.view.onwheel = (event) => {
+                        // Avoid zooming the browser window
+                        if (event.ctrlKey) {
+                            event.preventDefault();
+                        }
+                        event.stopPropagation();
+
+                        offsetAngle += snap * Math.sign(event.deltaY);
+                    };
+                }
 
                 while (crosshairs.inFlight) {
                     await warpgate.wait(100);
@@ -723,7 +782,11 @@ const initMeasuredTemplate = () => {
                     const radToNormalizedAngle = (rad) => {
                         let angle = (rad * 180 / Math.PI) % 360;
                         // offset the angle for even-sided tokens, because it's centered in the grid it's just wonky without the offset
-                        const offset = this._is15 ? 0 : 1;
+                        const offset = this._is15
+                            ? Settings.cone15Alternate
+                                ? 0.5
+                                : 0
+                            : 1;
                         if (this._tokenSquare.heightSquares % 2 === offset && this._tokenSquare.widthSquares % 2 === offset) {
                             angle -= (360 / totalSpots) / 2;
                         }
@@ -813,7 +876,7 @@ const initMeasuredTemplate = () => {
         }
 
         _sourceSquare(center, widthSquares, heightSquares) {
-            const gridSize = canvas.grid.h;
+            let gridSize = canvas.grid.h;
             const h = gridSize * heightSquares;
             const w = gridSize * widthSquares;
 
@@ -822,27 +885,43 @@ const initMeasuredTemplate = () => {
             const top = center.y - h / 2;
             const right = center.x + w / 2;
 
-            // todo read from a gm setting to see if the gm wants to allow the alternate 15' option and figure how to do both simultaneously
             // 15 foot cones originate in the middle of the grid, so for every square-edge there's one origin point instead of two
-            const gridOffset = this._is15 ? gridSize / 2 : 0;
-            const qtyOffset = this._is15 ? 0 : 1;
+            const gridOffset = this._is15 && !Settings.cone15Alternate
+                ? gridSize / 2
+                : 0;
 
-            const rightSpots = [...new Array(heightSquares + qtyOffset)].map((_, i) => ({
+            // "cheat" by cutting gridsize in half since we're essentially allowing two placement spots per grid square
+            if (this._is15 && Settings.cone15Alternate) {
+                gridSize /= 2;
+            }
+
+            const heightSpots = this._is15 && Settings.cone15Alternate
+                ? heightSquares * 2 + 1
+                : this._is15
+                    ? heightSquares
+                    : heightSquares + 1;
+            const widthSpots = this._is15 && Settings.cone15Alternate
+                ? widthSquares * 2 + 1
+                : this._is15
+                    ? widthSquares
+                    : widthSquares + 1;
+
+            const rightSpots = [...new Array(widthSpots)].map((_, i) => ({
                 direction: 0,
                 x: right,
                 y: top + gridSize * i + gridOffset,
             }));
-            const bottomSpots = [...new Array(widthSquares + qtyOffset)].map((_, i) => ({
+            const bottomSpots = [...new Array(heightSpots)].map((_, i) => ({
                 direction: 90,
                 x: right - gridSize * i - gridOffset,
                 y: bottom,
             }));
-            const leftSpots = [...new Array(heightSquares + qtyOffset)].map((_, i) => ({
+            const leftSpots = [...new Array(widthSpots)].map((_, i) => ({
                 direction: 180,
                 x: left,
                 y: bottom - gridSize * i - gridOffset,
             }));
-            const topSpots = [...new Array(widthSquares + qtyOffset)].map((_, i) => ({
+            const topSpots = [...new Array(heightSpots)].map((_, i) => ({
                 direction: 270,
                 x: left + gridSize * i + gridOffset,
                 y: top,

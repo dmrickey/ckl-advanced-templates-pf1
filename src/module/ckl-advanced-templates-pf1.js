@@ -34,7 +34,6 @@ Hooks.on('pf1.postInit', () => {
 });
 
 Hooks.on('updateToken', async (token, update, _options, _userId) => {
-    // eslint-disable-next-line
     if (!update?.hasOwnProperty('x') && !update?.hasOwnProperty('y')) {
         return;
     }

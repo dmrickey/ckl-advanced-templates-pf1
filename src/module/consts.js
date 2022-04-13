@@ -21,9 +21,15 @@ export const CONSTS = {
         },
         cone: {
         },
-        exireAtTurnEnd: 'exireAtTurnEnd',
+        allowConeRotation: 'allowConeRotation',
+        colorAlpha: 'colorAlpha',
+        coneRotationAngle: 'coneRotationAngle',
+        expireAtTurnEnd: 'exireAtTurnEnd',
         ignoreRange: 'ignoreRange',
         hideHighlight: 'hideHighlight',
+        hideOutline: 'hideOutline',
+        textureAlpha: 'textureAlpha',
+        textureScale: 'textureScale',
     },
     areaType: {
         burst: 'burst',
