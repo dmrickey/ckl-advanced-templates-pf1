@@ -6,7 +6,7 @@
 ### Circles
   - centered on self circle
     - disable dragging to update location (also editing x/y in details since it should be stuck to token)
-  - centered on target (e.g. Silence)
+  - centered on target (e.g. Silence, Meteor Swarm)
     - don't show template unless cursor is over a token
   - target grid
     - make sure dragging respects template placement rules
@@ -28,6 +28,7 @@
   - Add thickness option
   - Add option to hide ruler text (`_refreshRulerText()`)
   - Also alter destination points?
+- Add option for targeting multiple areas (Meteor Swarm)
 
 ### Targets (might need a new template type...)
 - rangefinding
