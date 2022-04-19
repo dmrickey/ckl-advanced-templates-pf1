@@ -11,6 +11,8 @@
   - target grid
     - make sure dragging respects template placement rules
   - Add aura ability to prompt buffs/debuffs
+  - Rangefinding
+    - Show error when attempting to cast a spell out of range (i.e. give feedback instead of silently failing)
 
 ### Cones
 - disable dragging and/or make sure dragging respects placement rules
