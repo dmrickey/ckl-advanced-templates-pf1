@@ -15,7 +15,7 @@
             },
             "cone15Alternate": {
                 "name": "Allow 15' Alternate Cone",
-                "hint": "If enabled, your players can use 15' coens that originate from a grid intersection when orienting the cone left/right/up/down instead of only the standard 15' cone grid outlines (as described by normal cone placement rules but not shown as any options in the 15' template diagrams)."
+                "hint": "If enabled, your players can use 15' cones that originate from a grid intersection when orienting the cone left/right/up/down instead of only the standard 15' cone grid outlines (as described by normal cone placement rules but not shown as any options in the 15' template diagrams)."
             },
             "coneRotation": {
                 "name": "Allow Non-Standard Cone Rotations",
