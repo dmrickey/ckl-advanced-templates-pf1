@@ -19,7 +19,7 @@
             },
             "coneRotation": {
                 "name": "Allow Non-Standard Cone Rotations",
-                "hint": "Set this number to allow your players to rotate cones with the mouse wheel. The number determins each incremental rotation. 0 means the cone will always be pointed \"away from the caster\". For best results, set this to a 45 or lower and it should be a divisor of 45 (e.g. 45, 22.5, 9, 5, etc)\n\nI do not recommend this option. It goes against the intent of the Pathfinder mechanics and I cannot provide a good placement experience without a good bit of rework to my existing cone-placement logic."
+                "hint": "Set this number to allow your players to rotate cones with the mouse wheel. The number determins each incremental rotation. 0 means the cone will always be pointed \"away from the caster\". For best results, set this to 45 or lower and it should be a divisor of 45 (e.g. 45, 22.5, 9, 5, etc.). This will result in some very weird \"cones\" but will give you more freedom in how you want to place them."
             },
             "useSystem": {
                 "name": "Allow System Template Placement",
