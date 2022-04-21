@@ -13,6 +13,7 @@
   - Add aura ability to prompt buffs/debuffs
   - Rangefinding
     - Show error when attempting to cast a spell out of range (i.e. give feedback instead of silently failing)
+  - Interval logic needs to be at the root level of the class so when I overwrite the update/drag implementation it has the same snap logic (i.e. grid intersection or not)
 
 ### Cones
 - disable dragging and/or make sure dragging respects placement rules
@@ -49,6 +50,17 @@
 - world
   - allow players to configure "use system"
   - Build a custom form for updating cone rotation to only allow valid angles
+
+---
+
+## Required for v.next
+- Unwrap PF1's measured templates
+  - instead extend foundry's measuredtemplates -- this will let me define templates in individual files instead of having to do them all within a single `initMeasuredTemplate` method in a single file.
+  - overwrite just PF1's implementation in pf1.onReady
+- Update/Delete token hooks need to use a local copy of "is first GM" instead of referencing PF1's
+- Canvas ready hook probably needs to be added at root of file instead of in `pf1.postInit` hook
+- Look through the rest of the logic to find any specific PF1 code
+  - Make sure the current item dialog hook stuff is only initialized for PF1
 
 ---
 
