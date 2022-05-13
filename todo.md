@@ -33,6 +33,7 @@
   - Add option to hide ruler text (`_refreshRulerText()`)
   - Also alter destination points?
 - Add option for targeting multiple areas (Meteor Swarm)
+- Update already-placed templates when updating a config (add flag on teh template for this item's ID then update those when this is updated)
 
 ### Targets (might need a new template type...)
 - rangefinding
@@ -47,9 +48,12 @@
 ---
 
 ## Settings
+- template
+  - allow setting fill / outline / alpha /etc values on placed templates
 - world
   - allow players to configure "use system"
   - Build a custom form for updating cone rotation to only allow valid angles
+  - global default fill opactiy that will be used when an override isn't set
 
 ---
 
