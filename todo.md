@@ -13,6 +13,7 @@
   - Add aura ability to prompt buffs/debuffs
   - Rangefinding
     - Show error when attempting to cast a spell out of range (i.e. give feedback instead of silently failing)
+    - Add "out of range" to distance to give pre-feedback
   - Interval logic needs to be at the root level of the class so when I overwrite the update/drag implementation it has the same snap logic (i.e. grid intersection or not)
 
 ### Cones
