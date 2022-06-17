@@ -36,7 +36,14 @@
         });
 
         setTimeout(() => {
-            picker.element[0].style.zIndex = `${Number.MAX_SAFE_INTEGER}`;
+            try {
+                picker.element[0].style.zIndex = `${Number.MAX_SAFE_INTEGER}`;
+            } catch {
+                // super specific catch for issue with how moulinette is overriding the default file picker
+                if (picker.picker) {
+                    picker.picker._element[0].style.zIndex = `${Number.MAX_SAFE_INTEGER}`;
+                }
+            }
         }, 100);
 
         await picker.browse(current);
