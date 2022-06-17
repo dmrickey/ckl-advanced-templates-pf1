@@ -59,6 +59,15 @@
 ---
 
 ## Required for v.next
+- update to support new PF1 actions
+- move saved data to individual actions
+- migrate current data to first action
+  - Make sure system is already migrated. If not, register for migration hook
+  - save whether or not my data has been migrated in an invisible world setting
+
+---
+
+## Required for generic version of mod (i.e. for support for systems besides PF1)
 - Unwrap PF1's measured templates
   - instead extend foundry's measuredtemplates -- this will let me define templates in individual files instead of having to do them all within a single `initMeasuredTemplate` method in a single file.
   - overwrite just PF1's implementation in pf1.onReady
@@ -66,6 +75,12 @@
 - Canvas ready hook probably needs to be added at root of file instead of in `pf1.postInit` hook
 - Look through the rest of the logic to find any specific PF1 code
   - Make sure the current item dialog hook stuff is only initialized for PF1
+- Make saving on the Item call a specific system handler
+
+---
+
+## Tech Debt
+- Flatten ui data store object and only expand it into the item's structure when saving. This will decouple the UI itself from the Item structure.
 
 ---
 
