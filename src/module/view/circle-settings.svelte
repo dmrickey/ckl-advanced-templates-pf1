@@ -2,7 +2,7 @@
     import { CONSTS, MODULE_NAME } from "../consts";
     import { ifDebug, localize } from "../scripts/utils";
 
-    export let itemPf = void 0;
+    export let action = void 0;
     export let updates = void 0;
 
     const placements = [
@@ -40,13 +40,13 @@
 
     // initialize circle options
     updates.data.flags[MODULE_NAME][CONSTS.flags.placementType] ||=
-        itemPf.data.flags[MODULE_NAME]?.[CONSTS.flags.placementType] || CONSTS.placement.circle.grid;
+        action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] || CONSTS.placement.circle.grid;
     updates.data.flags[MODULE_NAME][CONSTS.flags.circle.areaType] ||=
-        itemPf.data.flags[MODULE_NAME]?.[CONSTS.flags.circle.areaType] || CONSTS.areaType.burst;
+        action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.circle.areaType] || CONSTS.areaType.burst;
     updates.data.flags[MODULE_NAME][CONSTS.flags.ignoreRange] ||=
-        itemPf.data.flags[MODULE_NAME]?.[CONSTS.flags.ignoreRange] || false;
+        action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.ignoreRange] || false;
     updates.data.flags[MODULE_NAME][CONSTS.flags.circle.movesWithToken] ||=
-        itemPf.data.flags[MODULE_NAME]?.[CONSTS.flags.circle.movesWithToken] || false;
+        action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.circle.movesWithToken] || false;
 
     ifDebug(() => console.log("Opening circle settings for:", updates));
 </script>

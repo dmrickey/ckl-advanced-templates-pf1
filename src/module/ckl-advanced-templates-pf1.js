@@ -16,7 +16,7 @@ Hooks.once('init', async () => {
 
 // When ready
 Hooks.once('ready', async () => {
-    Hooks.on('renderItemSheetPF', injectTemplateSelector);
+    Hooks.on('renderItemActionSheet', injectTemplateSelector);
 
     DurationTracker.init();
 });

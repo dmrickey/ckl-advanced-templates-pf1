@@ -21,17 +21,17 @@
     ifDebug(() => console.log("Opening shared settings for:", updates));
 
     $: {
-        colorOverrideEnabled = updates.data.data.measureTemplate.overrideColor;
-        textureOverrideEnabled = updates.data.data.measureTemplate.overrideTexture;
+        colorOverrideEnabled = updates.data.measureTemplate.overrideColor;
+        textureOverrideEnabled = updates.data.measureTemplate.overrideTexture;
     }
 
     const selectTexture = async () => {
-        const current = updates.data.data.measureTemplate.customTexture;
+        const current = updates.data.measureTemplate.customTexture;
         const picker = new FilePicker({
             type: "imagevideo",
             current,
             callback: (path) => {
-                updates.data.data.measureTemplate.customTexture = path;
+                updates.data.measureTemplate.customTexture = path;
             },
         });
 
@@ -77,7 +77,7 @@
     <div class="form-group right-me">
         <label class="checkbox">
             {localizeFull("PF1.OverrideTexture")}
-            <input type="checkbox" bind:checked={updates.data.data.measureTemplate.overrideTexture} />
+            <input type="checkbox" bind:checked={updates.data.measureTemplate.overrideTexture} />
         </label>
     </div>
 
@@ -92,7 +92,7 @@
                     type="text"
                     disabled={!textureOverrideEnabled}
                     id="customTexture"
-                    bind:value={updates.data.data.measureTemplate.customTexture}
+                    bind:value={updates.data.measureTemplate.customTexture}
                 />
                 <button
                     class="file-picker-button"
@@ -159,7 +159,7 @@
     <div class="form-group right-me">
         <label class="checkbox">
             {localizeFull("PF1.OverrideColor")}
-            <input type="checkbox" bind:checked={updates.data.data.measureTemplate.overrideColor} />
+            <input type="checkbox" bind:checked={updates.data.measureTemplate.overrideColor} />
         </label>
     </div>
 
@@ -169,12 +169,12 @@
             {#if colorOverrideEnabled}
                 <label for="colorOverride">{localizeFull("PF1.CustomColor")}</label>
                 <div class="form-fields">
-                    <input id="colorOverride" type="text" bind:value={updates.data.data.measureTemplate.customColor} />
+                    <input id="colorOverride" type="text" bind:value={updates.data.measureTemplate.customColor} />
                     <div class="color-input-border">
                         <input
                             style="opacity: {updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}"
                             type="color"
-                            bind:value={updates.data.data.measureTemplate.customColor}
+                            bind:value={updates.data.measureTemplate.customColor}
                         />
                     </div>
                 </div>

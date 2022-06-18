@@ -15,13 +15,13 @@ import template from './template.js';
  * @param {*} _options unused
  */
 export default async function (sheet, jq, _options) {
-    const item = sheet.item;
-    const type = item?.data.data.measureTemplate?.type;
+    const action = sheet.action;
+    const type = action?.data.measureTemplate?.type;
     if (!['circle', 'cone'].includes(type)) {
         return;
     }
 
-    const templateGroupOptions = jq[0].querySelector('input[name="data.measureTemplate.overrideTexture"]')?.parentElement.parentElement;
+    const templateGroupOptions = jq[0].querySelector('input[name="measureTemplate.overrideTexture"]')?.parentElement.parentElement;
 
     if (templateGroupOptions) {
         const div = document.createElement('div');
@@ -34,12 +34,12 @@ export default async function (sheet, jq, _options) {
                 switch (type) {
                     case 'circle':
                         {
-                            showCircleSettings(item);
+                            showCircleSettings(action);
                         }
                         break;
                     case 'cone':
                         {
-                            showConeSettings(item);
+                            showConeSettings(action);
                         }
                         break;
                 }
