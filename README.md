@@ -72,17 +72,17 @@ Here's a few random changes that don't specifically fit into the above categorie
 
 manifest link: https://github.com/dmrickey/ckl-advanced-templates-pf1/releases/latest/download/module.json
 
-Last tested versions  
-Advanced Templates PF1 1.2.0  
-Foundry v9 255  
-PF1e 80.15
+Last tested versions
+Advanced Templates PF1 1.3.0
+Foundry v9 269
+PF1e 0.81.0
 
 Here's a quick visual demo of how to configure some of the options and how they work (no audio was recorded)
-https://youtu.be/r7oAkXw6-zU 
+https://youtu.be/r7oAkXw6-zU
 
 <details>
   <summary>Here's an example of placing a bomb</summary>
-  
+
 https://user-images.githubusercontent.com/3664822/159150950-cec5c5cb-4be2-486b-80c9-f5cbb305a9fa.mp4
-  
+
 </details>
