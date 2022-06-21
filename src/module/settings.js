@@ -49,7 +49,7 @@ const settings = {
     },
     [keys.migrationVersion]: {
         config: false,
-        default: 1,
+        default: 0,
         type: Number,
         scope: 'world',
     }
