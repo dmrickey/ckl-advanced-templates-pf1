@@ -4,21 +4,19 @@
     import { CONSTS, MODULE_NAME } from "../consts";
     import { ifDebug, localize } from "../scripts/utils";
 
-    export let itemPf = void 0;
+    export let action = void 0;
     export let TemplateApplication = void 0;
 
     const { application } = getContext("external");
 
-    const flags = itemPf.data.flags[MODULE_NAME];
-    const updateOptions = {
+    const flags = action.data.flags?.[MODULE_NAME];
+    const updates = {
         data: {
-            data: {
-                measureTemplate: {
-                    customColor: itemPf.data.data.measureTemplate.customColor || game.user.color,
-                    customTexture: itemPf.data.data.measureTemplate.customTexture,
-                    overrideColor: itemPf.data.data.measureTemplate.overrideColor,
-                    overrideTexture: itemPf.data.data.measureTemplate.overrideTexture,
-                },
+            measureTemplate: {
+                customColor: action.data.measureTemplate.customColor || game.user.color,
+                customTexture: action.data.measureTemplate.customTexture,
+                overrideColor: action.data.measureTemplate.overrideColor,
+                overrideTexture: action.data.measureTemplate.overrideTexture,
             },
             flags: {
                 [MODULE_NAME]: {
@@ -42,11 +40,11 @@
         },
     };
 
-    ifDebug(() => console.log("Opening settings for:", itemPf));
+    ifDebug(() => console.log("Opening settings for:", action));
 
     const applyTemplate = async () => {
-        ifDebug(() => console.log("Applying options:", updateOptions));
-        await itemPf.update(updateOptions.data);
+        ifDebug(() => console.log("Applying updates:", updates));
+        await action.update(updates.data);
         application.close();
     };
     const onCancel = () => {
@@ -55,9 +53,9 @@
 </script>
 
 <form class="pf1" novalidate on:submit|preventDefault={applyTemplate}>
-    <h3 class="form-header">{localize("templates.placement.selection.label", { itemType: itemPf.type })}</h3>
-    <svelte:component this={TemplateApplication} {itemPf} updates={updateOptions}>
-        <SharedSettings updates={updateOptions} />
+    <h3 class="form-header">{localize("templates.placement.selection.label")}</h3>
+    <svelte:component this={TemplateApplication} {action} {updates}>
+        <SharedSettings {updates} />
     </svelte:component>
 
     <div class="form-group">

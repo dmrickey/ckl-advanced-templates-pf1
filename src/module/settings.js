@@ -1,11 +1,12 @@
 import { MODULE_NAME } from "./consts";
 
 const keys = {
-    debug: 'debug',
-    target: 'target',
-    reExpand: 'reExpand',
     cone15Alternate: 'cone15Alternate',
     coneRotation: 'coneRotation',
+    debug: 'debug',
+    migrationVersion: 'migrationVersion',
+    reExpand: 'reExpand',
+    target: 'target',
     useSystem: 'useSystem',
 };
 
@@ -46,6 +47,12 @@ const settings = {
         type: Boolean,
         scope: 'world',
     },
+    [keys.migrationVersion]: {
+        config: false,
+        default: 0,
+        type: Number,
+        scope: 'world',
+    }
 };
 
 const initSettings = () =>
@@ -85,6 +92,14 @@ export class Settings {
      */
     static get debug() {
         return Settings.#getSetting(keys.debug);
+    }
+
+    static get migrationVersion() {
+        return Settings.#getSetting(keys.migrationVersion);
+    }
+
+    static set migrationVersion(version) {
+        game.settings.set(MODULE_NAME, keys.migrationVersion, version);
     }
 
     /**

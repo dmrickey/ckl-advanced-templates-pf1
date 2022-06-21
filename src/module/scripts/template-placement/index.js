@@ -24,19 +24,19 @@ async function promptMeasureTemplate(wrapped, shared) {
         };
     }
 
-    const type = this.data.data.measureTemplate.type;
+    const type = shared.action.data.measureTemplate.type;
 
     const token = getToken(this) || {};
-    const icon = this.data.img === 'systems/pf1/icons/misc/magic-swirl.png' ? undefined : this.data.img;
-    const { minRange, maxRange } = this;
+    const icon = shared.action.data.img === 'systems/pf1/icons/misc/magic-swirl.png' ? undefined : shared.action.data.img;
+    const { minRange, maxRange } = shared.action;
 
     const templateData = {
         _id: randomID(16),
-        distance: _getSize(this, shared) || 5,
+        distance: _getSize(shared) || 5,
         t: type,
         flags: {
             [MODULE_NAME]: {
-                ...this.data.flags[MODULE_NAME],
+                ...shared.action.data.flags?.[MODULE_NAME],
                 icon,
                 maxRange,
                 minRange,
@@ -44,16 +44,16 @@ async function promptMeasureTemplate(wrapped, shared) {
             },
         },
         user: game.userId,
-        fillColor: this.data.data.measureTemplate?.overrideColor
-            ? this.data.data.measureTemplate.customColor
+        fillColor: shared.action.data.measureTemplate?.overrideColor
+            ? shared.action.data.measureTemplate.customColor
             : game.user.color,
-        texture: this.data.data.measureTemplate?.overrideTexture
-            ? this.data.data.measureTemplate.customTexture
+        texture: shared.action.data.measureTemplate?.overrideTexture
+            ? shared.action.data.measureTemplate.customTexture
             : null,
     };
 
     if (!['cone', 'circle'].includes(type)
-        || (type === 'cone' && this.data.flags[MODULE_NAME]?.[CONSTS.flags.placementType] === CONSTS.placement.useSystem)
+        || (type === 'cone' && shared.action.data.flags[MODULE_NAME]?.[CONSTS.flags.placementType] === CONSTS.placement.useSystem)
     ) {
         const wrappedResult = await wrapped(shared);
         if (shared.template) {
@@ -65,7 +65,7 @@ async function promptMeasureTemplate(wrapped, shared) {
     const windows = Object.values(ui.windows).filter((x) => !!x.minimize && !x._minimized);
     await Promise.all(windows.map((x) => x.minimize()));
 
-    const template = await game[MODULE_NAME].AbilityTemplateAdvanced.fromData(templateData, this);
+    const template = await game[MODULE_NAME].AbilityTemplateAdvanced.fromData(templateData, shared.action);
     if (!template) {
         return { result: false };
     }
@@ -88,8 +88,8 @@ async function promptMeasureTemplate(wrapped, shared) {
 
 export default promptMeasureTemplate;
 
-const _getSize = (itemPf, shared) => typeof itemPf.data.data.measureTemplate.size === 'string'
-    ? RollPF.safeTotal(itemPf.data.data.measureTemplate.size, shared.rollData)
-    : game.pf1.utils.convertDistance(itemPf.data.data.measureTemplate.size)[0];
+const _getSize = (shared) => typeof shared.action.data.measureTemplate.size === 'string'
+    ? RollPF.safeTotal(shared.action.data.measureTemplate.size, shared.rollData)
+    : game.pf1.utils.convertDistance(shared.action.data.measureTemplate.size)[0];
 
 const hasTemplatePermission = () => game.permissions.TEMPLATE_CREATE.includes(game.user.role);

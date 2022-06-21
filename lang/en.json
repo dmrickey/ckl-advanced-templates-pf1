@@ -53,7 +53,7 @@
             "hideOutline.label": "Hide Outline",
             "ignoreRange": "Ignore Range Restriction",
             "modalTitle": "{itemName} Template",
-            "placement.selection.label": "Select template options for this {itemType}",
+            "placement.selection.label": "Select template options",
             "placement.useSystem.label": "Use System Default",
             "textureAlpha.label": "Texture Alpha",
             "textureScale.label": "Texture Scale"

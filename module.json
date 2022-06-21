@@ -48,6 +48,6 @@
     "system": [
         "pf1"
     ],
-    "minimumSystemVersion": "0.80.9",
+    "minimumSystemVersion": "0.81.0",
     "library": false
 }

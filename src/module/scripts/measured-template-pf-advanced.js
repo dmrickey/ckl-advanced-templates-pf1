@@ -314,7 +314,7 @@ const initMeasuredTemplate = () => {
     CONFIG.MeasuredTemplate.objectClass = MeasuredTemplatePFAdvanced;
 
     class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
-        static async fromData(templateData, itemPf) {
+        static async fromData(templateData, action) {
             const { t: type, distance } = templateData;
             if (!type
                 || !distance
@@ -327,7 +327,7 @@ const initMeasuredTemplate = () => {
             // Return the template constructed from the item data
             const cls = CONFIG.MeasuredTemplate.documentClass;
             const template = new cls(templateData, { parent: canvas.scene });
-            const placementType = itemPf.getFlag(MODULE_NAME, CONSTS.flags.placementType);
+            const placementType = action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType];
 
             let abilityCls;
             switch (type) {
@@ -362,7 +362,7 @@ const initMeasuredTemplate = () => {
             }
 
             const thisTemplate = new abilityCls(template);
-            await thisTemplate.initializePlacement(itemPf);
+            await thisTemplate.initializePlacement(action.parent);
 
             return thisTemplate;
         }
