@@ -1,11 +1,11 @@
-import { registerSettings } from './settings.js';
-
-import { MODULE_NAME } from './consts';
-import promptMeasureTemplate from './scripts/template-placement/';
-import injectTemplateSelector from './scripts/template-selector-injector';
-import { initMeasuredTemplate } from './scripts/measured-template-pf-advanced';
-import { DurationTracker } from './scripts/duration-tracker.js';
 import { deleteTemplatesForToken, moveTemplatesToToken } from './scripts/sync-templates-to-token.js';
+import { DurationTracker } from './scripts/duration-tracker.js';
+import { initMeasuredTemplate } from './scripts/measured-template-pf-advanced';
+import { MODULE_NAME } from './consts';
+import { registerSettings } from './settings.js';
+import injectTemplateSelector from './scripts/template-selector-injector';
+import migrateIfNeeded from './scripts/migration';
+import promptMeasureTemplate from './scripts/template-placement/';
 
 // Initialize module
 Hooks.once('init', async () => {
@@ -19,6 +19,15 @@ Hooks.once('ready', async () => {
     Hooks.on('renderItemActionSheet', injectTemplateSelector);
 
     DurationTracker.init();
+});
+
+Hooks.once('pf1.postReady', () => {
+    if (!game.pf1.isMigrating) {
+        migrateIfNeeded();
+    }
+    else {
+        Hooks.once('pf1.migrationFinished', migrateIfNeeded);
+    }
 });
 
 // Add any additional hooks if necessary
