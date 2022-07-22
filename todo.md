@@ -45,6 +45,8 @@
   - show available / targeted / remaining
   - needs to account for any extra logic like "has to be within x ft of main target"
   - will need to be able to commit while not using all available targets
+- Add targeting options hostile/all/allies
+- center on self does not target those in area
 
 ---
 
@@ -55,15 +57,6 @@
   - allow players to configure "use system"
   - Build a custom form for updating cone rotation to only allow valid angles
   - global default fill opactiy that will be used when an override isn't set
-
----
-
-## Required for v.next
-- update to support new PF1 actions
-- move saved data to individual actions
-- migrate current data to first action
-  - Make sure system is already migrated. If not, register for migration hook
-  - save whether or not my data has been migrated in an invisible world setting
 
 ---
 
