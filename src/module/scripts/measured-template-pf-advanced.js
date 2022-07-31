@@ -329,12 +329,15 @@ const initMeasuredTemplate = () => {
             const template = new cls(templateData, { parent: canvas.scene });
             const placementType = action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType];
 
+            const tokenId = templateData.flags?.[MODULE_NAME]?.tokenId;
+            const token = canvas.tokens.placeables.find((x) => x.id === tokenId);
+
             let abilityCls;
             switch (type) {
                 case 'circle':
                     switch (placementType) {
                         case CONSTS.placement.circle.self:
-                            abilityCls = AbilityTemplateCircleSelf;
+                            abilityCls = !!token ? AbilityTemplateCircleSelf : AbilityTemplateCircleGrid;
                             break;
                         case CONSTS.placement.circle.splash:
                             abilityCls = AbilityTemplateCircleSplash;
