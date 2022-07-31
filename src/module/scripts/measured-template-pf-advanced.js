@@ -434,6 +434,14 @@ const initMeasuredTemplate = () => {
          * @param {ItemPF} itemPf used to grab the token data for initial placement
          */
         async initializePlacement(itemPf) { }
+
+        targetIfEnabled() {
+            if (Settings.target) {
+                const targets = this.getTokensWithin();
+                const ids = targets.map((t) => t.id);
+                game.user.updateTokenTargets(ids);
+            }
+        }
     }
 
     class AbilityTemplateCircleSelf extends AbilityTemplateAdvanced {
@@ -442,6 +450,8 @@ const initMeasuredTemplate = () => {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
 
             await new Promise(r => setTimeout(r, 100));
+            this.targetIfEnabled();
+
             return true;
         }
 
@@ -453,12 +463,6 @@ const initMeasuredTemplate = () => {
             const { x, y } = token.center;
             this.data.x = x;
             this.data.y = y;
-
-            if (Settings.target && !isNaN(x) && !isNaN(y)) {
-                const targets = this.getTokensWithin();
-                const ids = targets.map((t) => t.id);
-                game.user.updateTokenTargets(ids);
-            }
         }
     }
 
@@ -582,11 +586,7 @@ const initMeasuredTemplate = () => {
                     this.data.y = y;
                     this.refresh();
 
-                    if (Settings.target) {
-                        const targets = this.getTokensWithin();
-                        const ids = targets.map((t) => t.id);
-                        game.user.updateTokenTargets(ids);
-                    }
+                    this.targetIfEnabled();
                 }
             };
 
@@ -713,11 +713,7 @@ const initMeasuredTemplate = () => {
                     this.data.y = y;
                     this.refresh();
 
-                    if (Settings.target) {
-                        const targets = this.getTokensWithin();
-                        const ids = targets.map((t) => t.id);
-                        game.user.updateTokenTargets(ids);
-                    }
+                    this.targetIfEnabled();
                 }
             };
 
@@ -818,11 +814,7 @@ const initMeasuredTemplate = () => {
                     this.data.y = y;
                     this.refresh();
 
-                    if (Settings.target) {
-                        const targets = this.getTokensWithin();
-                        const ids = targets.map((t) => t.id);
-                        game.user.updateTokenTargets(ids);
-                    }
+                    this.targetIfEnabled();
                 }
 
                 canvas.app.view.onwheel = null;
