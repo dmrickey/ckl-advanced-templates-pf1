@@ -46,7 +46,6 @@
   - needs to account for any extra logic like "has to be within x ft of main target"
   - will need to be able to commit while not using all available targets
 - Add targeting options hostile/all/allies
-- center on self does not target those in area
 
 ---
 
