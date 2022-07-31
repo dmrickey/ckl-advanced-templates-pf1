@@ -21,7 +21,7 @@ export default async function (sheet, jq, _options) {
         return;
     }
 
-    const templateGroupOptions = jq[0].querySelector('input[name="measureTemplate.overrideTexture"]')?.parentElement.parentElement;
+    const templateGroupOptions = jq[0].querySelector('input[name="measureTemplate.size"]')?.parentElement.parentElement;
 
     if (templateGroupOptions) {
         const div = document.createElement('div');
