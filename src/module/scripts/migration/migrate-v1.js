@@ -80,7 +80,7 @@ export const migrateSyntheticActors = async () => {
 
     const synthetics = [...game.scenes].flatMap(s => s.tokens.filter(t => !t.isLinked));
     for (const synthetic of synthetics.filter(s => s.data.actorData?.items?.length)) {
-        for (const item of synthetic.actor.data?.items?.filter(i => i.data.flags?.[MODULE_NAME] && i.data.data.actions?.length)) {
+        for (const item of synthetic.actor?.data?.items?.filter(i => i.data.flags?.[MODULE_NAME] && i.data.data.actions?.length)) {
             const action = item.actions.entries().next().value[1];
 
             await action.update({
