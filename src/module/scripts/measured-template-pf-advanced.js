@@ -438,6 +438,7 @@ const initMeasuredTemplate = () => {
         async commitPreview() {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
 
+            await new Promise(r => setTimeout(r, 100));
             return true;
         }
 
@@ -450,7 +451,7 @@ const initMeasuredTemplate = () => {
             this.data.x = x;
             this.data.y = y;
 
-            if (Settings.target && !isNaN(x) && !isNaN(x)) {
+            if (Settings.target && !isNaN(x) && !isNaN(y)) {
                 const targets = this.getTokensWithin();
                 const ids = targets.map((t) => t.id);
                 game.user.updateTokenTargets(ids);
