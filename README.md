@@ -73,7 +73,7 @@ Here's a few random changes that don't specifically fit into the above categorie
 manifest link: https://github.com/dmrickey/ckl-advanced-templates-pf1/releases/latest/download/module.json
 
 Last tested versions
-Advanced Templates PF1 1.3.2
+Advanced Templates PF1 1.3.3
 Foundry v9 269
 PF1e 0.81.1
 
