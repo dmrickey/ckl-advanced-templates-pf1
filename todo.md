@@ -6,6 +6,7 @@
 ### Circles
   - centered on self circle
     - disable dragging to update location (also editing x/y in details since it should be stuck to token)
+    - add a preview with a modal to commit or cancel - keep the preview attached to the token so the caster can move until deciding to commit it
   - centered on target (e.g. Silence, Meteor Swarm)
     - don't show template unless cursor is over a token
   - target grid
