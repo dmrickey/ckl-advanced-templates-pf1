@@ -53,7 +53,7 @@ async function promptMeasureTemplate(wrapped, shared) {
     };
 
     if (!['cone', 'circle'].includes(type)
-        || (type === 'cone' && shared.action.data.flags[MODULE_NAME]?.[CONSTS.flags.placementType] === CONSTS.placement.useSystem)
+        || (type === 'cone' && shared.action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] === CONSTS.placement.useSystem)
     ) {
         const wrappedResult = await wrapped(shared);
         if (shared.template) {
