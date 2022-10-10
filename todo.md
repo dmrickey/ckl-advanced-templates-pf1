@@ -34,6 +34,11 @@
   - Add thickness option
   - Add option to hide ruler text (`_refreshRulerText()`)
   - Also alter destination points?
+  - Add global default in case someone never wants an outline visible
+- Effect Type
+  - Try to read the html description to default to whatever area is defined for burst/spread/emanation
+- Delete Template at End of Turn
+  - Read the action's duration and if it is `"instantaneous"` then enable by default
 - Add option for targeting multiple areas (Meteor Swarm)
 - Update already-placed templates when updating a config (add flag on teh template for this item's ID then update those when this is updated)
 
