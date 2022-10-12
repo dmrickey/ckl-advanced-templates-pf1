@@ -1,13 +1,11 @@
 import { Settings } from '../../settings';
+import { isFirstGM } from '../utils';
 import * as v1 from './migrate-v1';
 
 const currentMigrationVersion = 1;
 
 export default async () => {
-
-    const gm = game.pf1.utils.getFirstActiveGM();
-    const isFirstGM = game.user === gm;
-    if (!isFirstGM) {
+    if (!isFirstGM()) {
         return;
     }
 

@@ -11,17 +11,17 @@ const initMeasuredTemplate = () => {
     class MeasuredTemplatePFAdvanced extends MeasuredTemplatePF {
         get shouldOverrideTokenEmanation() {
             return game.settings.get('pf1', 'measureStyle')
-                && this.data.t === 'circle'
-                && this.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] === CONSTS.placement.circle.self
-                && ['burst', 'emanation'].includes(this.data.flags?.[MODULE_NAME]?.[CONSTS.flags.circle.areaType]);
+                && this.document.t === 'circle'
+                && this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] === CONSTS.placement.circle.self
+                && ['burst', 'emanation'].includes(this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.circle.areaType]);
         }
 
         get hideHighlight() {
-            return !!this.data.flags?.[MODULE_NAME]?.[CONSTS.flags.hideHighlight];
+            return !!this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.hideHighlight];
         }
 
         get tokenSizeSquares() {
-            const tokenId = this.data.flags?.[MODULE_NAME]?.tokenId;
+            const tokenId = this.document.flags?.[MODULE_NAME]?.tokenId;
             const token = canvas.tokens.placeables.find((x) => x.id === tokenId);
             const sizeSquares = token?.data.width || 1;
             return { token, sizeSquares };
@@ -29,7 +29,7 @@ const initMeasuredTemplate = () => {
 
         get tokenGridCorners() {
             const { sizeSquares } = this.tokenSizeSquares;
-            const { x, y } = this.data;
+            const { x, y } = this.document;
             const gridSize = canvas.grid.h;
 
             const bottom = y + gridSize * sizeSquares / 2;
@@ -72,7 +72,7 @@ const initMeasuredTemplate = () => {
             const { sizeSquares } = this.tokenSizeSquares;
 
             const dimensions = canvas.dimensions;
-            let { distance: radius } = this.data;
+            let { distance: radius } = this.document;
             radius *= (dimensions.size / dimensions.distance);
             radius += dimensions.size * sizeSquares / 2;
             this.shape = new PIXI.RoundedRectangle(-radius, -radius, radius * 2, radius * 2, radius - dimensions.size * sizeSquares / 2);
@@ -80,15 +80,15 @@ const initMeasuredTemplate = () => {
 
         /** @override */
         refresh() {
-            if (!['circle', 'cone'].includes(this.data.t)) {
+            if (!['circle', 'cone'].includes(this.document.t)) {
                 return super.refresh();
             }
 
             const d = canvas.dimensions;
-            this.position.set(this.data.x, this.data.y);
+            this.position.set(this.document.x, this.document.y);
 
             // Extract and prepare data
-            let { direction, distance, width } = this.data;
+            let { direction, distance, width } = this.document;
             distance *= (d.size / d.distance);
             width *= (d.size / d.distance);
             direction = Math.toRadians(direction);
@@ -98,10 +98,10 @@ const initMeasuredTemplate = () => {
             }
 
             // Create ray and bounding rectangle
-            this.ray = Ray.fromAngle(this.data.x, this.data.y, direction, distance);
+            this.ray = Ray.fromAngle(this.document.x, this.document.y, direction, distance);
 
             // Get the Template shape
-            switch (this.data.t) {
+            switch (this.document.t) {
                 case 'circle':
                     if (this.shouldOverrideTokenEmanation) {
                         this._getEmanationShape();
@@ -111,7 +111,7 @@ const initMeasuredTemplate = () => {
                     }
                     break;
                 case 'cone':
-                    this.shape = this._getConeShape(direction, this.data.angle, distance);
+                    this.shape = this._getConeShape(direction, this.document.angle, distance);
                     break;
                 case 'rect':
                     this.shape = this._getRectShape(direction, distance);
@@ -121,7 +121,7 @@ const initMeasuredTemplate = () => {
                     break;
             }
 
-            const outlineAlpha = this.data.flags[MODULE_NAME]?.[CONSTS.flags.hideOutline]
+            const outlineAlpha = this.document.flags[MODULE_NAME]?.[CONSTS.flags.hideOutline]
                 ? 0
                 : 0.75;
 
@@ -134,11 +134,11 @@ const initMeasuredTemplate = () => {
                 let xOffset = true;
                 let yOffset = true;
 
-                const textureAlpha = this.data.flags[MODULE_NAME]?.[CONSTS.flags.textureAlpha] || 0.5;
-                const scaleOverride = this.data.flags[MODULE_NAME]?.[CONSTS.flags.textureScale] || 1;
+                const textureAlpha = this.document.flags[MODULE_NAME]?.[CONSTS.flags.textureAlpha] || 0.5;
+                const scaleOverride = this.document.flags[MODULE_NAME]?.[CONSTS.flags.textureScale] || 1;
                 let textureSize = distance * scaleOverride;
 
-                if (this.data.t === 'cone') {
+                if (this.document.t === 'cone') {
                     textureSize /= 2;
                     xOffset = false;
                 }
@@ -187,7 +187,7 @@ const initMeasuredTemplate = () => {
         /** @override */
         _drawControlIcon() {
             const size = Math.max(Math.round((canvas.dimensions.size * 0.5) / 20) * 20, 40);
-            const iconTexture = this.data.flags?.[MODULE_NAME]?.icon;
+            const iconTexture = this.document.flags?.[MODULE_NAME]?.icon;
             const icon = new ControlIcon({ texture: iconTexture || CONFIG.controlIcons.template, size });
             icon.x -= (size * 0.5);
             icon.y -= (size * 0.5);
@@ -214,8 +214,8 @@ const initMeasuredTemplate = () => {
                 const d = canvas.dimensions;
 
                 // Get number of rows and columns
-                const nr = Math.ceil((this.data.distance * 1.5) / d.distance / (d.size / grid.h));
-                const nc = Math.ceil((this.data.distance * 1.5) / d.distance / (d.size / grid.w));
+                const nr = Math.ceil((this.document.distance * 1.5) / d.distance / (d.size / grid.h));
+                const nc = Math.ceil((this.document.distance * 1.5) / d.distance / (d.size / grid.w));
 
                 // Get the center of the grid position occupied by the template
                 const result = [];
@@ -256,7 +256,7 @@ const initMeasuredTemplate = () => {
                             const destination = { x: cellCenterX, y: cellCenterY };
 
                             const distance = measureDistance(destination, origin);
-                            if (distance <= this.data.distance) {
+                            if (distance <= this.document.distance) {
                                 result.push({ x: gx, y: gy });
                             }
                         }
@@ -275,7 +275,7 @@ const initMeasuredTemplate = () => {
         highlightGrid() {
             if (
                 !game.settings.get("pf1", "measureStyle")
-                || !["circle", "cone", "ray"].includes(this.data.t)
+                || !["circle", "cone", "ray"].includes(this.document.t)
                 || canvas.grid.type !== CONST.GRID_TYPES.SQUARE
             ) {
                 return super.highlightGrid();
@@ -295,7 +295,7 @@ const initMeasuredTemplate = () => {
             hl.clear();
 
             // highlightGridPosition has a default so undefined is fine to pass in
-            const alpha = this.data.flags[MODULE_NAME]?.[CONSTS.flags.colorAlpha];
+            const alpha = this.document.flags[MODULE_NAME]?.[CONSTS.flags.colorAlpha];
 
             // Get grid squares to highlight
             const highlightSquares = this.getHighlightedSquares();
@@ -386,7 +386,7 @@ const initMeasuredTemplate = () => {
             const finalized = await this.commitPreview();
 
             this.active = false;
-            const hl = canvas.grid.getHighlightLayer(`Template.${this.id}`);
+            const hl = canvas.grid.getHighlightLayer(this.highlightId);
             hl.clear();
 
             this.destroy();
@@ -396,8 +396,8 @@ const initMeasuredTemplate = () => {
                 ? {
                     result: true,
                     place: async () => {
-                        this.data.update(this.data);
-                        const doc = (await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [this.data.toObject()]))[0];
+                        // this.document.update(this.document);
+                        const doc = (await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [this.document.toObject()]))[0];
                         this.document = doc;
                         return doc;
                     },
@@ -461,8 +461,8 @@ const initMeasuredTemplate = () => {
 
             const token = getToken(itemPf) || { center: { x: 0, y: 0 } };
             const { x, y } = token.center;
-            this.data.x = x;
-            this.data.y = y;
+            this.document.x = x;
+            this.document.y = y;
         }
     }
 
@@ -539,14 +539,14 @@ const initMeasuredTemplate = () => {
             const updateTemplateLocation = async (crosshairs) => {
                 while (crosshairs.inFlight) {
                     await warpgate.wait(20);
-                    this.data.flags[MODULE_NAME].icon = existingIcon;
+                    this.document.flags[MODULE_NAME].icon = existingIcon;
 
                     const { x, y } = crosshairs.center;
-                    if (this.data.x === x && this.data.y === y) {
+                    if (this.document.x === x && this.document.y === y) {
                         continue;
                     }
 
-                    if ((this._hasMaxRange || this._hasMinRange) && !this.data.flags[MODULE_NAME].ignoreRange) {
+                    if ((this._hasMaxRange || this._hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
                         const rays = this._tokenSquare.allSpots.map((spot) => ({
                             ray: new Ray(spot, crosshairs),
                         }));
@@ -558,12 +558,12 @@ const initMeasuredTemplate = () => {
                             || this._hasMaxRange && range > this._maxRange
                         ) {
                             icon = 'icons/svg/hazard.svg';
-                            this.data.flags[MODULE_NAME][CONSTS.flags.hideHighlight] = true;
+                            this.document.flags[MODULE_NAME][CONSTS.flags.hideHighlight] = true;
                             isInRange = false;
                         }
                         else {
                             icon = existingIcon;
-                            this.data.flags[MODULE_NAME][CONSTS.flags.hideHighlight] = false;
+                            this.document.flags[MODULE_NAME][CONSTS.flags.hideHighlight] = false;
                             isInRange = true;
                         }
 
@@ -574,7 +574,7 @@ const initMeasuredTemplate = () => {
                         crosshairs.label = localize('range', { range, unit });
 
                         if (icon && icon !== this.controlIcon?.iconSrc) {
-                            this.data.flags[MODULE_NAME].icon = icon;
+                            this.document.flags[MODULE_NAME].icon = icon;
                             if (this.controlIcon) {
                                 this.controlIcon.destroy();
                             }
@@ -582,8 +582,8 @@ const initMeasuredTemplate = () => {
                         }
                     }
 
-                    this.data.x = x;
-                    this.data.y = y;
+                    this.document.x = x;
+                    this.document.y = y;
                     this.refresh();
 
                     this.targetIfEnabled();
@@ -619,9 +619,9 @@ const initMeasuredTemplate = () => {
             const token = getToken(itemPf);
 
             if (token) {
-                this._maxRange = this.data.flags?.[MODULE_NAME]?.maxRange;
+                this._maxRange = this.document.flags?.[MODULE_NAME]?.maxRange;
                 this._hasMaxRange = !!this._maxRange && !isNaN(this._maxRange);
-                this._minRange = this.data.flags?.[MODULE_NAME]?.minRange;
+                this._minRange = this.document.flags?.[MODULE_NAME]?.minRange;
                 this._hasMinRange = !!this._minRange && !isNaN(this._minRange);
 
                 this._tokenSquare = this._calculateTokenSquare(token);
@@ -630,8 +630,8 @@ const initMeasuredTemplate = () => {
             const mouse = canvas.app.renderer.plugins.interaction.mouse;
             const position = mouse.getLocalPosition(canvas.app.stage);
             const { x, y } = position;
-            this.data.x = x;
-            this.data.y = y;
+            this.document.x = x;
+            this.document.y = y;
         }
     }
 
@@ -655,10 +655,10 @@ const initMeasuredTemplate = () => {
                 while (crosshairs.inFlight) {
                     await warpgate.wait(20);
 
-                    this.data.flags[MODULE_NAME].icon = existingIcon;
+                    this.document.flags[MODULE_NAME].icon = existingIcon;
 
                     const { x, y } = crosshairs.center;
-                    if (this.data.x === x && this.data.y === y) {
+                    if (this.document.x === x && this.document.y === y) {
                         continue;
                     }
 
@@ -673,7 +673,7 @@ const initMeasuredTemplate = () => {
                     const found = !!canvas.tokens.placeables.map(x => x.bounds).find(b => boundsContains(b, mouseCoords));
                     crosshairs.interval = found ? -1 : 1;
 
-                    if ((this._hasMaxRange || this._hasMinRange) && !this.data.flags[MODULE_NAME].ignoreRange) {
+                    if ((this._hasMaxRange || this._hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
                         const rays = this._tokenSquare.allSpots.map((spot) => ({
                             ray: new Ray(spot, crosshairs),
                         }));
@@ -685,12 +685,12 @@ const initMeasuredTemplate = () => {
                             || this._hasMaxRange && range > this._maxRange
                         ) {
                             icon = 'icons/svg/hazard.svg';
-                            this.data.flags[MODULE_NAME][CONSTS.flags.hideHighlight] = true;
+                            this.document.flags[MODULE_NAME][CONSTS.flags.hideHighlight] = true;
                             isInRange = false;
                         }
                         else {
                             icon = existingIcon;
-                            this.data.flags[MODULE_NAME][CONSTS.flags.hideHighlight] = false;
+                            this.document.flags[MODULE_NAME][CONSTS.flags.hideHighlight] = false;
                             isInRange = true;
                         }
 
@@ -701,7 +701,7 @@ const initMeasuredTemplate = () => {
                         crosshairs.label = localize('range', { range, unit });
 
                         if (icon && icon !== this.controlIcon?.iconSrc) {
-                            this.data.flags[MODULE_NAME].icon = icon;
+                            this.document.flags[MODULE_NAME].icon = icon;
                             if (this.controlIcon) {
                                 this.controlIcon.destroy();
                             }
@@ -709,8 +709,8 @@ const initMeasuredTemplate = () => {
                         }
                     }
 
-                    this.data.x = x;
-                    this.data.y = y;
+                    this.document.x = x;
+                    this.document.y = y;
                     this.refresh();
 
                     this.targetIfEnabled();
@@ -809,9 +809,9 @@ const initMeasuredTemplate = () => {
                     const spot = this._tokenSquare.allSpots[currentSpotIndex];
                     const { direction, x, y } = spot;
 
-                    this.data.direction = direction + offsetAngle;
-                    this.data.x = x;
-                    this.data.y = y;
+                    this.document.direction = direction + offsetAngle;
+                    this.document.x = x;
+                    this.document.y = y;
                     this.refresh();
 
                     this.targetIfEnabled();
@@ -841,7 +841,7 @@ const initMeasuredTemplate = () => {
         async initializeConeData(token) {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
-            const { distance } = this.data;
+            const { distance } = this.document;
             this._is15 = distance === 15;
 
             if (typeof token === 'undefined' || !token) {
@@ -866,9 +866,9 @@ const initMeasuredTemplate = () => {
             }
 
             const { x, y } = this._tokenSquare.allSpots[0];
-            this.data.x = x;
-            this.data.y = y;
-            this.data.angle = 90;
+            this.document.x = x;
+            this.document.y = y;
+            this.document.angle = 90;
         }
 
         _sourceSquare(center, widthSquares, heightSquares) {
