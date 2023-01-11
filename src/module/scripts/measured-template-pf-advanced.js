@@ -294,6 +294,10 @@ const initMeasuredTemplate = () => {
             const hl = this.getHighlightLayer();
             hl.clear();
 
+            if (!this.isVisible) {
+                return;
+            }
+
             // highlightGridPosition has a default so undefined is fine to pass in
             const alpha = this.document.flags[MODULE_NAME]?.[CONSTS.flags.colorAlpha];
 
