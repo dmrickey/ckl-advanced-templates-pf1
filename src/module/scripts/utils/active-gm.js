@@ -1,4 +1,4 @@
-const getFirstActiveGM = () => pf1.utils.getFirstActiveGM();
+const getFirstActiveGM = () => globalThis.pf1.utils.getFirstActiveGM();
 const isFirstGM = () => getFirstActiveGM() === game.user;
 const isCurrentUser = (userId) => game.user.id === userId;
 const handleSingleOwner = async (userId, func) => {

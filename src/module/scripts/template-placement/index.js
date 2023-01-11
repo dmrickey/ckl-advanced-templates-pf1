@@ -90,6 +90,6 @@ export default promptMeasureTemplate;
 
 const _getSize = (shared) => typeof shared.action.data.measureTemplate.size === 'string'
     ? RollPF.safeTotal(shared.action.data.measureTemplate.size, shared.rollData)
-    : pf1.utils.convertDistance(shared.action.data.measureTemplate.size)[0];
+    : globalThis.pf1.utils.convertDistance(shared.action.data.measureTemplate.size)[0];
 
 const hasTemplatePermission = () => game.permissions.TEMPLATE_CREATE.includes(game.user.role);
