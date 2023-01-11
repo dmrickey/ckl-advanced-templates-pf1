@@ -22,16 +22,16 @@ Hooks.once('ready', async () => {
     DurationTracker.init();
 });
 
-Hooks.once('pf1.postReady', () => {
+Hooks.once('pf1PostReady', () => {
     if (!pf1.migrations.isMigrating) {
         migrateIfNeeded();
     }
     else {
-        Hooks.once('pf1.migrationFinished', migrateIfNeeded);
+        Hooks.once('pf1MigrationFinished', migrateIfNeeded);
     }
 });
 
-Hooks.on('pf1.postInit', () => {
+Hooks.on('pf1PostInit', () => {
     initMeasuredTemplate();
     libWrapper.register(MODULE_NAME, 'pf1.actionUse.ActionUse.promptMeasureTemplate', promptMeasureTemplate, 'MIXED');
 
