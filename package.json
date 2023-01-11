@@ -1,44 +1,35 @@
 {
     "private": true,
     "name": "ckl-advanced-templates-pf1",
-    "description": "",
-    "license": "",
+    "description": "Better, rules-based templates for Pf1",
+    "license": "MIT",
     "homepage": "",
     "repository": {
         "type": "git",
         "url": ""
     },
+    "author": "David Rickey(https://github.com/dmrickey)",
+    "contributors": ["David Rickey(https://github.com/dmrickey)"],
     "bugs": {
-        "url": ""
+        "url": "https://github.com/dmrickey/ckl-advanced-templates-pf1/issues"
     },
-    "contributors": [
-        {
-            "name": "",
-            "email": ""
-        }
-    ],
     "type": "module",
     "dependencies": {
-        "@typhonjs-fvtt/runtime": "^0.0.8",
-        "svelte": "^3.46.0"
+        "@typhonjs-fvtt/runtime": "^0.0.20",
+        "@typhonjs-fvtt/svelte-standard": "^0.0.16",
+        "svelte": "^3.52.0"
     },
     "devDependencies": {
-        "@babel/core": "^7",
-        "@babel/preset-env": "^7",
-        "@rollup/plugin-babel": "^5",
         "@typhonjs-config/eslint-config": "^0.3.0",
         "@typhonjs-fvtt/eslint-config-foundry.js": "^0.8.0",
         "eslint": "^8",
-        "rollup": "^2"
+        "svelte-preprocess": "^4.10.0",
+        "vite": "^3"
     },
-    "browserslist": [
-        ">5%",
-        "not IE 11"
-    ],
+    "browserslist": [">5%", "not IE 11"],
     "scripts": {
-        "build": "rollup --config",
-        "build-watch": "rollup --watch --config",
-        "build:watch": "rollup --watch --config",
+        "build": "vite build",
+        "dev": "vite",
         "eslint": "eslint ."
     }
 }
