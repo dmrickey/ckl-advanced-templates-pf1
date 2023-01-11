@@ -63,8 +63,7 @@ export default () => {
         },
 
         build: {
-            root: 'src',
-            outDir: '../dist',
+            outDir: __dirname,
             emptyOutDir: false,
             sourcemap: s_SOURCEMAPS,
             brotliSize: true,

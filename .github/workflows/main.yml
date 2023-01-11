@@ -46,7 +46,7 @@ jobs:
       - run: npm run build
 
       # Create a zip file with all files required by the module to add to the release
-      - run: zip -r ./module.zip module.json dist/ lang/ packs/ LICENSE AUTHORS
+      - run: zip -r ./module.zip module.json ckl-advanced-templates-pf1.css ckl-advanced-templates-pf1.js ckl-advanced-templates-pf1.js.map lang/ packs/ LICENSE AUTHORS
 
       # Create a release for this specific version
       - name: Update Release with Files

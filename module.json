@@ -22,8 +22,8 @@
         "verified": "10"
     },
     "scripts": [],
-    "esmodules": ["./dist/ckl-advanced-templates-pf1.js"],
-    "styles": ["./dist/ckl-advanced-templates-pf1.css"],
+    "esmodules": ["ckl-advanced-templates-pf1.js"],
+    "styles": ["ckl-advanced-templates-pf1.css"],
     "packs": [],
     "relationships": {
         "systems": [
