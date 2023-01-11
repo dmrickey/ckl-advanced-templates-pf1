@@ -1,11 +1,11 @@
 {
-    "name": "ckl-advanced-templates-pf1",
-    "description": "Better, rules-based templates for Pf1",
+    "name": "template-svelte-esm",
+    "description": "Provides a bare-bones Foundry module template repo to get set up with using the TyphonJS Runtime Library and Svelte with ES Modules.",
     "license": "MIT",
     "private": true,
     "type": "module",
-    "author": "David Rickey(https://github.com/dmrickey)",
-    "contributors": ["David Rickey(https://github.com/dmrickey)"],
+    "author": "Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)",
+    "contributors": ["Michael Leahy <support@typhonjs.io> (https://github.com/typhonrt)"],
     "dependencies": {
         "@typhonjs-fvtt/runtime": "^0.0.20",
         "@typhonjs-fvtt/svelte-standard": "^0.0.16",
