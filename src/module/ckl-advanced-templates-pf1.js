@@ -44,9 +44,9 @@ Hooks.on('pf1PostInit', () => {
 
 Hooks.on('updateToken', async (token, update, _options, userId) => {
     if (update?.hasOwnProperty('x') || update?.hasOwnProperty('y')) {
-        handleSingleOwner(userId, await moveTemplatesToToken(token));
+        await handleSingleOwner(userId, moveTemplatesToToken(token));
     }
 });
 
 Hooks.on('deleteToken', async (token, _options, userId) =>
-    handleSingleOwner(userId, await deleteTemplatesForToken(token)));
+    await handleSingleOwner(userId, deleteTemplatesForToken(token)));

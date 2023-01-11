@@ -1,13 +1,13 @@
 const getFirstActiveGM = () => pf1.utils.getFirstActiveGM();
 const isFirstGM = () => getFirstActiveGM() === game.user;
-const isOwnerWithoutGm = (userId) => game.user.id === userId;
-const handleSingleOwner = (userId, func) => {
-    const gm = pf1.utils.getFirstActiveGM();
-    const isFirstGM = game.user === gm;
+const isCurrentUser = (userId) => game.user.id === userId;
+const handleSingleOwner = async (userId, func) => {
+    const gm = getFirstActiveGM();
 
-    if (isFirstGM || (!gm && game.user.id === userId)) {
-        await func();
+    if (isFirstGM() || (!gm && isCurrentUser(userId))) {
+        return await func();
     }
+    return null;
 }
 
-export { isFirstGM, isOwnerWithoutGm, handleSingleOwner };
+export { isFirstGM, isCurrentUser, handleSingleOwner };

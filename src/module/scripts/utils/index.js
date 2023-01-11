@@ -1,4 +1,4 @@
-import { isFirstGM, isOwnerWithoutGm, handleSingleOwner } from './active-gm';
+import { isFirstGM, isCurrentUser, handleSingleOwner } from './active-gm';
 import { localize, localizeFull } from './localize';
 import clamp from './clamp';
 import getToken from './get-token-from-item';
@@ -11,7 +11,7 @@ export {
     handleSingleOwner,
     ifDebug,
     isFirstGM,
-    isOwnerWithoutGm,
+    isCurrentUser,
     localize,
     localizeFull,
     targetTokens,
