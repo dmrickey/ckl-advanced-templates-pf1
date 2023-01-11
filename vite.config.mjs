@@ -75,6 +75,11 @@ export default () => {
                 entry: './module/ckl-advanced-templates-pf1.js',
                 formats: ['es'],
                 fileName: 'ckl-advanced-templates-pf1'
+            },
+            rollupOptions: {
+                output: {
+                    assetFileNames: (assetInfo) => assetInfo.name === 'style.css' ? 'ckl-advanced-templates-pf1.css' : assetInfo.name
+                },
             }
         },
 
