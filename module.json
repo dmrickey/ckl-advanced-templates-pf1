@@ -1,35 +1,61 @@
 {
+    "id": "ckl-advanced-templates-pf1",
     "name": "ckl-advanced-templates-pf1",
     "title": "Advanced Templates Pf1",
-    "description": "",
+    "description": "Better, rules-based templates for Pf1",
+
     "version": "This is auto replaced",
+    "url": "This is auto replaced",
+    "manifest": "This is auto replaced",
+    "download": "This is auto replaced",
+
     "author": "David Rickey",
     "authors": [
         {
             "name": "David Rickey",
-            "discord": "david (aka claudekennilol)#2244"
+            "discord": "david aka claudekennilol#2244"
         }
     ],
-    "minimumCoreVersion": "9",
-    "compatibleCoreVersion": "9",
+    "minimumCoreVersion": 10,
+    "compatibility": {
+        "minimum": "10",
+        "verified": "10"
+    },
     "scripts": [],
-    "esmodules": [
-        "./dist/ckl-advanced-templates-pf1.js"
-    ],
-    "styles": [
-        "./dist/ckl-advanced-templates-pf1.css"
-    ],
+    "esmodules": ["ckl-advanced-templates-pf1.js"],
+    "styles": ["ckl-advanced-templates-pf1.css"],
     "packs": [],
-    "dependencies": [
-        {
-            "name": "warpgate",
-            "type": "module"
-        },
-        {
-            "name": "lib-wrapper",
-            "type": "module"
-        }
-    ],
+    "relationships": {
+        "systems": [
+            {
+                "id": "pf1",
+                "type": "system",
+                "manifest": "https://gitlab.com/foundryvtt_pathfinder1e/foundryvtt-pathfinder1/-/releases/permalink/latest/downloads/system.json",
+                "compatibility": {
+                    "minimum": "0.82",
+                    "verified": "0.82.5"
+                }
+            }
+        ],
+        "requires": [
+            {
+                "id": "warpgate",
+                "type": "module",
+                "manifest": "https://github.com/trioderegion/warpgate/releases/latest/download/module.json",
+                "compatibility": {
+                    "verified": "1.15.4"
+                }
+            },
+            {
+                "id": "lib-wrapper",
+                "type": "module",
+                "manifest": "https://github.com/ruipin/fvtt-lib-wrapper/releases/latest/download/module.json",
+                "compatibility": {
+                    "verified": "1.12.11.0"
+                }
+            }
+        ]
+    },
     "languages": [
         {
             "lang": "en",
@@ -38,16 +64,15 @@
         }
     ],
     "socket": false,
-    "url": "This is auto replaced",
-    "manifest": "This is auto replaced",
-    "download": "This is auto replaced",
     "license": "",
-    "readme": "",
-    "bugs": "",
-    "changelog": "",
-    "system": [
-        "pf1"
-    ],
+    "readme": "https://github.com/dmrickey/ckl-advanced-templates-pf1/blob/master/README.md",
+    "bugs": "https://github.com/dmrickey/ckl-advanced-templates-pf1/issues",
+    "changelog": "https://github.com/dmrickey/ckl-advanced-templates-pf1/blob/master/changelog.md",
+
+    "system": ["pf1"],
     "minimumSystemVersion": "0.81.0",
-    "library": false
+    "library": false,
+
+    "protected": false,
+    "coreTranslation": false
 }
