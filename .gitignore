@@ -5,3 +5,6 @@ ckl-advanced-templates-pf1.lock
 !.vscode/extensions.json
 dist/*
 node_modules/
+/ckl-advanced-templates-pf1.js
+/ckl-advanced-templates-pf1.js.map
+/style.css
