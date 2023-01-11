@@ -23,6 +23,7 @@
 - Add an "offset degrees" label for when the GM has that option turned on so the user knows what offset from 0 they've onto their cone as an extra rotation (hide label if 0)
 
 ### Rays
+- On startup add it to the selectable types
 - originate from caster
 - originate from selection
 - system default option
