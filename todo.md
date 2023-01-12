@@ -29,6 +29,13 @@
 - system default option
 
 ### All
+- Targeting
+  - Choose who to target
+    - Only Allies
+    - Only Hostiles
+    - Everyone
+  - Viable target?
+    - Add an option to only place centered on a target (kinda like splash weapons but no alternate option)
 - Outline
   - Add color option
   - Add alpha option
