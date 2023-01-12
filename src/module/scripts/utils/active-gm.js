@@ -5,9 +5,8 @@ const handleSingleOwner = async (userId, func) => {
     const gm = getFirstActiveGM();
 
     if (isFirstGM() || (!gm && isCurrentUser(userId))) {
-        return await func();
+        await func();
     }
-    return null;
 }
 
 export { isFirstGM, isCurrentUser, handleSingleOwner };

@@ -28,4 +28,4 @@ const targetTokens = (template) => {
     game.user.updateTokenTargets(tokenIdsToTarget);
 };
 
-export default targetTokens;
+export { targetTokens };

@@ -23,7 +23,7 @@ const initMeasuredTemplate = () => {
         get tokenSizeSquares() {
             const tokenId = this.document.flags?.[MODULE_NAME]?.tokenId;
             const token = canvas.tokens.placeables.find((x) => x.id === tokenId);
-            const sizeSquares = token?.data.width || 1;
+            const sizeSquares = token?.document.width || 1;
             return { token, sizeSquares };
         }
 
@@ -169,8 +169,8 @@ const initMeasuredTemplate = () => {
                 .drawCircle(this.ray.dx, this.ray.dy, 6);
 
             // Update the HUD
-            this.hud.icon.visible = this.layer._active;
-            this.hud.icon.border.visible = this._hover;
+            this.controlIcon.visible = this.layer._active;
+            this.controlIcon.border.visible = this._hover;
 
             this._refreshRulerText();
 
@@ -400,7 +400,20 @@ const initMeasuredTemplate = () => {
                 ? {
                     result: true,
                     place: async () => {
-                        // this.document.update(this.document);
+                        // todo put this in a better place
+                        // all of the custom props I can set
+                        this.document.updateSource({
+                            angle: this.document.angle,
+                            borderColor: this.document.borderColor,
+                            direction: this.document.direction,
+                            distance: this.document.distance,
+                            fillColor: this.document.fillColor,
+                            flags: this.document.flags,
+                            texture: this.document.texture,
+                            width: this.document.width,
+                            x: this.document.x,
+                            y: this.document.y
+                        });
                         const doc = (await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [this.document.toObject()]))[0];
                         this.document = doc;
                         return doc;
@@ -480,8 +493,8 @@ const initMeasuredTemplate = () => {
         _gridInterval() { return 1; }
 
         _calculateTokenSquare(token) {
-            const heightSquares = Math.max(Math.round(token.data.height), 1);
-            const widthSquares = Math.max(Math.round(token.data.width), 1);
+            const heightSquares = Math.max(Math.round(token.document.height), 1);
+            const widthSquares = Math.max(Math.round(token.document.width), 1);
 
             const gridSize = canvas.grid.h;
             const { x, y, h, w } = token;
@@ -864,8 +877,8 @@ const initMeasuredTemplate = () => {
                 this._tokenSquare = this._sourceSquare({ x: source.x, y: source.y }, 1, 1);
             }
             else {
-                const width = Math.max(Math.round(token.data.width), 1);
-                const height = Math.max(Math.round(token.data.height), 1);
+                const width = Math.max(Math.round(token.document.width), 1);
+                const height = Math.max(Math.round(token.document.height), 1);
                 this._tokenSquare = this._sourceSquare(token.center, width, height);
             }
 

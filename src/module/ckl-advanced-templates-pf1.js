@@ -33,7 +33,7 @@ Hooks.once('pf1PostReady', () => {
 
 Hooks.on('pf1PostInit', () => {
     initMeasuredTemplate();
-    libWrapper.register(MODULE_NAME, 'pf1.actionUse.ActionUse.promptMeasureTemplate', promptMeasureTemplate, 'MIXED');
+    libWrapper.register(MODULE_NAME, 'pf1.actionUse.ActionUse.prototype.promptMeasureTemplate', promptMeasureTemplate, 'MIXED');
 
     Hooks.on('canvasReady', () => {
         canvas.templates.placeables.forEach((template) => {
@@ -44,9 +44,9 @@ Hooks.on('pf1PostInit', () => {
 
 Hooks.on('updateToken', async (token, update, _options, userId) => {
     if (update?.hasOwnProperty('x') || update?.hasOwnProperty('y')) {
-        await handleSingleOwner(userId, moveTemplatesToToken(token));
+        await handleSingleOwner(userId, async () => moveTemplatesToToken(token));
     }
 });
 
 Hooks.on('deleteToken', async (token, _options, userId) =>
-    await handleSingleOwner(userId, deleteTemplatesForToken(token)));
+    await handleSingleOwner(userId, async () => deleteTemplatesForToken(token)));

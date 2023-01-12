@@ -1,6 +1,5 @@
-import ifDebug from '../utils/if-debug';
 import { CONSTS, MODULE_NAME } from '../../consts';
-import { getToken } from '../utils';
+import { getToken, ifDebug } from '../utils';
 import { Settings } from '../../settings';
 
 /**
@@ -26,9 +25,10 @@ async function promptMeasureTemplate(wrapped) {
 
     const type = this.shared.action.data.measureTemplate.type;
 
-    const token = getToken(this) || {};
+    const token = getToken(this.item) || {};
     const icon = this.shared.action.data.img === 'systems/pf1/icons/misc/magic-swirl.png' ? undefined : this.shared.action.data.img;
-    const { minRange, maxRange } = this.shared.action;
+    const maxRange = this.shared.action.getRange();
+    const minRange = this.shared.action.getRange({ type: "min" });
 
     const templateData = {
         _id: randomID(16),
