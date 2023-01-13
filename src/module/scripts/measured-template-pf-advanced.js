@@ -417,9 +417,8 @@ const initMeasuredTemplate = () => {
 
             const finalized = await this.commitPreview();
 
-            // redraw the layer to turn back on control icons
-            const layer = canvas.layers.find(x => x.name.includes('Template'));
-            await layer?.draw();
+            // redraw the templates layer to turn control icons back on
+            await canvas.templates.draw();
 
             this.active = false;
 
