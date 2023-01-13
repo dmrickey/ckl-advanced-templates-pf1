@@ -404,13 +404,24 @@ const initMeasuredTemplate = () => {
             if (this.controlIcon) {
                 this.controlIcon.removeAllListeners();
             }
+
+            // remove control icon button ability to allow placing templates on top of other templates
+            const existingTemplates = canvas.templates.placeables;
+            existingTemplates.forEach(existing => {
+                if (existing.controlIcon) {
+                    existing.controlIcon.removeAllListeners();
+                }
+            });
+
             this.hitArea = new PIXI.Polygon([]);
 
             const finalized = await this.commitPreview();
 
+            // redraw the layer to turn back on control icons
+            const layer = canvas.layers.find(x => x.name.includes('Template'));
+            await layer?.draw();
+
             this.active = false;
-            const hl = canvas.grid.getHighlightLayer(this.highlightId);
-            hl.clear();
 
             this.destroy();
             initialLayer.activate();
