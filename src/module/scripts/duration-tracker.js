@@ -25,7 +25,7 @@ class DurationTracker {
 
     static async removeEndOfTurnTemplates() {
         const templateIds = canvas.templates.placeables
-            .filter((t) => !!t.data.flags?.[MODULE_NAME]?.[CONSTS.flags.expireAtTurnEnd])
+            .filter((t) => !!t.document.flags?.[MODULE_NAME]?.[CONSTS.flags.expireAtTurnEnd])
             .map((t) => t.id);
 
         if (templateIds.length) {
@@ -40,7 +40,7 @@ class DurationTracker {
 
         Hooks.on('updateCombat', async (combat, changed) => {
             if (!('turn' in changed || 'round' in changed) && changed.round !== 1
-                || game.combats.get(combat.id).data.combatants.size === 0
+                || !game.combats.get(combat.id).combatants.size
             ) {
                 return;
             }
