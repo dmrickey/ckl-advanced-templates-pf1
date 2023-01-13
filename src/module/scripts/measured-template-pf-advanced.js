@@ -121,12 +121,17 @@ const initMeasuredTemplate = () => {
                     break;
             }
 
+            const template = this.template.clear();
+            if (!this.isVisible) {
+                return;
+            }
+
             const outlineAlpha = this.document.flags[MODULE_NAME]?.[CONSTS.flags.hideOutline]
                 ? 0
                 : 0.75;
 
             // Draw the Template outline
-            this.template.clear().lineStyle(this._borderThickness, this.borderColor, outlineAlpha).beginFill(0x000000, 0.0);
+            template.lineStyle(this._borderThickness, this.borderColor, outlineAlpha).beginFill(0x000000, 0.0);
 
             // this is a bit overridden
             // Fill Color or Texture
@@ -146,7 +151,7 @@ const initMeasuredTemplate = () => {
                 const tileTexture = false; // todo
                 const scale = tileTexture ? 1 : textureSize * 2 / this.texture.width;
                 const offset = tileTexture ? 0 : (textureSize);
-                this.template.beginTextureFill({
+                template.beginTextureFill({
                     texture: this.texture,
                     matrix: new PIXI.Matrix()
                         .scale(scale, scale)
@@ -156,25 +161,33 @@ const initMeasuredTemplate = () => {
                 });
             }
             else {
-                this.template.beginFill(0x000000, 0.0);
+                template.beginFill(0x000000, 0.0);
             }
 
             // Draw the shape
-            this.template.drawShape(this.shape);
+            template.drawShape(this.shape);
 
             // Draw origin and destination points
-            this.template.lineStyle(this._borderThickness, 0x000000)
+            template.lineStyle(this._borderThickness, 0x000000)
                 .beginFill(0x000000, 0.5)
                 .drawCircle(0, 0, 6)
-                .drawCircle(this.ray.dx, this.ray.dy, 6);
+                .drawCircle(this.ray.dx, this.ray.dy, 6)
+                .endFill();
+
+            // Draw the template shape and highlight the grid
+            // this._refreshTemplate();
+            this.highlightGrid();
 
             // Update the HUD
-            this.controlIcon.visible = this.layer._active;
-            this.controlIcon.border.visible = this._hover;
-
+            this._refreshControlIcon();
             this._refreshRulerText();
 
             return this;
+        }
+
+        /** @override */
+        _refreshTemplate() {
+            // body of this is now in refresh() to avoid resetting position multiple times
         }
 
         /**
@@ -276,7 +289,6 @@ const initMeasuredTemplate = () => {
             if (
                 !game.settings.get("pf1", "measureStyle")
                 || !["circle", "cone", "ray"].includes(this.document.t)
-                || canvas.grid.type !== CONST.GRID_TYPES.SQUARE
             ) {
                 return super.highlightGrid();
             }
@@ -293,7 +305,6 @@ const initMeasuredTemplate = () => {
             // Clear existing highlight
             const hl = this.getHighlightLayer();
             hl.clear();
-
             if (!this.isVisible) {
                 return;
             }
@@ -301,16 +312,22 @@ const initMeasuredTemplate = () => {
             // highlightGridPosition has a default so undefined is fine to pass in
             const alpha = this.document.flags[MODULE_NAME]?.[CONSTS.flags.colorAlpha];
 
-            // Get grid squares to highlight
-            const highlightSquares = this.getHighlightedSquares();
-            for (const s of highlightSquares) {
-                grid.grid.highlightGridPosition(hl, {
-                    x: s.x,
-                    y: s.y,
-                    alpha,
-                    color: fc,
-                    border: bc,
-                });
+            if (grid.type === CONST.GRID_TYPES.GRIDLESS) {
+                const highlightShape = this._getGridHighlightShape();
+                grid.grid.highlightGridPosition(hl, { border: bc, color: fc, shape: highlightShape });
+            }
+            else {
+                // Get grid squares to highlight
+                const highlightSquares = this.getHighlightedSquares();
+                for (const s of highlightSquares) {
+                    grid.grid.highlightGridPosition(hl, {
+                        x: s.x,
+                        y: s.y,
+                        alpha,
+                        color: fc,
+                        border: bc,
+                    });
+                }
             }
         }
     }
