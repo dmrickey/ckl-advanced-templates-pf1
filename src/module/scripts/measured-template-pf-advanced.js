@@ -121,61 +121,63 @@ const initMeasuredTemplate = () => {
                     break;
             }
 
-            const template = this.template.clear();
-            if (!this.isVisible) {
-                return;
-            }
-
-            const outlineAlpha = this.document.flags[MODULE_NAME]?.[CONSTS.flags.hideOutline]
-                ? 0
-                : 0.75;
-
-            // Draw the Template outline
-            template.lineStyle(this._borderThickness, this.borderColor, outlineAlpha).beginFill(0x000000, 0.0);
-
-            // this is a bit overridden
-            // Fill Color or Texture
-            if (this.texture) {
-                let xOffset = true;
-                let yOffset = true;
-
-                const textureAlpha = this.document.flags[MODULE_NAME]?.[CONSTS.flags.textureAlpha] || 0.5;
-                const scaleOverride = this.document.flags[MODULE_NAME]?.[CONSTS.flags.textureScale] || 1;
-                let textureSize = distance * scaleOverride;
-
-                if (this.document.t === 'cone') {
-                    textureSize /= 2;
-                    xOffset = false;
+            const _refreshTemplate = () => {
+                const template = this.template.clear();
+                if (!this.isVisible) {
+                    return;
                 }
 
-                const tileTexture = false; // todo
-                const scale = tileTexture ? 1 : textureSize * 2 / this.texture.width;
-                const offset = tileTexture ? 0 : (textureSize);
-                template.beginTextureFill({
-                    texture: this.texture,
-                    matrix: new PIXI.Matrix()
-                        .scale(scale, scale)
-                        .translate(xOffset ? -offset : 0, yOffset ? -offset : 0)
-                        .rotate(direction),
-                    alpha: textureAlpha,
-                });
-            }
-            else {
-                template.beginFill(0x000000, 0.0);
-            }
+                const outlineAlpha = this.document.flags[MODULE_NAME]?.[CONSTS.flags.hideOutline]
+                    ? 0
+                    : 0.75;
 
-            // Draw the shape
-            template.drawShape(this.shape);
+                // Draw the Template outline
+                template.lineStyle(this._borderThickness, this.borderColor, outlineAlpha).beginFill(0x000000, 0.0);
 
-            // Draw origin and destination points
-            template.lineStyle(this._borderThickness, 0x000000)
-                .beginFill(0x000000, 0.5)
-                .drawCircle(0, 0, 6)
-                .drawCircle(this.ray.dx, this.ray.dy, 6)
-                .endFill();
+                // this is a bit overridden
+                // Fill Color or Texture
+                if (this.texture) {
+                    let xOffset = true;
+                    let yOffset = true;
+
+                    const textureAlpha = this.document.flags[MODULE_NAME]?.[CONSTS.flags.textureAlpha] || 0.5;
+                    const scaleOverride = this.document.flags[MODULE_NAME]?.[CONSTS.flags.textureScale] || 1;
+                    let textureSize = distance * scaleOverride;
+
+                    if (this.document.t === 'cone') {
+                        textureSize /= 2;
+                        xOffset = false;
+                    }
+
+                    const tileTexture = false; // todo
+                    const scale = tileTexture ? 1 : textureSize * 2 / this.texture.width;
+                    const offset = tileTexture ? 0 : (textureSize);
+                    template.beginTextureFill({
+                        texture: this.texture,
+                        matrix: new PIXI.Matrix()
+                            .scale(scale, scale)
+                            .translate(xOffset ? -offset : 0, yOffset ? -offset : 0)
+                            .rotate(direction),
+                        alpha: textureAlpha,
+                    });
+                }
+                else {
+                    template.beginFill(0x000000, 0.0);
+                }
+
+                // Draw the shape
+                template.drawShape(this.shape);
+
+                // Draw origin and destination points
+                template.lineStyle(this._borderThickness, 0x000000)
+                    .beginFill(0x000000, 0.5)
+                    .drawCircle(0, 0, 6)
+                    .drawCircle(this.ray.dx, this.ray.dy, 6)
+                    .endFill();
+            };
 
             // Draw the template shape and highlight the grid
-            // this._refreshTemplate();
+            _refreshTemplate(); // method is inline above instead of overridden because mine is more complex and uses local variables. (but still inline to show which block of logic it's basically overwriting)
             this.highlightGrid();
 
             // Update the HUD
