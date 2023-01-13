@@ -60,6 +60,9 @@
         },
         "ok": "Ok",
         "cancel": "Cancel",
-        "range": "{range} {unit}"
+        "range": "{range} {unit}",
+        "errors": {
+            "outOfRange": "Template is out of range."
+        }
     }
 }
