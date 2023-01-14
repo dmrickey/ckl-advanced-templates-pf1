@@ -29,7 +29,7 @@ const initMeasuredTemplate = () => {
         }
 
         getCursorPositionWithRespectToGrid(crosshairs) {
-            if (canvas.scene.grid === CONST.GRID_TYPES.SQUARE) {
+            if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
                 return { x: crosshairs.x, y: crosshairs.y }
             }
 
@@ -741,8 +741,8 @@ const initMeasuredTemplate = () => {
             const updateTemplateRotation = async (crosshairs) => {
                 let offsetAngle = 0;
 
-                const snap = Settings.coneRotation;
-                if (snap) {
+                const alternateRotation = Settings.coneRotation;
+                if (alternateRotation) {
                     canvas.app.view.onwheel = (event) => {
                         // Avoid zooming the browser window
                         if (event.ctrlKey) {
@@ -750,44 +750,62 @@ const initMeasuredTemplate = () => {
                         }
                         event.stopPropagation();
 
-                        offsetAngle += snap * Math.sign(event.deltaY);
+                        offsetAngle += alternateRotation * Math.sign(event.deltaY);
                     };
                 }
 
                 while (crosshairs.inFlight) {
                     await warpgate.wait(100);
 
-                    const totalSpots = this._tokenSquare.allSpots.length;
-                    const radToNormalizedAngle = (rad) => {
-                        let angle = (rad * 180 / Math.PI) % 360;
-                        // offset the angle for even-sided tokens, because it's centered in the grid it's just wonky without the offset
-                        const offset = this._is15
-                            ? Settings.cone15Alternate
-                                ? 0.5
-                                : 0
-                            : 1;
-                        if (this._tokenSquare.heightSquares % 2 === offset && this._tokenSquare.widthSquares % 2 === offset) {
-                            angle -= (360 / totalSpots) / 2;
+                    let direction, x, y;
+                    if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
+                        const totalSpots = this._tokenSquare.allSpots.length;
+                        const radToNormalizedAngle = (rad) => {
+                            let angle = (rad * 180 / Math.PI) % 360;
+                            // offset the angle for even-sided tokens, because it's centered in the grid it's just wonky without the offset
+                            const offset = this._is15
+                                ? Settings.cone15Alternate
+                                    ? 0.5
+                                    : 0
+                                : 1;
+                            if (this._tokenSquare.heightSquares % 2 === offset && this._tokenSquare.widthSquares % 2 === offset) {
+                                angle -= (360 / totalSpots) / 2;
+                            }
+                            const normalizedAngle = Math.round(angle / (360 / totalSpots)) * (360 / totalSpots);
+                            return normalizedAngle < 0
+                                ? normalizedAngle + 360
+                                : normalizedAngle;
+                        };
+
+                        const position = this.getCursorPositionWithRespectToGrid(crosshairs);
+                        const ray = new Ray(this._tokenSquare.center, position);
+                        const angle = radToNormalizedAngle(ray.angle);
+                        const spotIndex = Math.ceil(angle / 360 * totalSpots);
+                        if (spotIndex === currentSpotIndex && offsetAngle === currentOffsetAngle) {
+                            continue;
                         }
-                        const normalizedAngle = Math.round(angle / (360 / totalSpots)) * (360 / totalSpots);
-                        return normalizedAngle < 0
-                            ? normalizedAngle + 360
-                            : normalizedAngle;
-                    };
 
-                    const position = this.getCursorPositionWithRespectToGrid(crosshairs);
-                    const ray = new Ray(this._tokenSquare.center, position);
-                    const angle = radToNormalizedAngle(ray.angle);
-                    const spotIndex = Math.ceil(angle / 360 * totalSpots);
-                    if (spotIndex === currentSpotIndex && offsetAngle === currentOffsetAngle) {
-                        continue;
+                        currentOffsetAngle = offsetAngle;
+                        currentSpotIndex = spotIndex;
+
+                        const spot = this._tokenSquare.allSpots[currentSpotIndex];
+                        direction = spot.direction;
+                        x = spot.x;
+                        y = spot.y;
                     }
-
-                    currentOffsetAngle = offsetAngle;
-                    currentSpotIndex = spotIndex;
-
-                    const spot = this._tokenSquare.allSpots[currentSpotIndex];
-                    const { direction, x, y } = spot;
+                    else {
+                        const radToNormalizedAngle = (rad) => {
+                            const angle = (rad * 180 / Math.PI) % 360;
+                            return angle < 0
+                                ? angle + 360
+                                : angle;
+                        };
+                        const position = this.getCursorPositionWithRespectToGrid(crosshairs);
+                        const ray = new Ray(this._tokenSquare.center, position);
+                        direction = radToNormalizedAngle(ray.angle);
+                        x = Math.cos(ray.angle) * this._tokenSquare.w / 2 + this._tokenSquare.center.x;
+                        y = Math.sin(ray.angle) * this._tokenSquare.h / 2 + this._tokenSquare.center.y;
+                    }
 
                     this.document.direction = direction + offsetAngle;
                     this.document.x = x;
@@ -943,7 +961,7 @@ const initMeasuredTemplate = () => {
 
     class AbilityTemplateConeTarget extends AbilityTemplateConeBase {
         /** @override */
-        async initializePlacement(itemPf) {
+        async initializePlacement(_itemPf) {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
             await super.initializeConeData();
