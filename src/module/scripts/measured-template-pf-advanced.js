@@ -629,7 +629,10 @@ const initMeasuredTemplate = () => {
                             ray: new Ray(spot, { x, y }),
                         }));
                         const distances = rays.map((ray) => canvas.grid.measureDistances([ray], { gridSpaces: true })[0]);
-                        const range = Math.min(...distances);
+                        let range = Math.min(...distances);
+                        range = !!(range % 1)
+                            ? range.toFixed(1)
+                            : range;
 
                         isInRange = !(this._hasMinRange && range < this._minRange
                             || this._hasMaxRange && range > this._maxRange);
