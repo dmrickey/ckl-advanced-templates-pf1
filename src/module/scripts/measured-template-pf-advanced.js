@@ -588,6 +588,8 @@ const initMeasuredTemplate = () => {
             };
         }
 
+        _crosshairsOverride(crosshairs) { }
+
         /** @override */
         async commitPreview() {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
@@ -601,12 +603,15 @@ const initMeasuredTemplate = () => {
             const updateTemplateLocation = async (crosshairs) => {
                 while (crosshairs.inFlight) {
                     await warpgate.wait(20);
+
                     this.document.flags[MODULE_NAME].icon = existingIcon;
 
                     const { x, y } = crosshairs.center;
                     if (this.document.x === x && this.document.y === y) {
                         continue;
                     }
+
+                    this._crosshairsOverride(crosshairs);
 
                     if ((this._hasMaxRange || this._hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
                         const rays = this._tokenSquare.allSpots.map((spot) => ({
@@ -690,87 +695,16 @@ const initMeasuredTemplate = () => {
 
     class AbilityTemplateCircleSplash extends AbilityTemplateCircleGrid {
         /** @override */
-        async commitPreview() {
-            ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
-            if (Settings.target) {
-                game.user.updateTokenTargets();
-            }
-
-            const existingIcon = this.controlIcon?.iconSrc;
-            let isInRange = true;
-
-            const updateTemplateLocation = async (crosshairs) => {
-                while (crosshairs.inFlight) {
-                    await warpgate.wait(20);
-
-                    this.document.flags[MODULE_NAME].icon = existingIcon;
-
-                    const { x, y } = crosshairs.center;
-                    if (this.document.x === x && this.document.y === y) {
-                        continue;
-                    }
-
-                    let mouse = canvas.app.renderer.plugins.interaction.mouse;
-                    let mouseCoords = mouse.getLocalPosition(canvas.app.stage);
-                    const boundsContains = (bounds, point) =>
-                        bounds.left <= point.x
-                        && point.x <= bounds.right
-                        && bounds.top <= point.y
-                        && point.y <= bounds.bottom;
-
-                    const found = !!canvas.tokens.placeables.map(x => x.bounds).find(b => boundsContains(b, mouseCoords));
-                    crosshairs.interval = found ? -1 : 1;
-
-                    if ((this._hasMaxRange || this._hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
-                        const rays = this._tokenSquare.allSpots.map((spot) => ({
-                            ray: new Ray(spot, crosshairs),
-                        }));
-                        const distances = rays.map((ray) => canvas.grid.measureDistances([ray], { gridSpaces: true })[0]);
-                        const range = Math.min(...distances);
-
-                        isInRange = !(this._hasMinRange && range < this._minRange
-                            || this._hasMaxRange && range > this._maxRange);
-                        this._setPreviewVisibility(isInRange);
-
-                        const unit = game.settings.get('pf1', 'units') === 'imperial'
-                            ? localizeFull('PF1.DistFtShort')
-                            : localizeFull('PF1.DistMShort');
-                        crosshairs.label = `${range} ${unit}`;
-                        crosshairs.label = localize('range', { range, unit });
-                    }
-
-                    this.document.x = x;
-                    this.document.y = y;
-                    this.refresh();
-
-                    this.targetIfEnabled();
-                }
-            };
-
-            const targetConfig = {
-                drawIcon: false,
-                drawOutline: false,
-                interval: 1,
-            };
-            const crosshairs = await warpgate.crosshairs.show(
-                targetConfig,
-                {
-                    show: updateTemplateLocation
-                }
-            );
-
-            if (crosshairs.cancelled || !isInRange) {
-                if (!isInRange) {
-                    const message = localize('errors.outOfRange');
-                    ui.notifications.error(message);
-                }
-                if (Settings.target) {
-                    game.user.updateTokenTargets();
-                }
-                return false;
-            }
-
-            return true;
+        _crosshairsOverride(crosshairs) {
+            let mouse = canvas.app.renderer.plugins.interaction.mouse;
+            let mouseCoords = mouse.getLocalPosition(canvas.app.stage);
+            const boundsContains = (bounds, point) =>
+                bounds.left <= point.x
+                && point.x <= bounds.right
+                && bounds.top <= point.y
+                && point.y <= bounds.bottom;
+            const found = !!canvas.tokens.placeables.map(x => x.bounds).find(b => boundsContains(b, mouseCoords));
+            crosshairs.interval = found ? -1 : 1;
         }
     }
 
