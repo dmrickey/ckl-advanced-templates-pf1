@@ -850,8 +850,8 @@ const initMeasuredTemplate = () => {
                     drawIcon: true,
                     drawOutline: false,
                     interval: -1,
-                    label: 'Cone Start',
-                    // grab icon from item
+                    label: localize('coneStart'),
+                    icon: this.document.flags?.[MODULE_NAME]?.icon || 'systems/pf1/icons/misc/magic-swirl.png',
                 };
 
                 const source = await warpgate.crosshairs.show(sourceConfig);

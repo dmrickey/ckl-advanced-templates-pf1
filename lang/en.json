@@ -58,8 +58,9 @@
             "textureAlpha.label": "Texture Alpha",
             "textureScale.label": "Texture Scale"
         },
-        "ok": "Ok",
         "cancel": "Cancel",
+        "coneStart": "Cone Start",
+        "ok": "Ok",
         "range": "{range} {unit}",
         "errors": {
             "outOfRange": "Template is out of range."
