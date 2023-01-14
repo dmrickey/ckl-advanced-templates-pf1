@@ -29,6 +29,7 @@ async function promptMeasureTemplate(wrapped) {
     const icon = this.shared.action.data.img === 'systems/pf1/icons/misc/magic-swirl.png' ? undefined : this.shared.action.data.img;
     const maxRange = this.shared.action.getRange();
     const minRange = this.shared.action.getRange({ type: "min" });
+    const flags = this.shared.action.data.flags?.[MODULE_NAME] || {};
 
     const templateData = {
         _id: randomID(16),
@@ -36,7 +37,8 @@ async function promptMeasureTemplate(wrapped) {
         t: type,
         flags: {
             [MODULE_NAME]: {
-                ...this.shared.action.data.flags?.[MODULE_NAME],
+                ...flags,
+                [CONSTS.flags.circle.movesWithToken]: flags[CONSTS.placement] == CONSTS.placement.circle.self && flags[CONSTS.flags.circle.movesWithToken],
                 icon,
                 maxRange,
                 minRange,
