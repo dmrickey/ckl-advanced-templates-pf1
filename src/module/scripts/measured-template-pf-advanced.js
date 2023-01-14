@@ -17,7 +17,8 @@ const initMeasuredTemplate = () => {
         }
 
         get hideHighlight() {
-            return !!this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.hideHighlight];
+            return !!this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.hideHighlight]
+                || !!this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.hidePreview];
         }
 
         get tokenSizeSquares() {
@@ -78,6 +79,21 @@ const initMeasuredTemplate = () => {
             this.shape = new PIXI.RoundedRectangle(-radius, -radius, radius * 2, radius * 2, radius - dimensions.size * sizeSquares / 2);
         }
 
+        _setPreviewVisibility(show) {
+            this.document.flags[MODULE_NAME][CONSTS.flags.hidePreview] = !show;
+            const existingIcon = this.document.flags[MODULE_NAME].icon;
+            const icon = show ? existingIcon : 'icons/svg/hazard.svg';
+            this.ruler.alpha = show ? 1 : 0;
+
+            if (icon && icon !== this.controlIcon?.iconSrc) {
+                this.document.flags[MODULE_NAME].icon = icon;
+                if (this.controlIcon) {
+                    this.controlIcon.destroy();
+                }
+                this.controlIcon = this.addChild(this._drawControlIcon());
+            }
+        }
+
         /** @override */
         refresh() {
             if (!['circle', 'cone'].includes(this.document.t)) {
@@ -123,7 +139,7 @@ const initMeasuredTemplate = () => {
 
             const _refreshTemplate = () => {
                 const template = this.template.clear();
-                if (!this.isVisible) {
+                if (!this.isVisible || this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.hidePreview]) {
                     return;
                 }
 
@@ -599,33 +615,15 @@ const initMeasuredTemplate = () => {
                         const distances = rays.map((ray) => canvas.grid.measureDistances([ray], { gridSpaces: true })[0]);
                         const range = Math.min(...distances);
 
-                        let icon;
-                        if (this._hasMinRange && range < this._minRange
-                            || this._hasMaxRange && range > this._maxRange
-                        ) {
-                            icon = 'icons/svg/hazard.svg';
-                            this.document.flags[MODULE_NAME][CONSTS.flags.hideHighlight] = true;
-                            isInRange = false;
-                        }
-                        else {
-                            icon = existingIcon;
-                            this.document.flags[MODULE_NAME][CONSTS.flags.hideHighlight] = false;
-                            isInRange = true;
-                        }
+                        isInRange = !(this._hasMinRange && range < this._minRange
+                            || this._hasMaxRange && range > this._maxRange);
+                        this._setPreviewVisibility(isInRange);
 
                         const unit = game.settings.get('pf1', 'units') === 'imperial'
                             ? localizeFull('PF1.DistFtShort')
                             : localizeFull('PF1.DistMShort');
                         crosshairs.label = `${range} ${unit}`;
                         crosshairs.label = localize('range', { range, unit });
-
-                        if (icon && icon !== this.controlIcon?.iconSrc) {
-                            this.document.flags[MODULE_NAME].icon = icon;
-                            if (this.controlIcon) {
-                                this.controlIcon.destroy();
-                            }
-                            this.controlIcon = this.addChild(this._drawControlIcon());
-                        }
                     }
 
                     this.document.x = x;
@@ -730,33 +728,15 @@ const initMeasuredTemplate = () => {
                         const distances = rays.map((ray) => canvas.grid.measureDistances([ray], { gridSpaces: true })[0]);
                         const range = Math.min(...distances);
 
-                        let icon;
-                        if (this._hasMinRange && range < this._minRange
-                            || this._hasMaxRange && range > this._maxRange
-                        ) {
-                            icon = 'icons/svg/hazard.svg';
-                            this.document.flags[MODULE_NAME][CONSTS.flags.hideHighlight] = true;
-                            isInRange = false;
-                        }
-                        else {
-                            icon = existingIcon;
-                            this.document.flags[MODULE_NAME][CONSTS.flags.hideHighlight] = false;
-                            isInRange = true;
-                        }
+                        isInRange = !(this._hasMinRange && range < this._minRange
+                            || this._hasMaxRange && range > this._maxRange);
+                        this._setPreviewVisibility(isInRange);
 
                         const unit = game.settings.get('pf1', 'units') === 'imperial'
                             ? localizeFull('PF1.DistFtShort')
                             : localizeFull('PF1.DistMShort');
                         crosshairs.label = `${range} ${unit}`;
                         crosshairs.label = localize('range', { range, unit });
-
-                        if (icon && icon !== this.controlIcon?.iconSrc) {
-                            this.document.flags[MODULE_NAME].icon = icon;
-                            if (this.controlIcon) {
-                                this.controlIcon.destroy();
-                            }
-                            this.controlIcon = this.addChild(this._drawControlIcon());
-                        }
                     }
 
                     this.document.x = x;
