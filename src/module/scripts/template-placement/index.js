@@ -38,7 +38,7 @@ async function promptMeasureTemplate(wrapped) {
         flags: {
             [MODULE_NAME]: {
                 ...flags,
-                [CONSTS.flags.circle.movesWithToken]: flags[CONSTS.placement] == CONSTS.placement.circle.self && flags[CONSTS.flags.circle.movesWithToken],
+                [CONSTS.flags.circle.movesWithToken]: flags[CONSTS.flags.placementType] == CONSTS.placement.circle.self && !!flags[CONSTS.flags.circle.movesWithToken],
                 icon,
                 maxRange,
                 minRange,
