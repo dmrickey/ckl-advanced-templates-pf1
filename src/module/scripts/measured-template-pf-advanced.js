@@ -28,6 +28,17 @@ const initMeasuredTemplate = () => {
             return { token, sizeSquares };
         }
 
+        getCursorPositionWithRespectToGrid(crosshairs) {
+            if (canvas.scene.grid === CONST.GRID_TYPES.SQUARE) {
+                return { x: crosshairs.x, y: crosshairs.y }
+            }
+
+            const mouse = canvas.app.renderer.plugins.interaction.mouse;
+            const position = mouse.getLocalPosition(canvas.app.stage);
+            const { x, y } = position;
+            return { x, y };
+        }
+
         get tokenGridCorners() {
             const { sizeSquares } = this.tokenSizeSquares;
             const { x, y } = this.document;
@@ -588,7 +599,7 @@ const initMeasuredTemplate = () => {
             };
         }
 
-        _crosshairsOverride(crosshairs) { }
+        _crosshairsOverride(_crosshairs) { }
 
         /** @override */
         async commitPreview() {
@@ -606,7 +617,7 @@ const initMeasuredTemplate = () => {
 
                     this.document.flags[MODULE_NAME].icon = existingIcon;
 
-                    const { x, y } = crosshairs.center;
+                    const { x, y } = this.getCursorPositionWithRespectToGrid(crosshairs);
                     if (this.document.x === x && this.document.y === y) {
                         continue;
                     }
@@ -615,7 +626,7 @@ const initMeasuredTemplate = () => {
 
                     if ((this._hasMaxRange || this._hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
                         const rays = this._tokenSquare.allSpots.map((spot) => ({
-                            ray: new Ray(spot, crosshairs),
+                            ray: new Ray(spot, { x, y }),
                         }));
                         const distances = rays.map((ray) => canvas.grid.measureDistances([ray], { gridSpaces: true })[0]);
                         const range = Math.min(...distances);
@@ -652,7 +663,7 @@ const initMeasuredTemplate = () => {
             );
 
             if (crosshairs.cancelled || !isInRange) {
-                if (!isInRange) {
+                if (!isInRange && !crosshairs.cancelled) {
                     const message = localize('errors.outOfRange');
                     ui.notifications.error(message);
                 }
@@ -764,7 +775,8 @@ const initMeasuredTemplate = () => {
                             : normalizedAngle;
                     };
 
-                    const ray = new Ray(this._tokenSquare.center, crosshairs);
+                    const position = this.getCursorPositionWithRespectToGrid(crosshairs);
+                    const ray = new Ray(this._tokenSquare.center, position);
                     const angle = radToNormalizedAngle(ray.angle);
                     const spotIndex = Math.ceil(angle / 360 * totalSpots);
                     if (spotIndex === currentSpotIndex && offsetAngle === currentOffsetAngle) {
