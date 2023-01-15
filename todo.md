@@ -13,7 +13,6 @@
     - make sure dragging respects template placement rules
   - Add aura ability to prompt buffs/debuffs
   - Rangefinding
-    - Show error when attempting to cast a spell out of range (i.e. give feedback instead of silently failing)
     - Add "out of range" to distance to give pre-feedback
   - Interval logic needs to be at the root level of the class so when I overwrite the update/drag implementation it has the same snap logic (i.e. grid intersection or not)
 
@@ -48,7 +47,7 @@
 - Delete Template at End of Turn
   - Read the action's duration and if it is `"instantaneous"` then enable by default
 - Add option for targeting multiple areas (Meteor Swarm)
-- Update already-placed templates when updating a config (add flag on teh template for this item's ID then update those when this is updated)
+- Update already-placed templates when updating a config (add flag on the template for this item's ID then update those when this is updated)
 
 ### Targets (might need a new template type...)
 - rangefinding
