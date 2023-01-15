@@ -847,7 +847,8 @@ const initMeasuredTemplate = () => {
                 if (source.cancelled) {
                     return;
                 }
-                this._tokenSquare = this._sourceSquare({ x: source.x, y: source.y }, 1, 1);
+                const size = canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? 1 : 0;
+                this._tokenSquare = this._sourceSquare({ x: source.x, y: source.y }, size, size);
             }
             else {
                 const width = Math.max(Math.round(token.document.width), 1);
@@ -932,8 +933,10 @@ const initMeasuredTemplate = () => {
                 bottom,
                 left,
                 right,
-                h: canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? h : 0,
-                w: canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? w : 0,
+                // h: canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? h : 0,
+                // w: canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? w : 0,
+                h,
+                w,
                 heightSquares,
                 widthSquares,
                 allSpots,
