@@ -28,17 +28,6 @@ const initMeasuredTemplate = () => {
             return { token, sizeSquares };
         }
 
-        getCursorPositionWithRespectToGrid(crosshairs) {
-            if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
-                return { x: crosshairs.x, y: crosshairs.y }
-            }
-
-            const mouse = canvas.app.renderer.plugins.interaction.mouse;
-            const position = mouse.getLocalPosition(canvas.app.stage);
-            const { x, y } = position;
-            return { x, y };
-        }
-
         get tokenGridCorners() {
             const { sizeSquares } = this.tokenSizeSquares;
             const { x, y } = this.document;
@@ -420,6 +409,8 @@ const initMeasuredTemplate = () => {
             return thisTemplate;
         }
 
+        _gridInterval() { return canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? 1 : 0; }
+
         async drawPreview() {
             const initialLayer = canvas.activeLayer;
 
@@ -546,8 +537,6 @@ const initMeasuredTemplate = () => {
         _hasMinRange;
         _tokenSquare;
 
-        _gridInterval() { return 1; }
-
         _calculateTokenSquare(token) {
             const heightSquares = Math.max(Math.round(token.document.height), 1);
             const widthSquares = Math.max(Math.round(token.document.width), 1);
@@ -617,7 +606,7 @@ const initMeasuredTemplate = () => {
 
                     this.document.flags[MODULE_NAME].icon = existingIcon;
 
-                    const { x, y } = this.getCursorPositionWithRespectToGrid(crosshairs);
+                    const { x, y } = crosshairs;
                     if (this.document.x === x && this.document.y === y) {
                         continue;
                     }
@@ -704,7 +693,7 @@ const initMeasuredTemplate = () => {
 
     class AbilityTemplateCircleAnywhere extends AbilityTemplateCircleGrid {
         /** @override */
-        _gridInterval() { return 2; }
+        _gridInterval() { return canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? 2 : 0; }
     }
 
     class AbilityTemplateCircleSplash extends AbilityTemplateCircleGrid {
@@ -718,7 +707,7 @@ const initMeasuredTemplate = () => {
                 && bounds.top <= point.y
                 && point.y <= bounds.bottom;
             const found = !!canvas.tokens.placeables.map(x => x.bounds).find(b => boundsContains(b, mouseCoords));
-            crosshairs.interval = found ? -1 : 1;
+            crosshairs.interval = canvas.scene.grid.type !== CONST.GRID_TYPES.SQUARE ? 0 : found ? -1 : 1;
         }
     }
 
@@ -780,8 +769,7 @@ const initMeasuredTemplate = () => {
                                 : normalizedAngle;
                         };
 
-                        const position = this.getCursorPositionWithRespectToGrid(crosshairs);
-                        const ray = new Ray(this._tokenSquare.center, position);
+                        const ray = new Ray(this._tokenSquare.center, crosshairs);
                         const angle = radToNormalizedAngle(ray.angle);
                         const spotIndex = Math.ceil(angle / 360 * totalSpots);
                         if (spotIndex === currentSpotIndex && offsetAngle === currentOffsetAngle) {
@@ -803,8 +791,7 @@ const initMeasuredTemplate = () => {
                                 ? angle + 360
                                 : angle;
                         };
-                        const position = this.getCursorPositionWithRespectToGrid(crosshairs);
-                        const ray = new Ray(this._tokenSquare.center, position);
+                        const ray = new Ray(this._tokenSquare.center, crosshairs);
                         direction = radToNormalizedAngle(ray.angle);
                         x = Math.cos(ray.angle) * this._tokenSquare.w / 2 + this._tokenSquare.center.x;
                         y = Math.sin(ray.angle) * this._tokenSquare.h / 2 + this._tokenSquare.center.y;
@@ -838,6 +825,8 @@ const initMeasuredTemplate = () => {
             return true;
         }
 
+        _gridInterval() { return canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? -1 : 0; }
+
         /** @override */
         async initializeConeData(token) {
             ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
@@ -849,7 +838,7 @@ const initMeasuredTemplate = () => {
                 const sourceConfig = {
                     drawIcon: true,
                     drawOutline: false,
-                    interval: -1,
+                    interval: this._gridInterval(),
                     label: localize('coneStart'),
                     icon: this.document.flags?.[MODULE_NAME]?.icon || 'systems/pf1/icons/misc/magic-swirl.png',
                 };
