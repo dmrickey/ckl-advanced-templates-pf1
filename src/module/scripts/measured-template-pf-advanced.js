@@ -423,7 +423,7 @@ const initMeasuredTemplate = () => {
                 this.controlIcon.removeAllListeners();
             }
 
-            // remove control icon button ability to allow placing templates on top of other templates
+            // disable existing templates' control icon buttons to allow placing templates on top of other templates
             const existingTemplates = canvas.templates.placeables;
             existingTemplates.forEach(existing => {
                 if (existing.controlIcon) {
