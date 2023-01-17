@@ -20,11 +20,12 @@ const targetTokens = (template) => {
         .flatMap((x) => x);
     const tokenIdsToTarget = centers.filter((o) =>
         canvas
-            .grid.getHighlightLayer(`Template.${template.id}`)
+            //.grid.getHighlightLayer(`Template.${template.id}`)
+            .grid.getHighlightLayer(template.highlightId)
             .geometry.containsPoint(o.center))
         .map((x) => x.id);
 
     game.user.updateTokenTargets(tokenIdsToTarget);
 };
 
-export default targetTokens;
+export { targetTokens };

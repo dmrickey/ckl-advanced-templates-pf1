@@ -19,8 +19,8 @@ const moveTemplatesToToken = async (token) => {
 };
 
 const _getTemplateIdsForToken = (token) => canvas.templates.placeables
-    .filter((t) => !!t.data.flags?.[MODULE_NAME]?.[CONSTS.flags.circle.movesWithToken])
-    .filter((t) => t.data.flags?.[MODULE_NAME]?.tokenId === token.id)
+    .filter((t) => !!t.document.flags?.[MODULE_NAME]?.[CONSTS.flags.circle.movesWithToken])
+    .filter((t) => t.document.flags?.[MODULE_NAME]?.tokenId === token.id)
     .map((t) => t.id);
 
 export {

@@ -1,6 +1,5 @@
-import ifDebug from '../utils/if-debug';
 import { CONSTS, MODULE_NAME } from '../../consts';
-import { getToken } from '../utils';
+import { getToken, ifDebug } from '../utils';
 import { Settings } from '../../settings';
 
 /**
@@ -12,8 +11,8 @@ import { Settings } from '../../settings';
  *
  * @returns {object} The template creation data
  */
-async function promptMeasureTemplate(wrapped, shared) {
-    ifDebug(() => console.log('promptMeasureTemplate', this, shared));
+async function promptMeasureTemplate(wrapped) {
+    ifDebug(() => console.log('promptMeasureTemplate', this));
 
     // return success early if user isn't allowed to place templates
     if (!hasTemplatePermission()) {
@@ -24,19 +23,22 @@ async function promptMeasureTemplate(wrapped, shared) {
         };
     }
 
-    const type = shared.action.data.measureTemplate.type;
+    const type = this.shared.action.data.measureTemplate.type;
 
-    const token = getToken(this) || {};
-    const icon = shared.action.data.img === 'systems/pf1/icons/misc/magic-swirl.png' ? undefined : shared.action.data.img;
-    const { minRange, maxRange } = shared.action;
+    const token = getToken(this.item) || {};
+    const icon = this.shared.action.data.img === 'systems/pf1/icons/misc/magic-swirl.png' ? undefined : this.shared.action.data.img;
+    const maxRange = this.shared.action.getRange();
+    const minRange = this.shared.action.getRange({ type: "min" });
+    const flags = this.shared.action.data.flags?.[MODULE_NAME] || {};
 
     const templateData = {
         _id: randomID(16),
-        distance: _getSize(shared) || 5,
+        distance: _getSize(this.shared) || 5,
         t: type,
         flags: {
             [MODULE_NAME]: {
-                ...shared.action.data.flags?.[MODULE_NAME],
+                ...flags,
+                [CONSTS.flags.circle.movesWithToken]: flags[CONSTS.flags.placementType] == CONSTS.placement.circle.self && !!flags[CONSTS.flags.circle.movesWithToken],
                 icon,
                 maxRange,
                 minRange,
@@ -44,20 +46,20 @@ async function promptMeasureTemplate(wrapped, shared) {
             },
         },
         user: game.userId,
-        fillColor: shared.action.data.measureTemplate?.overrideColor
-            ? shared.action.data.measureTemplate.customColor
+        fillColor: this.shared.action.data.measureTemplate?.overrideColor
+            ? this.shared.action.data.measureTemplate.customColor
             : game.user.color,
-        texture: shared.action.data.measureTemplate?.overrideTexture
-            ? shared.action.data.measureTemplate.customTexture
+        texture: this.shared.action.data.measureTemplate?.overrideTexture
+            ? this.shared.action.data.measureTemplate.customTexture
             : null,
     };
 
     if (!['cone', 'circle'].includes(type)
-        || (type === 'cone' && shared.action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] === CONSTS.placement.useSystem)
+        || (type === 'cone' && this.shared.action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] === CONSTS.placement.useSystem)
     ) {
-        const wrappedResult = await wrapped(shared);
-        if (shared.template) {
-            await shared.template.update({ flags: templateData.flags });
+        const wrappedResult = await wrapped();
+        if (this.shared.template) {
+            await this.shared.template.update({ flags: templateData.flags });
         }
         return wrappedResult;
     }
@@ -65,7 +67,7 @@ async function promptMeasureTemplate(wrapped, shared) {
     const windows = Object.values(ui.windows).filter((x) => !!x.minimize && !x._minimized);
     await Promise.all(windows.map((x) => x.minimize()));
 
-    const template = await game[MODULE_NAME].AbilityTemplateAdvanced.fromData(templateData, shared.action);
+    const template = await game[MODULE_NAME].AbilityTemplateAdvanced.fromData(templateData, this.shared.action);
     if (!template) {
         return { result: false };
     }
@@ -81,7 +83,7 @@ async function promptMeasureTemplate(wrapped, shared) {
         await Promise.all(windows.map((x) => x.maximize()));
     }
 
-    shared.template = await result.place();
+    this.shared.template = await result.place();
 
     return result;
 }
@@ -90,6 +92,6 @@ export default promptMeasureTemplate;
 
 const _getSize = (shared) => typeof shared.action.data.measureTemplate.size === 'string'
     ? RollPF.safeTotal(shared.action.data.measureTemplate.size, shared.rollData)
-    : game.pf1.utils.convertDistance(shared.action.data.measureTemplate.size)[0];
+    : globalThis.pf1.utils.convertDistance(shared.action.data.measureTemplate.size)[0];
 
 const hasTemplatePermission = () => game.permissions.TEMPLATE_CREATE.includes(game.user.role);

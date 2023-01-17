@@ -73,9 +73,9 @@ Here's a few random changes that don't specifically fit into the above categorie
 manifest link: https://github.com/dmrickey/ckl-advanced-templates-pf1/releases/latest/download/module.json
 
 Last tested versions
-Advanced Templates PF1 1.3.4
-Foundry v9 269
-PF1e 0.81.3
+Advanced Templates PF1 1.4.0
+Foundry v10 291
+PF1e 0.82.5
 
 Here's a quick visual demo of how to configure some of the options and how they work (no audio was recorded)
 https://youtu.be/r7oAkXw6-zU
