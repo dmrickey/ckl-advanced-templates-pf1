@@ -1,3 +1,4 @@
+// todo either delete this or use it (and update it, because it uses data.data)
 const targetTokens = (template) => {
     const getCenterOfSquares = (t) => {
         const gridSize = canvas.grid.h;
