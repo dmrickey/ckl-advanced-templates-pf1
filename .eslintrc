@@ -14,8 +14,13 @@
     ],
 
         // Defines / overrides a few more environment parameters not provided in the configs above.
-        "env": {
+    "env": {
         "jquery": true
+    },
+
+    "globals": {
+        "pf1": "readonly",
+        "libWrapper": "readonly"
     },
 
     // Prevents overwriting any built in globals particularly from `@typhonjs-fvtt/eslint-config-foundry.js`, but also

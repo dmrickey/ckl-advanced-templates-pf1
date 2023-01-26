@@ -23,7 +23,7 @@ Hooks.once('ready', async () => {
 });
 
 Hooks.once('pf1PostReady', () => {
-    if (!globalThis.pf1.migrations.isMigrating) {
+    if (!pf1.migrations.isMigrating) {
         migrateIfNeeded();
     }
     else {
