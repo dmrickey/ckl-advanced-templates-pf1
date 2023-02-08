@@ -9,6 +9,10 @@ const initMeasuredTemplate = () => {
     const MeasuredTemplatePF = CONFIG.MeasuredTemplate.objectClass;
 
     class MeasuredTemplatePFAdvanced extends MeasuredTemplatePF {
+        get shouldOverride() {
+            return ['circle', 'cone'].includes(this.document.t);
+        }
+
         get shouldOverrideTokenEmanation() {
             return game.settings.get('pf1', 'measureStyle')
                 && this.document.t === 'circle'
@@ -96,7 +100,7 @@ const initMeasuredTemplate = () => {
 
         /** @override */
         refresh() {
-            if (!['circle', 'cone'].includes(this.document.t)) {
+            if (!this.shouldOverride) {
                 return super.refresh();
             }
 
@@ -206,6 +210,10 @@ const initMeasuredTemplate = () => {
         /** @override */
         _refreshTemplate() {
             // body of this is now in refresh() to avoid resetting position multiple times
+            // so only call it when it isn't a shape we handle above in `refresh`
+            if (!this.shouldOverride) {
+                return super._refreshTemplate();
+            }
         }
 
         /**
@@ -217,6 +225,7 @@ const initMeasuredTemplate = () => {
          */
         /** @override */
         _drawControlIcon() {
+            // call this for all templates to use spell's icon
             const size = Math.max(Math.round((canvas.dimensions.size * 0.5) / 20) * 20, 40);
             const iconTexture = this.document.flags?.[MODULE_NAME]?.icon;
             const icon = new ControlIcon({ texture: iconTexture || CONFIG.controlIcons.template, size });
@@ -332,7 +341,12 @@ const initMeasuredTemplate = () => {
 
             if (grid.type === CONST.GRID_TYPES.GRIDLESS) {
                 const highlightShape = this._getGridHighlightShape();
-                grid.grid.highlightGridPosition(hl, { border: bc, color: fc, shape: highlightShape });
+                grid.grid.highlightGridPosition(hl, {
+                    border: bc,
+                    color: fc,
+                    alpha,
+                    shape: highlightShape,
+                });
             }
             else {
                 // Get grid squares to highlight
