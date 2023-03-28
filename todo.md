@@ -16,6 +16,11 @@
     - Add "out of range" to distance to give pre-feedback
   - Interval logic needs to be at the root level of the class so when I overwrite the update/drag implementation it has the same snap logic (i.e. grid intersection or not)
 
+### Configurable Token Auras
+- it's basically just a circle.
+- Create a config in a feature for "is aura"
+  - I've already got attachable circles so this is essentially just checking if an active item is an aura and creating the template for it. Hopefuly re-use the existing svelte templates I've got set up
+
 ### Cones
 - disable dragging and/or make sure dragging respects placement rules
 - Add some kind of targeting indicator and/or fill highlight when targeting via "select square"
@@ -92,6 +97,5 @@
 
 ## Unknowns that I don't intend to look into
 - Making it work with anything that isn't PF1
-- Gridless
 - Hex Grids
 - Whether or not it runs on Forge (it probably does, I think its limitations are only related to file paths, but I have no way of testing this)
