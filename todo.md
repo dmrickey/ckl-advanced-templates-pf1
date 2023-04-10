@@ -11,20 +11,32 @@
     - don't show template unless cursor is over a token
   - target grid
     - make sure dragging respects template placement rules
-  - Add aura ability to prompt buffs/debuffs
   - Rangefinding
     - Add "out of range" to distance to give pre-feedback
   - Interval logic needs to be at the root level of the class so when I overwrite the update/drag implementation it has the same snap logic (i.e. grid intersection or not)
 
 ### Configurable Token Auras
+- Add aura ability to prompt buffs/debuffs
 - it's basically just a circle.
 - Create a config in a feature for "is aura"
   - I've already got attachable circles so this is essentially just checking if an active item is an aura and creating the template for it. Hopefuly re-use the existing svelte templates I've got set up
+- Option for "always on" or "buff for tracking control aura on user"
+- buff to trigger for allies in the aura
+  - lingers?
+    - if lingers, a different buff and for how long?
+- (de)buff for enemies inside the aura
+  - Checkbox for using save configured in action vs. being automatic
+  - lingers?
+    - if lingers, a different buff and for how long?
+- checkbox for "only show in combat"
+  - make sure if this is disabled, it shows automatically
+- When granting buff to others, need to make sure that any actor roll variables are resolved and swapped out when given to the target
 
 ### Cones
 - disable dragging and/or make sure dragging respects placement rules
 - Add some kind of targeting indicator and/or fill highlight when targeting via "select square"
 - Add an "offset degrees" label for when the GM has that option turned on so the user knows what offset from 0 they've onto their cone as an extra rotation (hide label if 0)
+- "place from target location" - after placing, and selecting the rotation, right click should go back to choosing a location, a second right click should cancel the template
 
 ### Rays
 - On startup add it to the selectable types
