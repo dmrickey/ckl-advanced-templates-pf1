@@ -8,6 +8,8 @@ import { getToken, ifDebug, localize, localizeFull } from './utils';
 const initMeasuredTemplate = () => {
     const MeasuredTemplatePF = CONFIG.MeasuredTemplate.objectClass;
 
+    // this should work as of v9 - ethaks, see this convo https://discord.com/channels/732325252788387980/851896823471538196/1119302160392392704
+    // class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
     class MeasuredTemplatePFAdvanced extends MeasuredTemplatePF {
         get shouldOverride() {
             return ['circle', 'cone'].includes(this.document.t);
