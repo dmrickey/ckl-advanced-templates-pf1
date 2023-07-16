@@ -8,3 +8,4 @@
 ckl-advanced-templates-pf1.lock
 dist/*
 node_modules/
+tools/link.bat

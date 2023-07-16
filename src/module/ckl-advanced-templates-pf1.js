@@ -1,7 +1,7 @@
 import { deleteTemplatesForToken, moveTemplatesToToken } from './scripts/sync-templates-to-token.js';
 import { DurationTracker } from './scripts/duration-tracker.js';
 import { handleSingleOwner } from './scripts/utils/active-gm.js';
-import { initMeasuredTemplate } from './scripts/measured-template-pf-advanced';
+import { initTemplates } from './scripts/templates';
 import { MODULE_NAME } from './consts';
 import { registerSettings } from './settings.js';
 import injectTemplateSelector from './scripts/template-selector-injector';
@@ -32,7 +32,8 @@ Hooks.once('pf1PostReady', () => {
 });
 
 Hooks.on('pf1PostInit', () => {
-    initMeasuredTemplate();
+    initTemplates();
+
     libWrapper.register(MODULE_NAME, 'pf1.actionUse.ActionUse.prototype.promptMeasureTemplate', promptMeasureTemplate, 'MIXED');
 
     Hooks.on('canvasReady', () => {
