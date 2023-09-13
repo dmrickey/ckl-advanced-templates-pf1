@@ -26,28 +26,28 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             case 'circle':
                 switch (placementType) {
                     case CONSTS.placement.circle.self:
-                        abilityCls = !!token ? game[MODULE_NAME].AbilityTemplateCircleSelf : game[MODULE_NAME].AbilityTemplateCircleGrid;
+                        abilityCls = !!token ? game.modules.get(MODULE_NAME).api.AbilityTemplateCircleSelf : game.modules.get(MODULE_NAME).api.AbilityTemplateCircleGrid;
                         break;
                     case CONSTS.placement.circle.splash:
-                        abilityCls = game[MODULE_NAME].AbilityTemplateCircleSplash;
+                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateCircleSplash;
                         break;
                     case CONSTS.placement.useSystem:
-                        abilityCls = game[MODULE_NAME].AbilityTemplateCircleAnywhere;
+                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateCircleAnywhere;
                         break;
                     case CONSTS.placement.circle.grid:
                     default:
-                        abilityCls = game[MODULE_NAME].AbilityTemplateCircleGrid;
+                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateCircleGrid;
                         break;
                 }
                 break;
             case 'cone':
                 switch (placementType) {
                     case CONSTS.placement.cone.selectTargetSquare:
-                        abilityCls = game[MODULE_NAME].AbilityTemplateConeTarget;
+                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateConeTarget;
                         break;
                     case CONSTS.placement.cone.self:
                     default:
-                        abilityCls = game[MODULE_NAME].AbilityTemplateConeSelf;
+                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateConeSelf;
                         break;
                 }
                 break;

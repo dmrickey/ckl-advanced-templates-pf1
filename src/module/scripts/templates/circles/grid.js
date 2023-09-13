@@ -156,9 +156,7 @@ export class AbilityTemplateCircleGrid extends AbilityTemplateAdvanced {
             this._tokenSquare = this._calculateTokenSquare(token);
         }
 
-        const mouse = canvas.app.renderer.plugins.interaction.mouse;
-        const position = mouse.getLocalPosition(canvas.app.stage);
-        const { x, y } = position;
+        const { x, y } = canvas.mousePosition;
         this.document.x = x;
         this.document.y = y;
     }

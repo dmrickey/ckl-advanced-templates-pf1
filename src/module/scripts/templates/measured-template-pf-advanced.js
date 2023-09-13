@@ -119,17 +119,19 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
                     this._getEmanationShape();
                 }
                 else {
-                    this.shape = this._getCircleShape(distance);
+                    // this.shape = this._getCircleShape(distance);
+                    this.shape = this.constructor.getCircleShape(distance);
                 }
                 break;
             case 'cone':
-                this.shape = this._getConeShape(direction, this.document.angle, distance);
+                // this.shape = this._getConeShape(direction, this.document.angle, distance);
+                this.shape = this.constructor.getConeShape(direction, this.document.fromAngle, distance);
                 break;
             case 'rect':
-                this.shape = this._getRectShape(direction, distance);
+                this.shape = this.constructor.getRectShape(direction, distance);
                 break;
             case 'ray':
-                this.shape = this._getRayShape(direction, distance, width);
+                this.shape = this.constructor.getRayShape(direction, distance, width);
                 break;
         }
 
@@ -214,13 +216,13 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
      * @returns {ControlIcon}
      *
      * @private
+     * @override
      */
-    /** @override */
     _drawControlIcon() {
         // call this for all templates to use spell's icon
         const size = Math.max(Math.round((canvas.dimensions.size * 0.5) / 20) * 20, 40);
-        const iconTexture = this.document.flags?.[MODULE_NAME]?.icon;
-        const icon = new ControlIcon({ texture: iconTexture || CONFIG.controlIcons.template, size });
+        const iconTexture = this.document.flags?.[MODULE_NAME]?.icon || CONFIG.controlIcons.template;
+        const icon = new ControlIcon({ texture: iconTexture, size });
         icon.x -= (size * 0.5);
         icon.y -= (size * 0.5);
         return icon;

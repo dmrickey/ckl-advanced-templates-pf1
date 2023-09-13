@@ -11,19 +11,21 @@ import { AbilityTemplateConeSelf } from "./cones/self";
 export const initTemplates = () => {
     CONFIG.MeasuredTemplate.objectClass = MeasuredTemplatePFAdvanced;
 
-    game[MODULE_NAME] = {
-        // base
-        AbilityTemplateAdvanced,
-        MeasuredTemplatePFAdvanced,
+    Hooks.once("ready", () => {
+        game.modules.get(MODULE_NAME).api = {
+            // base
+            AbilityTemplateAdvanced,
+            MeasuredTemplatePFAdvanced,
 
-        // circles
-        AbilityTemplateCircleAnywhere,
-        AbilityTemplateCircleGrid,
-        AbilityTemplateCircleSelf,
-        AbilityTemplateCircleSplash,
+            // circles
+            AbilityTemplateCircleAnywhere,
+            AbilityTemplateCircleGrid,
+            AbilityTemplateCircleSelf,
+            AbilityTemplateCircleSplash,
 
-        // cones
-        AbilityTemplateConeSelf,
-        AbilityTemplateConeTarget,
-    };
+            // cones
+            AbilityTemplateConeSelf,
+            AbilityTemplateConeTarget,
+        };
+    });
 };

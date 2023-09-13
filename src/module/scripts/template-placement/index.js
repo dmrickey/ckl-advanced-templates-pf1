@@ -67,7 +67,7 @@ async function promptMeasureTemplate(wrapped) {
     const windows = Object.values(ui.windows).filter((x) => !!x.minimize && !x._minimized);
     await Promise.all(windows.map((x) => x.minimize()));
 
-    const template = await game[MODULE_NAME].AbilityTemplateAdvanced.fromData(templateData, this.shared.action);
+    const template = await game.modules.get(MODULE_NAME).api.AbilityTemplateAdvanced.fromData(templateData, this.shared.action);
     if (!template) {
         return { result: false };
     }
