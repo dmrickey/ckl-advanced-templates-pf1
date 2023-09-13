@@ -10,6 +10,7 @@ import { AbilityTemplateConeSelf } from "./cones/self";
 
 export const initTemplates = () => {
     CONFIG.MeasuredTemplate.objectClass = MeasuredTemplatePFAdvanced;
+    pf1.canvas.MeasuredTemplatePF = MeasuredTemplatePFAdvanced;
 
     Hooks.once("ready", () => {
         game.modules.get(MODULE_NAME).api = {
