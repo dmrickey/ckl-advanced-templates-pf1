@@ -1,13 +1,10 @@
-import { CONSTS, MODULE_NAME } from '../../consts';
-
-
 /**
  * A type of Placeable Object which highlights an area of the grid as covered by some area of effect.
  * @category - Canvas
  * @see {@link MeasuredTemplateDocument}
  * @see {@link TemplateLayer}
  */
-export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
+class MeasuredTemplate extends PlaceableObject {
 
     /** BEGIN MY CODE */
     get shouldOverride() {
