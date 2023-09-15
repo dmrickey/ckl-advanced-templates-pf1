@@ -5,13 +5,11 @@ import { Settings } from '../../settings';
 /**
  * Common logic and switch statement for placing all templates
  *
- * @param {Function} wrapped The base `promptMeasureTemplate`
- *
  * @param {object} shared The shared context passed between different functions when executing an Attack
  *
  * @returns {object} The template creation data
  */
-async function promptMeasureTemplate(wrapped) {
+async function promptMeasureTemplate() {
     ifDebug(() => console.log('promptMeasureTemplate', this));
 
     // return success early if user isn't allowed to place templates
@@ -30,10 +28,15 @@ async function promptMeasureTemplate(wrapped) {
     const maxRange = this.shared.action.getRange();
     const minRange = this.shared.action.getRange({ type: "min" });
     const flags = this.shared.action.data.flags?.[MODULE_NAME] || {};
+    let distance = _getSize(this.shared) || 5;
+    if (type === 'rect') {
+        distance = Math.sqrt(Math.pow(distance, 2) + Math.pow(distance, 2));
+        // direction = 45
+    }
 
     const templateData = {
         _id: randomID(16),
-        distance: _getSize(this.shared) || 5,
+        distance,
         t: type,
         flags: {
             [MODULE_NAME]: {
@@ -54,15 +57,15 @@ async function promptMeasureTemplate(wrapped) {
             : null,
     };
 
-    if (!['cone', 'circle'].includes(type)
-        || (type === 'cone' && this.shared.action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] === CONSTS.placement.useSystem)
-    ) {
-        const wrappedResult = await wrapped();
-        if (this.shared.template) {
-            await this.shared.template.update({ flags: templateData.flags });
-        }
-        return wrappedResult;
-    }
+    // if (!['cone', 'circle'].includes(type)
+    //     || (type === 'cone' && this.shared.action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] === CONSTS.placement.useSystem)
+    // ) {
+    //     const wrappedResult = await wrapped();
+    //     if (this.shared.template) {
+    //         await this.shared.template.update({ flags: templateData.flags });
+    //     }
+    //     return wrappedResult;
+    // }
 
     const windows = Object.values(ui.windows).filter((x) => !!x.minimize && !x._minimized);
     await Promise.all(windows.map((x) => x.minimize()));

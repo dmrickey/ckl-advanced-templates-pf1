@@ -4,13 +4,9 @@
  * @see {@link MeasuredTemplateDocument}
  * @see {@link TemplateLayer}
  */
-class MeasuredTemplate extends PlaceableObject {
+class MeasuredTemplatePFAdvanced extends PlaceableObject {
 
     /** BEGIN MY CODE */
-    get shouldOverride() {
-        return ['circle', 'cone'].includes(this.document.t);
-    }
-
     get shouldOverrideTokenEmanation() {
         return game.settings.get('pf1', 'measureStyle')
             && this.document.t === 'circle'

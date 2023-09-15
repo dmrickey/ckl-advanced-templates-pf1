@@ -8,7 +8,6 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         if (!type
             || !distance
             || !canvas.scene
-            || !['cone', 'circle'].includes(type)
         ) {
             return null;
         }
@@ -21,7 +20,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         const tokenId = templateData.flags?.[MODULE_NAME]?.tokenId;
         const token = canvas.tokens.placeables.find((x) => x.id === tokenId);
 
-        let abilityCls;
+        let abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateAdvanced;
         switch (type) {
             case 'circle':
                 switch (placementType) {
@@ -45,11 +44,20 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                     case CONSTS.placement.cone.selectTargetSquare:
                         abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateConeTarget;
                         break;
+                    case CONSTS.placement.useSystem:
+                        // use default
+                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateAdvanced;
+                        break;
                     case CONSTS.placement.cone.self:
                     default:
                         abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateConeSelf;
                         break;
                 }
+                break;
+            case 'rect':
+            case 'ray':
+                // use default
+                abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateAdvanced;
                 break;
         }
 
@@ -122,11 +130,13 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     }
 
 
+    // todo fill in default here for rect / ray
     /**
      * returns true if committed, false if cancelled
      */
     async commitPreview() { }
 
+    // todo fill in default here for rect / ray
     /**
      * sets up data specififc to template placement (initial position, rotation, set up points array for cones around token, extra width info for emanations, etc)
      *

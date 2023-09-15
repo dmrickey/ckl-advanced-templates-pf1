@@ -34,7 +34,7 @@ Hooks.once('pf1PostReady', () => {
 Hooks.on('pf1PostInit', () => {
     initTemplates();
 
-    libWrapper.register(MODULE_NAME, 'pf1.actionUse.ActionUse.prototype.promptMeasureTemplate', promptMeasureTemplate, 'MIXED');
+    libWrapper.register(MODULE_NAME, 'pf1.actionUse.ActionUse.prototype.promptMeasureTemplate', promptMeasureTemplate, 'OVERRIDE');
 
     Hooks.on('canvasReady', () => {
         canvas.templates.placeables.forEach((template) => {
