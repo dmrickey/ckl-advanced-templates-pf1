@@ -1,5 +1,9 @@
 # TODO
-
+## v.9
+- range finding appears to be broken
+- implement default cone
+- implement default rect
+- implement default ray
 ---
 
 ## Targeting types
@@ -46,7 +50,7 @@
 
 ### All
 - Targeting
-  - Update "out of range" to show a large icon instead of updating warpgate's template's control icon 
+  - Update "out of range" to show a large icon instead of updating warpgate's template's control icon
   - Choose who to target
     - Only Allies
     - Only Hostiles
