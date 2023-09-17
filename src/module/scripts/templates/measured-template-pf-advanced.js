@@ -9,6 +9,25 @@ import { CONSTS, MODULE_NAME } from '../../consts';
  */
 export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
 
+    // COPIED FROM PF1
+    withinAngle(min, max, value) {
+        min = Math.normalizeDegrees(min);
+        max = Math.normalizeDegrees(max);
+        value = Math.normalizeDegrees(value);
+
+        if (min < max) return value >= min && value <= max;
+        return value >= min || value <= max;
+    }
+
+    withinRect(point, rect) {
+        return point.x >= rect.x && point.x < rect.x + rect.width && point.y >= rect.y && point.y < rect.y + rect.height;
+    }
+
+    degToRad(deg) {
+        return deg * (Math.PI / 180);
+    }
+    // END COPIED FROM PF1
+
     /** BEGIN MY CODE */
     get shouldOverride() {
         return ['circle', 'cone'].includes(this.document.t);
@@ -324,7 +343,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
      * Refresh the underlying geometric shape of the MeasuredTemplate.
      */
     #refreshShape() {
-        const { x, y, direction, distance } = this.document;
+        let { x, y, direction, distance } = this.document;
         distance *= canvas.dimensions.distancePixels;
         direction = Math.toRadians(direction);
 
@@ -470,6 +489,21 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         radius *= (dimensions.size / dimensions.distance);
         radius += dimensions.size * sizeSquares / 2;
         return new PIXI.RoundedRectangle(-radius, -radius, radius * 2, radius * 2, radius - dimensions.size * sizeSquares / 2);
+    }
+
+    _setPreviewVisibility(show) {
+        this.document.flags[MODULE_NAME][CONSTS.flags.hidePreview] = !show;
+        const existingIcon = this.document.flags[MODULE_NAME].icon;
+        const icon = show ? existingIcon : 'icons/svg/hazard.svg';
+        this.ruler.alpha = show ? 1 : 0;
+
+        if (icon && icon !== this.controlIcon?.iconSrc) {
+            this.document.flags[MODULE_NAME].icon = icon;
+            if (this.controlIcon) {
+                this.controlIcon.destroy();
+            }
+            this.controlIcon = this.addChild(this._drawControlIcon());
+        }
     }
     /** END MY CODE */
 
@@ -834,9 +868,9 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
             const dir = (templateDirection >= 0 ? 360 - templateDirection : -templateDirection) % 360;
             // If we're not on a border for X, offset by 0.5 or -0.5 to the border of the cell in the direction we're looking on X axis
             // /2 turns from 1/0/-1 to 0.5/0/-0.5
-            offsetMult.x = x % gridSizePxBase != 0 ? Math.sign(Math.round(Math.cos(degtorad(dir)))) / 2 : 0;
+            offsetMult.x = x % gridSizePxBase != 0 ? Math.sign(Math.round(Math.cos(this.degToRad(dir)))) / 2 : 0;
             // Same for Y, but cos Y goes down on screens, we invert
-            offsetMult.y = y % gridSizePxBase != 0 ? -Math.sign(Math.round(Math.sin(degtorad(dir)))) / 2 : 0;
+            offsetMult.y = y % gridSizePxBase != 0 ? -Math.sign(Math.round(Math.sin(this.degToRad(dir)))) / 2 : 0;
         }
 
         const result = [];
@@ -859,12 +893,12 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
                 if (templateType === "cone") {
                     const ray = new Ray(origin, destination);
                     const rayAngle = Math.normalizeDegrees(ray.angle / (Math.PI / 180));
-                    if (ray.distance > 0 && !withinAngle(minAngle, maxAngle, rayAngle)) {
+                    if (ray.distance > 0 && !this.withinAngle(minAngle, maxAngle, rayAngle)) {
                         continue;
                     }
                 }
 
-                const distance = measureDistance(destination, origin);
+                const distance = pf1.utils.measureDistance(origin, destination);
                 if (distance <= this.document.distance) {
                     result.push({ x: gx, y: gy });
                 }
@@ -976,7 +1010,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
                         const ray = new Ray(this.center, t.center);
                         const rayAngle = Math.normalizeDegrees(Math.toDegrees(ray.angle));
 
-                        const rayWithinAngle = withinAngle(minAngle, maxAngle, rayAngle);
+                        const rayWithinAngle = this.withinAngle(minAngle, maxAngle, rayAngle);
                         // Calculate ray length in relation to circle radius
                         const raySceneLength = (ray.distance / gridSizePx) * gridSizeUnits;
                         // Include token if its within template distance and within the cone's angle
@@ -990,7 +1024,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
                             width: this.width,
                             height: this.width,
                         };
-                        if (withinRect(t.center, rect)) {
+                        if (this.withinRect(t.center, rect)) {
                             result.add(t);
                         }
                         break;
@@ -1007,7 +1041,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
 
             for (const square of highlightSquares) {
                 for (const t of relevantTokens) {
-                    if (withinRect(t.center, square)) {
+                    if (this.withinRect(t.center, square)) {
                         result.add(t);
                         relevantTokens.delete(t);
                     }
