@@ -502,7 +502,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
             if (this.controlIcon) {
                 this.controlIcon.destroy();
             }
-            this.controlIcon = this.addChild(this._drawControlIcon());
+            this.controlIcon = this.addChild(this.#createControlIcon());
         }
     }
     /** END MY CODE */
@@ -587,7 +587,10 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         let text;
         const { distance, t } = this.document;
         const u = canvas.scene.grid.units;
-        if (t === "rect") {
+        if (this.document.flags[MODULE_NAME][CONSTS.flags.hidePreview]) {
+            text = '';
+        }
+        else if (t === "rect") {
             const d = canvas.dimensions;
             const dx = Math.round(this.ray.dx) * (d.distance / d.size);
             const dy = Math.round(this.ray.dy) * (d.distance / d.size);

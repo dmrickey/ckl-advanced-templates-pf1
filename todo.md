@@ -4,6 +4,8 @@
 - implement default cone
 - implement default rect
 - implement default ray
+- fix texture for cones
+- center of huge creature is considered 10 feet away
 ---
 
 ## Targeting types
