@@ -587,7 +587,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         let text;
         const { distance, t } = this.document;
         const u = canvas.scene.grid.units;
-        if (this.document.flags[MODULE_NAME][CONSTS.flags.hidePreview]) {
+        if (this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.hidePreview]) {
             text = '';
         }
         else if (t === "rect") {
