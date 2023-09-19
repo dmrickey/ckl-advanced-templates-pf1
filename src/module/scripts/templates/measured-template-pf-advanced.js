@@ -29,10 +29,6 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
     // END COPIED FROM PF1
 
     /** BEGIN MY CODE */
-    get shouldOverride() {
-        return ['circle', 'cone'].includes(this.document.t);
-    }
-
     get shouldOverrideTokenEmanation() {
         return game.settings.get('pf1', 'measureStyle')
             && this.document.t === 'circle'
@@ -491,6 +487,20 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         return new PIXI.RoundedRectangle(-radius, -radius, radius * 2, radius * 2, radius - dimensions.size * sizeSquares / 2);
     }
 
+    // todo - dunno if I need this
+    _createHollowCircle(radius, x, y) {
+        let circle = new Graphics();
+        circle.beginFill(color);
+        circle.drawCircle(0, 0, radius);
+        circle.beginHole();
+        circle.drawCircle(0, 0, radius - 0.1);
+        circle.endHole();
+        circle.endFill();
+        circle.x = x;
+        circle.y = y;
+        return circle;
+    }
+
     _setPreviewVisibility(show) {
         this.document.flags[MODULE_NAME][CONSTS.flags.hidePreview] = !show;
         const existingIcon = this.document.flags[MODULE_NAME].icon;
@@ -799,17 +809,17 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         const templateType = this.document.t;
         if (!game.settings.get("pf1", "measureStyle") || !["circle", "cone", "ray"].includes(templateType)) return [];
 
-        const grid = canvas.grid,
-            // Size of each cell in pixels
-            gridSizePxBase = canvas.dimensions.size,
-            // Offset for uneven grids
-            gridSizePxOffset = gridSizePxBase % 2,
-            // Final grid size
-            gridSizePx = gridSizePxBase + gridSizePxOffset,
-            gridSizeUnits = canvas.dimensions.distance; // feet, meters, etc.
+        const grid = canvas.grid;
+        // Size of each cell in pixels
+        const gridSizePxBase = canvas.dimensions.size;
+        // Offset for uneven grids
+        const gridSizePxOffset = gridSizePxBase % 2;
+        // Final grid size
+        const gridSizePx = gridSizePxBase + gridSizePxOffset;
+        const gridSizeUnits = canvas.dimensions.distance; // feet, meters, etc.
 
-        const templateDirection = this.document.direction,
-            templateAngle = this.document.angle;
+        const templateDirection = this.document.direction;
+        const templateAngle = this.document.angle;
 
         // Parse rays as per Bresenham's algorithm
         if (templateType === "ray") {

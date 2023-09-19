@@ -5,6 +5,7 @@ import { AbilityTemplateCircleAnywhere } from "./circles/anywhere";
 import { AbilityTemplateCircleGrid } from "./circles/grid";
 import { AbilityTemplateCircleSelf } from "./circles/self";
 import { AbilityTemplateCircleSplash } from "./circles/splash";
+import { AbilityTemplateConeSystem } from "./cones/system";
 import { AbilityTemplateConeTarget } from "./cones/target-square";
 import { AbilityTemplateConeSelf } from "./cones/self";
 
@@ -27,6 +28,7 @@ export const initTemplates = () => {
             // cones
             AbilityTemplateConeSelf,
             AbilityTemplateConeTarget,
+            AbilityTemplateConeSystem,
         };
     });
 };

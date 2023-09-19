@@ -20,7 +20,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         const tokenId = templateData.flags?.[MODULE_NAME]?.tokenId;
         const token = canvas.tokens.placeables.find((x) => x.id === tokenId);
 
-        let abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateAdvanced;
+        let abilityCls;
         switch (type) {
             case 'circle':
                 switch (placementType) {
@@ -45,8 +45,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                         abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateConeTarget;
                         break;
                     case CONSTS.placement.useSystem:
-                        // use default
-                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateAdvanced;
+                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateConeSystem;
                         break;
                     case CONSTS.placement.cone.self:
                     default:
@@ -130,19 +129,25 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     }
 
 
-    // todo fill in default here for rect / ray
+    // todo fill in default here for rect / line
     /**
      * returns true if committed, false if cancelled
+     * @virtual
+     * @returns {Promise<Boolean>}
      */
     async commitPreview() { }
 
-    // todo fill in default here for rect / ray
+    // todo fill in default here for rect / line
     /**
      * sets up data specififc to template placement (initial position, rotation, set up points array for cones around token, extra width info for emanations, etc)
      *
      * @param {ItemPF} itemPf used to grab the token data for initial placement
      */
-    async initializePlacement(itemPf) { }
+    async initializePlacement(itemPf) {
+        const { x, y } = canvas.mousePosition;
+        this.document.x = x;
+        this.document.y = y;
+    }
 
     targetIfEnabled() {
         if (Settings.target) {
