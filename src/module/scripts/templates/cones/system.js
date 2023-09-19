@@ -14,34 +14,29 @@ export class AbilityTemplateConeSystem extends AbilityTemplateAdvanced {
             drawOutline: false,
         };
 
-        let offsetAngle = 0;
-
         this.document.angle = 90;
-        let currentOffsetAngle = 0;
         const updatePosition = async (crosshairs) => {
 
+            let newDirection = 0;
             canvas.app.view.onwheel = (event) => {
-                // Avoid zooming the browser window
+                // Avoid rotation while zooming the browser window
                 if (event.ctrlKey) {
                     event.preventDefault();
                 }
                 event.stopPropagation();
 
-                offsetAngle += 45 * Math.sign(event.deltaY);
+                newDirection = this.document.direction + 45 * Math.sign(event.deltaY);
             };
 
             while (crosshairs.inFlight) {
                 await warpgate.wait(100);
 
                 const { x, y } = crosshairs;
-                if (currentOffsetAngle === offsetAngle && x === this.document.x && y === this.document.y) {
+                if (this.document.direction === newDirection && x === this.document.x && y === this.document.y) {
                     continue;
                 }
 
-                currentOffsetAngle = offsetAngle;
-
-                // this.document.direction += offsetAngle;
-                this.document.direction = this.document.direction + offsetAngle;
+                this.document.direction = newDirection;
                 this.document.x = crosshairs.x;
                 this.document.y = crosshairs.y;
                 this.refresh();

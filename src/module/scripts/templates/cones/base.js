@@ -26,7 +26,7 @@ export class AbilityTemplateConeBase extends AbilityTemplateAdvanced {
             const alternateRotation = Settings.coneRotation;
             if (alternateRotation) {
                 canvas.app.view.onwheel = (event) => {
-                    // Avoid zooming the browser window
+                    // Avoid rotation while zooming the browser window
                     if (event.ctrlKey) {
                         event.preventDefault();
                     }

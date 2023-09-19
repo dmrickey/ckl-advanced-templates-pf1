@@ -2,7 +2,6 @@
 ## v.9
 - range finding appears to be broken
 - cone
-  - 'use system' cone rotation does not work well
   - for cone square origin - implement right click to re-choose position
   - verify "use system" on gridless
   - fix texture for cones
