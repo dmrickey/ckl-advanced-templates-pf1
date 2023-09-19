@@ -66,9 +66,7 @@ export class AbilityTemplateCircleGrid extends AbilityTemplateAdvanced {
     /** @override */
     async commitPreview() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
-        if (Settings.target) {
-            game.user.updateTokenTargets();
-        }
+        super.clearTargetIfEnabled();
 
         const existingIcon = this.controlIcon?.iconSrc;
         let isInRange = true;
@@ -111,7 +109,7 @@ export class AbilityTemplateCircleGrid extends AbilityTemplateAdvanced {
                 this.document.y = y;
                 this.refresh();
 
-                this.targetIfEnabled();
+                super.targetIfEnabled();
             }
         };
 
@@ -132,9 +130,7 @@ export class AbilityTemplateCircleGrid extends AbilityTemplateAdvanced {
                 const message = localize('errors.outOfRange');
                 ui.notifications.error(message);
             }
-            if (Settings.target) {
-                game.user.updateTokenTargets();
-            }
+            super.clearTargetIfEnabled();
             return false;
         }
 

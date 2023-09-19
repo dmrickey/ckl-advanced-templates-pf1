@@ -149,6 +149,11 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         this.document.y = y;
     }
 
+    clearTargetIfEnabled() {
+        if (Settings.target) {
+            game.user.updateTokenTargets();
+        }
+    }
     targetIfEnabled() {
         if (Settings.target) {
             const targets = this.getTokensWithin();

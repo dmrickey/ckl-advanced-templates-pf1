@@ -11,9 +11,7 @@ export class AbilityTemplateConeBase extends AbilityTemplateAdvanced {
     async commitPreview() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
 
-        if (Settings.target) {
-            game.user.updateTokenTargets();
-        }
+        super.clearTargetIfEnabled();
 
         const targetConfig = {
             drawIcon: false,
@@ -94,7 +92,7 @@ export class AbilityTemplateConeBase extends AbilityTemplateAdvanced {
                 this.document.y = y;
                 this.refresh();
 
-                this.targetIfEnabled();
+                super.targetIfEnabled();
             }
 
             canvas.app.view.onwheel = null;
@@ -108,9 +106,7 @@ export class AbilityTemplateConeBase extends AbilityTemplateAdvanced {
         );
 
         if (rotateCrosshairs.cancelled) {
-            if (Settings.target) {
-                game.user.updateTokenTargets();
-            }
+            super.clearTargetIfEnabled();
             return false;
         }
 
