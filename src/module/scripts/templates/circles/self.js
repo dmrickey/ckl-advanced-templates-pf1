@@ -20,5 +20,6 @@ export class AbilityTemplateCircleSelf extends AbilityTemplateAdvanced {
         const { x, y } = token.center;
         this.document.x = x;
         this.document.y = y;
+        return true;
     }
 }

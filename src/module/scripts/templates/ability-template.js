@@ -61,9 +61,11 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         }
 
         const thisTemplate = new abilityCls(template);
-        await thisTemplate.initializePlacement(action.parent);
+        if (await thisTemplate.initializePlacement(action.parent)) {
+            return thisTemplate;
+        }
 
-        return thisTemplate;
+        return null;
     }
 
     _gridInterval() { return canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? 1 : 0; }
@@ -142,11 +144,13 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
      * sets up data specififc to template placement (initial position, rotation, set up points array for cones around token, extra width info for emanations, etc)
      *
      * @param {ItemPF} itemPf used to grab the token data for initial placement
+     * @returns {Promise<Boolean>}
      */
     async initializePlacement(itemPf) {
         const { x, y } = canvas.mousePosition;
         this.document.x = x;
         this.document.y = y;
+        return true;
     }
 
     clearTargetIfEnabled() {

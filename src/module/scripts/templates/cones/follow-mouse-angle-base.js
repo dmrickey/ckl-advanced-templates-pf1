@@ -3,9 +3,9 @@ import { MODULE_NAME } from '../../../consts';
 import { Settings } from '../../../settings';
 import { ifDebug, localize } from '../../utils';
 
-export class AbilityTemplateConeBase extends AbilityTemplateAdvanced {
+export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced {
     _tokenSquare;
-    _is15;
+    get _is15() { return this.document?.distance === 15 };
 
     /** @override */
     async commitPreview() {
@@ -107,6 +107,13 @@ export class AbilityTemplateConeBase extends AbilityTemplateAdvanced {
 
         if (rotateCrosshairs.cancelled) {
             super.clearTargetIfEnabled();
+
+            if (this.canRestart) {
+                super.clearTempate();
+                if (await this.initializePlacement()) {
+                    return await this.commitPreview();
+                }
+            }
             return false;
         }
 
@@ -115,39 +122,21 @@ export class AbilityTemplateConeBase extends AbilityTemplateAdvanced {
 
     _gridInterval() { return canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? -1 : 0; }
 
-    /** @override */
-    async initializeConeData(token) {
+    /**
+     * @virtual
+     * @return {Promise<Boolean>}
+     */
+    async initializeConeData(center, width, height) {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
-        const { distance } = this.document;
-        this._is15 = distance === 15;
-
-        if (typeof token === 'undefined' || !token) {
-            const sourceConfig = {
-                drawIcon: true,
-                drawOutline: false,
-                interval: this._gridInterval(),
-                label: localize('coneStart'),
-                icon: this.document.flags?.[MODULE_NAME]?.icon || 'systems/pf1/icons/misc/magic-swirl.png',
-            };
-
-            const source = await warpgate.crosshairs.show(sourceConfig);
-            if (source.cancelled) {
-                return;
-            }
-            const size = canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? 1 : 0;
-            this._tokenSquare = this._sourceSquare({ x: source.x, y: source.y }, size, size);
-        }
-        else {
-            const width = Math.max(Math.round(token.document.width), 1);
-            const height = Math.max(Math.round(token.document.height), 1);
-            this._tokenSquare = this._sourceSquare(token.center, width, height);
-        }
+        this._tokenSquare = this._sourceSquare(center, width, height);
 
         const { x, y } = this._tokenSquare.allSpots[0];
         this.document.x = x;
         this.document.y = y;
         this.document.angle = 90;
+
+        return true;
     }
 
     _sourceSquare(center, widthSquares, heightSquares) {
@@ -230,4 +219,10 @@ export class AbilityTemplateConeBase extends AbilityTemplateAdvanced {
             allSpots,
         };
     }
+
+    /**
+     * @virtual
+     * @returns {boolean}
+     */
+    get canRestart() { return false; }
 }

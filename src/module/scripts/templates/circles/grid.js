@@ -155,5 +155,6 @@ export class AbilityTemplateCircleGrid extends AbilityTemplateAdvanced {
         const { x, y } = canvas.mousePosition;
         this.document.x = x;
         this.document.y = y;
+        return true;
     }
 }

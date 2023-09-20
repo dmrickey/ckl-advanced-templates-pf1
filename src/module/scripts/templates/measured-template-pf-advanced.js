@@ -617,10 +617,10 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
 
     /* -------------------------------------------- */
 
+    /** BEGIN MY CODE */
     /**
      * Highlight the grid squares which should be shown under the area of effect
      */
-    /** BEGIN MY CODE */
     highlightGrid() {
         const usePf1Highlight = game.settings.get("pf1", "measureStyle")
             && ["circle", "cone", "ray"].includes(this.document.t);
@@ -922,6 +922,13 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
     }
 
     /** BEGIN MY CODE */
+    clearTempate() {
+        this.template.clear();
+        this.getHighlightLayer().clear();
+        this.ruler.text = '';
+        this.controlIcon.visible = false;
+    }
+
     #getEmanationHighlightSquares() {
         const grid = canvas.grid;
         const d = canvas.dimensions;
@@ -979,7 +986,6 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         const filtered = [...(new Set(result.map(JSON.stringify)))].map(JSON.parse);
         return filtered;
     }
-    /** END MY CODE */
 
     /**
      * Determine tokens residing within the template bounds, based on either grid higlight logic or token center.
@@ -1068,4 +1074,5 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
     getHighlightLayer() {
         return canvas.grid.getHighlightLayer(this.highlightId);
     }
+    /** END MY CODE */
 }
