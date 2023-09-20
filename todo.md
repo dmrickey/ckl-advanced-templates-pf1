@@ -3,7 +3,6 @@
 - implement default rect
 - implement default line
   - implement line with no width
-- center of huge creature is considered 10 feet away
 ---
 
 ## Targeting types

@@ -61,6 +61,10 @@ export class AbilityTemplateCircleGrid extends AbilityTemplateAdvanced {
         };
     }
 
+    tokenContains(x, y) {
+        return new PIXI.Rectangle(this._tokenSquare.x, this._tokenSquare.y, this._tokenSquare.w, this._tokenSquare.h).contains(x, y);
+    }
+
     _crosshairsOverride(_crosshairs) { }
 
     /** @override */
@@ -93,6 +97,10 @@ export class AbilityTemplateCircleGrid extends AbilityTemplateAdvanced {
                     range = !!(range % 1)
                         ? range.toFixed(1)
                         : range;
+                    const isInToken = this.tokenContains(x, y);
+                    if (isInToken) {
+                        range = 0;
+                    }
 
                     isInRange = !(this._hasMinRange && range < this._minRange
                         || this._hasMaxRange && range > this._maxRange);
