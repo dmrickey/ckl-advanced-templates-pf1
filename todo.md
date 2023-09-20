@@ -1,11 +1,9 @@
 # TODO
 ## v.9
-- range finding appears to be broken
 - implement default rect
 - implement default line
   - implement line with no width
 - center of huge creature is considered 10 feet away
-- verify "end of turn" deletion
 ---
 
 ## Targeting types
