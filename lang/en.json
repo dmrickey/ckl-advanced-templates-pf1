@@ -63,7 +63,7 @@
         "ok": "Ok",
         "range": "{range} {unit}",
         "errors": {
-            "outOfRange": "Template is out of range."
+            "outOfRange": "Target is out of range."
         }
     }
 }

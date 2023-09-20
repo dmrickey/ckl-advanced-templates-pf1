@@ -14,8 +14,6 @@
   - don't show template unless cursor is over a token
 - target grid
   - make sure dragging respects template placement rules
-- Rangefinding
-  - Add "out of range" to distance to give pre-feedback
 - Interval logic needs to be at the root level of the class so when I overwrite the update/drag implementation it has the same snap logic (i.e. grid intersection or not)
 - Range Increments
   - Automatically reduce attack bonus based on range increment penalties

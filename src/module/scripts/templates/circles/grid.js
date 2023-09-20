@@ -109,8 +109,10 @@ export class AbilityTemplateCircleGrid extends AbilityTemplateAdvanced {
                     const unit = game.settings.get('pf1', 'units') === 'imperial'
                         ? localizeFull('PF1.DistFtShort')
                         : localizeFull('PF1.DistMShort');
-                    crosshairs.label = `${range} ${unit}`;
                     crosshairs.label = localize('range', { range, unit });
+                    if (!isInRange) {
+                        crosshairs.label += '\n' + localize('errors.outOfRange');
+                    }
                 }
 
                 this.document.x = x;
