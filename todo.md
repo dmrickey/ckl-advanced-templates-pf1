@@ -1,10 +1,6 @@
 # TODO
 ## v.9
 - range finding appears to be broken
-- cone
-  - for cone square origin - implement right click to re-choose position
-  - verify "use system" on gridless
-  - fix texture for cones
 - implement default rect
 - implement default line
   - implement line with no width
@@ -14,22 +10,24 @@
 
 ## Targeting types
 ### Circles
-  - centered on self circle
-    - disable dragging to update location (also editing x/y in details since it should be stuck to token)
-    - add a preview with a modal to commit or cancel - keep the preview attached to the token so the caster can move until deciding to commit it
-  - centered on target (e.g. Silence, Meteor Swarm)
-    - don't show template unless cursor is over a token
-  - target grid
-    - make sure dragging respects template placement rules
-  - Rangefinding
-    - Add "out of range" to distance to give pre-feedback
-  - Interval logic needs to be at the root level of the class so when I overwrite the update/drag implementation it has the same snap logic (i.e. grid intersection or not)
-  - Range Increments
-    - Automatically reduce attack bonus based on range increment penalties
-      - include option for Far Shot (reduce penalty by half)
-      - include static decreases (multiple shots reduce by two)
-        - Arc Slinger
-        - Distance Thrower
+- centered on self circle
+  - disable dragging to update location (also editing x/y in details since it should be stuck to token)
+  - add a preview with a modal to commit or cancel - keep the preview attached to the token so the caster can move until deciding to commit it
+- centered on target (e.g. Silence, Meteor Swarm)
+  - don't show template unless cursor is over a token
+- target grid
+  - make sure dragging respects template placement rules
+- Rangefinding
+  - Add "out of range" to distance to give pre-feedback
+- Interval logic needs to be at the root level of the class so when I overwrite the update/drag implementation it has the same snap logic (i.e. grid intersection or not)
+- Range Increments
+  - Automatically reduce attack bonus based on range increment penalties
+    - include option for Far Shot (reduce penalty by half)
+    - include static decreases (multiple shots reduce by two)
+      - Arc Slinger
+      - Distance Thrower
+- Splash
+  - Add "miss" button that will automatically move the template and update the chat targets
 
 ### Configurable Token Auras
 - Add aura ability to prompt buffs/debuffs
@@ -55,6 +53,7 @@
   - Add a "directions pop-up in the lower right"
   - Add an "offset degrees" label for when the GM has that option turned on so the user knows what offset from 0 they've onto their cone as an extra rotation (hide label if 0)
 - "place from target location" - after placing, and selecting the rotation, right click should go back to choosing a location, a second right click should cancel the template
+- Restarting "choose start location cone" on gridless map doesn't remove template preview until new start is chosen
 
 ### Rays
 - On startup add it to the selectable types

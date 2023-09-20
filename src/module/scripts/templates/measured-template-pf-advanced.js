@@ -445,7 +445,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
                 matrix: new PIXI.Matrix()
                     .scale(scale, scale)
                     .translate(xOffset ? -offset : 0, yOffset ? -offset : 0)
-                    .rotate(direction),
+                    .rotate(Math.toRadians(direction)),
                 alpha: textureAlpha,
             });
         }
