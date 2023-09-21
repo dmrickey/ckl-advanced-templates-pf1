@@ -6,9 +6,6 @@
 - cone
   - target square - add hint to right click to re-choose square
 - rect
-  - texture
-    - subtract 45 from direction
-    - scale to containing rect
   - centered rect
     - rangefinding is broken
   - default

@@ -7,7 +7,8 @@ import { CONSTS, MODULE_NAME } from '../../consts';
  * @see {@link MeasuredTemplateDocument}
  * @see {@link TemplateLayer}
  */
-export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
+// export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
+export class MeasuredTemplatePFAdvanced extends PlaceableObject {
 
     // COPIED FROM PF1
     withinAngle(min, max, value) {
@@ -417,12 +418,11 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
 
         // Fill Color or Texture
         if (this.texture) {
-            let xOffset = true;
-            let yOffset = true;
-
             const d = canvas.dimensions;
             let { direction, distance } = this.document;
             distance *= (d.size / d.distance);
+
+            // add token radius to distance for emanations
             if (this.shouldOverrideTokenEmanation) {
                 const { sizeSquares } = this.tokenSizeSquares;
                 distance += d.size * sizeSquares / 2;
@@ -432,19 +432,43 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
             const scaleOverride = this.document.flags[MODULE_NAME]?.[CONSTS.flags.textureScale] || 1;
             let textureSize = distance * scaleOverride;
 
-            if (this.document.t === 'cone') {
-                textureSize /= 2;
-                xOffset = false;
+            let scale = 1;
+            let xOffset = 0;
+            let yOffset = 0;
+
+            switch (this.document.t) {
+                case 'circle':
+                    {
+                        xOffset = yOffset = textureSize;
+                        scale = textureSize * 2 / this.texture.width;
+                    }
+                    break;
+                case 'cone':
+                    {
+                        textureSize /= 2;
+                        yOffset = -textureSize;
+
+                        scale = textureSize * 2 / this.texture.width;
+                    }
+                    break;
+                case 'rect':
+                    {
+                        // textureSize is basically the hypotenuse, multiple by sin(45) to get the width/height of the rect (square)
+                        textureSize *= Math.sin(Math.toRadians(45));
+                        scale = textureSize / this.texture.width;
+
+                        direction = 0;
+                        textureSize /= 2;
+                    }
+                    break;
             }
 
             const tileTexture = false; // todo
-            const scale = tileTexture ? 1 : textureSize * 2 / this.texture.width;
-            const offset = tileTexture ? 0 : (textureSize);
             template.beginTextureFill({
                 texture: this.texture,
                 matrix: new PIXI.Matrix()
-                    .scale(scale, scale)
-                    .translate(xOffset ? -offset : 0, yOffset ? -offset : 0)
+                    .scale(tileTexture ? 1 : scale, tileTexture ? 1 : scale)
+                    .translate(xOffset, yOffset)
                     .rotate(Math.toRadians(direction)),
                 alpha: textureAlpha,
             });
