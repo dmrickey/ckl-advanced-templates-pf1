@@ -1,6 +1,8 @@
 # TODO
 ## v.9
 - add hint popup in lower right corner
+- circle
+  - update initializePlacement to use getters instead of setting local variables to flag values (see cone)
 - cone
   - target square - add hint to right click to re-choose square
 - rect
@@ -8,7 +10,7 @@
     - subtract 45 from direction
     - scale to containing rect
   - centered rect
-    - placement is off by ~3px
+    - rangefinding is broken
   - default
 - line
   - line from token

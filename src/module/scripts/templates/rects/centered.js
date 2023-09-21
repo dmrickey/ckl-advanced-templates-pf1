@@ -15,6 +15,8 @@ export class AbilityTemplateRectCentered extends AbilityTemplateAdvanced {
     get _hasMinRange() { return !!this._minRange && !isNaN(this._minRange); };
     _tokenSquare;
 
+    get offset() { return this.document.flags?.[MODULE_NAME]?.offset ?? 0; }
+
     _calculateTokenSquare(token) {
         const heightSquares = Math.max(Math.round(token.document.height), 1);
         const widthSquares = Math.max(Math.round(token.document.width), 1);
@@ -88,8 +90,8 @@ export class AbilityTemplateRectCentered extends AbilityTemplateAdvanced {
 
                 const centerX = crosshairs.x;
                 const centerY = crosshairs.y;
-                const templateX = centerX - this.distance / 2;
-                const templateY = centerY - this.distance / 2;
+                const templateX = centerX - this.offset;
+                const templateY = centerY - this.offset;
                 if (this.document.x === templateX && this.document.y === templateY) {
                     continue;
                 }
@@ -166,12 +168,17 @@ export class AbilityTemplateRectCentered extends AbilityTemplateAdvanced {
         }
 
         const d = this.distance;
+        const squares = d / canvas.scene.grid.distance;
+        const offset = squares * canvas.scene.grid.size / 2;
+
+        this.document.flags[MODULE_NAME].offset = offset;
+
         this.distance = Math.sqrt(Math.pow(d, 2) + Math.pow(d, 2));
         this.direction = 45;
 
         const { x, y } = canvas.mousePosition;
-        this.document.x = x - this.distance / 2;
-        this.document.y = y - this.distance / 2;
+        this.document.x = x - offset;
+        this.document.y = y - offset;
         return true;
     }
 }
