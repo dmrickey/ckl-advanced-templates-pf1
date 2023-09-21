@@ -11,6 +11,13 @@ export const CONSTS = {
             selectTargetSquare: 'selectTargetSquare',
             self: 'self',
         },
+        line: {
+            selectTargetSquare: 'selectTargetSquare',
+            self: 'self',
+        },
+        rect: {
+            centered: 'centered',
+        },
         useSystem: 'useSystem',
     },
     flags: {

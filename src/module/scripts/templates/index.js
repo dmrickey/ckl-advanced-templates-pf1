@@ -8,6 +8,9 @@ import { AbilityTemplateCircleSplash } from "./circles/splash";
 import { AbilityTemplateConeSystem } from "./cones/system";
 import { AbilityTemplateConeTarget } from "./cones/target-square";
 import { AbilityTemplateConeSelf } from "./cones/self";
+import { AbilityTemplateLineFromSelf } from "./lines/from-self";
+import { AbilityTemplateLineTargetSquare } from "./lines/target-square";
+import { AbilityTemplateRectCentered } from "./rects/centered";
 
 export const initTemplates = () => {
     CONFIG.MeasuredTemplate.objectClass = MeasuredTemplatePFAdvanced;
@@ -29,6 +32,15 @@ export const initTemplates = () => {
             AbilityTemplateConeSelf,
             AbilityTemplateConeTarget,
             AbilityTemplateConeSystem,
+
+            // lines
+            AbilityTemplateLineFromSelf,
+            AbilityTemplateLineTargetSquare,
+            // todo AbilityTemplateLineSystem
+
+            // rects
+            AbilityTemplateRectCentered,
+            // todo AbilityTemplateRectSystem,
         };
     });
 };

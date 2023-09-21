@@ -1,7 +1,21 @@
 # TODO
 ## v.9
-- implement default rect
-- implement default line
+- add hint popup in lower right corner
+- cone
+  - target square - add hint to right click to re-choose square
+- rect
+  - texture
+    - subtract 45 from direction
+    - scale to containing rect
+  - centered rect
+    - placement is off by ~3px
+  - default
+- line
+  - line from token
+    - add hint for mouse wheel to rotate spot
+  - line from target
+    - add hint for mouse wheel to rotate spot
+  - default
   - implement line with no width
 ---
 

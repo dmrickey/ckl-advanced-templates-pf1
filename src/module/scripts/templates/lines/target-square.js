@@ -1,8 +1,8 @@
 import { MODULE_NAME } from '../../../consts';
 import { ifDebug, localize } from '../../utils';
-import { AbilityTemplateFollowMouseAngleCone } from './follow-mouse-angle-base';
+import { AbilityTemplateLineTargetBase } from './target-base';
 
-export class AbilityTemplateConeTarget extends AbilityTemplateFollowMouseAngleCone {
+export class AbilityTemplateLineTargetSquare extends AbilityTemplateLineTargetBase {
     /** @override */
     async initializePlacement(_itemPf) {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
@@ -21,7 +21,7 @@ export class AbilityTemplateConeTarget extends AbilityTemplateFollowMouseAngleCo
         }
         const size = canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? 1 : 0;
 
-        return await super.initializeConeData({ x: source.x, y: source.y }, size, size);
+        return await super.initializeLineData({ x: source.x, y: source.y }, size, size);
     }
 
     /**

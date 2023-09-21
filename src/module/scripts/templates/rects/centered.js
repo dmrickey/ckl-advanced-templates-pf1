@@ -1,12 +1,18 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
-import { MODULE_NAME } from '../../../consts';
 import { getToken, ifDebug, localize, localizeFull } from '../../utils';
+import { MODULE_NAME } from "../../../consts";
 
-export class AbilityTemplateCircleGrid extends AbilityTemplateAdvanced {
-    _maxRange;
-    _hasMaxRange;
-    _minRange;
-    _hasMinRange;
+export class AbilityTemplateRectCentered extends AbilityTemplateAdvanced {
+    get distance() { return this.document.distance; }
+    set distance(value) { this.document.distance = value; }
+
+    get direction() { return this.document.direction; }
+    set direction(value) { this.document.direction = value; }
+
+    get _maxRange() { return this.document.flags?.[MODULE_NAME]?.maxRange; };
+    get _hasMaxRange() { return !!this._maxRange && !isNaN(this._maxRange); };
+    get _minRange() { return this.document.flags?.[MODULE_NAME]?.minRange; };
+    get _hasMinRange() { return !!this._minRange && !isNaN(this._minRange); };
     _tokenSquare;
 
     _calculateTokenSquare(token) {
@@ -80,8 +86,11 @@ export class AbilityTemplateCircleGrid extends AbilityTemplateAdvanced {
 
                 this.document.flags[MODULE_NAME].icon = existingIcon;
 
-                const { x, y } = crosshairs;
-                if (this.document.x === x && this.document.y === y) {
+                const centerX = crosshairs.x;
+                const centerY = crosshairs.y;
+                const templateX = centerX - this.distance / 2;
+                const templateY = centerY - this.distance / 2;
+                if (this.document.x === templateX && this.document.y === templateY) {
                     continue;
                 }
 
@@ -89,14 +98,14 @@ export class AbilityTemplateCircleGrid extends AbilityTemplateAdvanced {
 
                 if ((this._hasMaxRange || this._hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
                     const rays = this._tokenSquare.allSpots.map((spot) => ({
-                        ray: new Ray(spot, { x, y }),
+                        ray: new Ray(spot, { centerX, centerY }),
                     }));
                     const distances = rays.map((ray) => canvas.grid.measureDistances([ray], { gridSpaces: true })[0]);
                     let range = Math.min(...distances);
                     range = !!(range % 1)
                         ? range.toFixed(1)
                         : range;
-                    const isInToken = this.tokenContains(x, y);
+                    const isInToken = this.tokenContains(centerX, centerY);
                     if (isInToken) {
                         range = 0;
                     }
@@ -114,8 +123,8 @@ export class AbilityTemplateCircleGrid extends AbilityTemplateAdvanced {
                     }
                 }
 
-                this.document.x = x;
-                this.document.y = y;
+                this.document.x = templateX;
+                this.document.y = templateY;
                 this.refresh();
 
                 super.targetIfEnabled();
@@ -153,17 +162,16 @@ export class AbilityTemplateCircleGrid extends AbilityTemplateAdvanced {
         const token = getToken(itemPf);
 
         if (token) {
-            this._maxRange = this.document.flags?.[MODULE_NAME]?.maxRange;
-            this._hasMaxRange = !!this._maxRange && !isNaN(this._maxRange);
-            this._minRange = this.document.flags?.[MODULE_NAME]?.minRange;
-            this._hasMinRange = !!this._minRange && !isNaN(this._minRange);
-
             this._tokenSquare = this._calculateTokenSquare(token);
         }
 
+        const d = this.distance;
+        this.distance = Math.sqrt(Math.pow(d, 2) + Math.pow(d, 2));
+        this.direction = 45;
+
         const { x, y } = canvas.mousePosition;
-        this.document.x = x;
-        this.document.y = y;
+        this.document.x = x - this.distance / 2;
+        this.document.y = y - this.distance / 2;
         return true;
     }
 }

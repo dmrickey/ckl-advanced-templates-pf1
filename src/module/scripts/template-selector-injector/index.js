@@ -1,6 +1,8 @@
 import {
     showConeSettings,
-    showCircleSettings
+    showCircleSettings,
+    showLineSettings,
+    showRectSettings
 } from '../../view/show-template-settings';
 import { localize } from '../utils';
 import template from './template.js';
@@ -17,9 +19,6 @@ import template from './template.js';
 export default async function (sheet, jq, _options) {
     const action = sheet.action;
     const type = action?.data.measureTemplate?.type;
-    if (!['circle', 'cone'].includes(type)) {
-        return;
-    }
 
     const templateGroupOptions = jq[0].querySelector('input[name="measureTemplate.size"]')?.parentElement.parentElement;
 
@@ -33,14 +32,16 @@ export default async function (sheet, jq, _options) {
             async () => {
                 switch (type) {
                     case 'circle':
-                        {
-                            showCircleSettings(action);
-                        }
+                        showCircleSettings(action);
                         break;
                     case 'cone':
-                        {
-                            showConeSettings(action);
-                        }
+                        showConeSettings(action);
+                        break;
+                    case 'line':
+                        showLineSettings(action);
+                        break;
+                    case 'rect':
+                        showRectSettings(action);
                         break;
                 }
             });

@@ -47,6 +47,14 @@
                     "selectTargetSquare.label": "Originate from Selection"
                 }
             },
+            "line": {
+                "uses same labels as cone": ""
+            },
+            "rect": {
+                "placement": {
+                    "centered.label": "Centered on cursor"
+                }
+            },
             "chooseOptions": "Choose Options",
             "colorAlpha.label": "Color Alpha",
             "deleteAtTurnEnd": "Delete Template at End of Turn",

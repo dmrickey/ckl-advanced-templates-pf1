@@ -1,7 +1,7 @@
-import { AbilityTemplateFollowMouseAngleCone } from "./follow-mouse-angle-base";
 import { getToken, ifDebug } from '../../utils';
+import { AbilityTemplateLineTargetBase } from './target-base';
 
-export class AbilityTemplateConeSelf extends AbilityTemplateFollowMouseAngleCone {
+export class AbilityTemplateLineFromSelf extends AbilityTemplateLineTargetBase {
     /** @override */
     async initializePlacement(itemPf) {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
@@ -9,6 +9,6 @@ export class AbilityTemplateConeSelf extends AbilityTemplateFollowMouseAngleCone
         const token = getToken(itemPf);
         const width = Math.max(Math.round(token.document.width), 1);
         const height = Math.max(Math.round(token.document.height), 1);
-        return await super.initializeConeData(token.center, width, height);
+        return await super.initializeLineData(token.center, width, height);
     }
 }

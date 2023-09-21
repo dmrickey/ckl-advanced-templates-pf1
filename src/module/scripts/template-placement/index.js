@@ -24,15 +24,11 @@ async function promptMeasureTemplate() {
     const type = this.shared.action.data.measureTemplate.type;
 
     const token = getToken(this.item) || {};
-    const icon = this.shared.action.data.img === 'systems/pf1/icons/misc/magic-swirl.png' ? undefined : this.shared.action.data.img;
+    const icon = this.shared.action.data.img === 'systems/pf1/icons/misc/magic-swirl.png' ? this.item.img : this.shared.action.data.img;
     const maxRange = this.shared.action.getRange();
     const minRange = this.shared.action.getRange({ type: "min" });
     const flags = this.shared.action.data.flags?.[MODULE_NAME] || {};
     let distance = _getSize(this.shared) || 5;
-    if (type === 'rect') {
-        distance = Math.sqrt(Math.pow(distance, 2) + Math.pow(distance, 2));
-        // direction = 45
-    }
 
     const templateData = {
         _id: randomID(16),

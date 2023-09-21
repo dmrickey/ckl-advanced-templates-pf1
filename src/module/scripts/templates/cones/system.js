@@ -1,6 +1,5 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
 import { ifDebug } from '../../utils';
-import { Settings } from "../../../settings";
 
 export class AbilityTemplateConeSystem extends AbilityTemplateAdvanced {
     /** @override */

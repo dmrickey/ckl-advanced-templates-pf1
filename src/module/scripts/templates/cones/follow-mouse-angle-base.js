@@ -1,11 +1,10 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
-import { MODULE_NAME } from '../../../consts';
 import { Settings } from '../../../settings';
-import { ifDebug, localize } from '../../utils';
+import { ifDebug } from '../../utils';
 
 export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced {
     _tokenSquare;
-    get _is15() { return this.document?.distance === 15 };
+    get #is15() { return this.document?.distance === 15 };
 
     /** @override */
     async commitPreview() {
@@ -45,7 +44,7 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
                     const radToNormalizedAngle = (rad) => {
                         let angle = (rad * 180 / Math.PI) % 360;
                         // offset the angle for even-sided tokens, because it's centered in the grid it's just wonky without the offset
-                        const offset = this._is15
+                        const offset = this.#is15
                             ? Settings.cone15Alternate
                                 ? 0.5
                                 : 0
@@ -120,6 +119,7 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
         return true;
     }
 
+    /** @override */
     _gridInterval() { return canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? -1 : 0; }
 
     /**
@@ -129,7 +129,7 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
     async initializeConeData(center, width, height) {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
-        this._tokenSquare = this._sourceSquare(center, width, height);
+        this._tokenSquare = this.#sourceSquare(center, width, height);
 
         const { x, y } = this._tokenSquare.allSpots[0];
         this.document.x = x;
@@ -139,7 +139,7 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
         return true;
     }
 
-    _sourceSquare(center, widthSquares, heightSquares) {
+    #sourceSquare(center, widthSquares, heightSquares) {
         let gridSize = canvas.grid.h;
         const h = gridSize * heightSquares;
         const w = gridSize * widthSquares;
@@ -150,23 +150,23 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
         const right = center.x + w / 2;
 
         // 15 foot cones originate in the middle of the grid, so for every square-edge there's one origin point instead of two
-        const gridOffset = this._is15 && !Settings.cone15Alternate
+        const gridOffset = this.#is15 && !Settings.cone15Alternate
             ? gridSize / 2
             : 0;
 
         // "cheat" by cutting gridsize in half since we're essentially allowing two placement spots per grid square
-        if (this._is15 && Settings.cone15Alternate) {
+        if (this.#is15 && Settings.cone15Alternate) {
             gridSize /= 2;
         }
 
-        const heightSpots = this._is15 && Settings.cone15Alternate
+        const heightSpots = this.#is15 && Settings.cone15Alternate
             ? heightSquares * 2 + 1
-            : this._is15
+            : this.#is15
                 ? heightSquares
                 : heightSquares + 1;
-        const widthSpots = this._is15 && Settings.cone15Alternate
+        const widthSpots = this.#is15 && Settings.cone15Alternate
             ? widthSquares * 2 + 1
-            : this._is15
+            : this.#is15
                 ? widthSquares
                 : widthSquares + 1;
 

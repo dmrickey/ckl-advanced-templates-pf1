@@ -53,7 +53,33 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                         break;
                 }
                 break;
+            case 'line':
+                switch (placementType) {
+                    case CONSTS.placement.cone.selectTargetSquare:
+                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateLineTargetSquare;
+                        break;
+                    case CONSTS.placement.useSystem:
+                        // todo
+                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateAdvanced;
+                        break;
+                    case CONSTS.placement.cone.self:
+                    default:
+                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateLineFromSelf;
+                        break;
+                }
+                break;
             case 'rect':
+                switch (placementType) {
+                    case CONSTS.placement.useSystem:
+                        // todo
+                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateAdvanced;
+                        break;
+                    case CONSTS.placement.rect.centered:
+                    default:
+                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateRectCentered;
+                        break;
+                }
+                break;
             case 'ray':
                 // use default
                 abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateAdvanced;
@@ -68,6 +94,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         return null;
     }
 
+    /** @virtual */
     _gridInterval() { return canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? 1 : 0; }
 
     async drawPreview() {
