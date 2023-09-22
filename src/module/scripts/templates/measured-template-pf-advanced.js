@@ -432,7 +432,8 @@ export class MeasuredTemplatePFAdvanced extends PlaceableObject {
             const scaleOverride = this.document.flags[MODULE_NAME]?.[CONSTS.flags.textureScale] || 1;
             let textureSize = distance * scaleOverride;
 
-            let scale = 1;
+            let xScale = 1;
+            let yScale = 1;
             let xOffset = 0;
             let yOffset = 0;
 
@@ -440,7 +441,7 @@ export class MeasuredTemplatePFAdvanced extends PlaceableObject {
                 case 'circle':
                     {
                         xOffset = yOffset = textureSize;
-                        scale = textureSize * 2 / this.texture.width;
+                        xScale = yScale = textureSize * 2 / this.texture.width;
                     }
                     break;
                 case 'cone':
@@ -448,14 +449,15 @@ export class MeasuredTemplatePFAdvanced extends PlaceableObject {
                         textureSize /= 2;
                         yOffset = -textureSize;
 
-                        scale = textureSize * 2 / this.texture.width;
+                        xScale = yScale = textureSize * 2 / this.texture.width;
                     }
                     break;
                 case 'rect':
                     {
                         // textureSize is basically the hypotenuse, multiple by sin(45) to get the width/height of the rect (square)
                         textureSize *= Math.sin(Math.toRadians(45));
-                        scale = textureSize / this.texture.width;
+                        xScale = textureSize / this.texture.width;
+                        yScale = textureSize / this.texture.height;
 
                         direction = 0;
                         textureSize /= 2;
@@ -463,11 +465,10 @@ export class MeasuredTemplatePFAdvanced extends PlaceableObject {
                     break;
             }
 
-            const tileTexture = false; // todo
             template.beginTextureFill({
                 texture: this.texture,
                 matrix: new PIXI.Matrix()
-                    .scale(tileTexture ? 1 : scale, tileTexture ? 1 : scale)
+                    .scale(xScale, yScale)
                     .translate(xOffset, yOffset)
                     .rotate(Math.toRadians(direction)),
                 alpha: textureAlpha,
