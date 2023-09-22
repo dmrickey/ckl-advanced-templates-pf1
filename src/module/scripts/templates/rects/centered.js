@@ -72,8 +72,6 @@ export class AbilityTemplateRectCentered extends AbilityTemplateAdvanced {
         return new PIXI.Rectangle(this._tokenSquare.x, this._tokenSquare.y, this._tokenSquare.w, this._tokenSquare.h).contains(x, y);
     }
 
-    _crosshairsOverride(_crosshairs) { }
-
     /** @override */
     async commitPreview() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
@@ -96,11 +94,9 @@ export class AbilityTemplateRectCentered extends AbilityTemplateAdvanced {
                     continue;
                 }
 
-                this._crosshairsOverride(crosshairs);
-
                 if ((this._hasMaxRange || this._hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
                     const rays = this._tokenSquare.allSpots.map((spot) => ({
-                        ray: new Ray(spot, { centerX, centerY }),
+                        ray: new Ray(spot, crosshairs),
                     }));
                     const distances = rays.map((ray) => canvas.grid.measureDistances([ray], { gridSpaces: true })[0]);
                     let range = Math.min(...distances);
