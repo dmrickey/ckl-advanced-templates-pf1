@@ -7,16 +7,16 @@
     export let action = void 0;
     export let updates = void 0;
 
-    const placements = [
-        {
-            value: CONSTS.placement.rect.centered,
-            label: localize("templates.rect.placement.centered.label"),
-        },
-        {
-            value: CONSTS.placement.useSystem,
-            label: localize("templates.placement.useSystem.label"),
-        },
-    ];
+    // const placements = [
+    //     {
+    //         value: CONSTS.placement.rect.centered,
+    //         label: localize("templates.rect.placement.centered.label"),
+    //     },
+    //     {
+    //         value: CONSTS.placement.useSystem,
+    //         label: localize("templates.placement.useSystem.label"),
+    //     },
+    // ];
 
     // initialize rect options
     updates.data.flags[MODULE_NAME][CONSTS.flags.placementType] ||=
@@ -26,7 +26,7 @@
 </script>
 
 <form class="pf1" novalidate>
-    <div class="form-group column">
+    <!-- <div class="form-group column">
         {#each placements as placement}
             <label class="checkbox">
                 <input
@@ -38,7 +38,7 @@
                 {placement.label}
             </label>
         {/each}
-    </div>
+    </div> -->
 
     <slot />
 </form>

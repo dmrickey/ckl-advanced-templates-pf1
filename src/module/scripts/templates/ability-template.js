@@ -55,34 +55,21 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                 break;
             case 'line':
                 switch (placementType) {
-                    case CONSTS.placement.cone.selectTargetSquare:
+                    case CONSTS.placement.line.selectTargetSquare:
                         abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateLineTargetSquare;
                         break;
                     case CONSTS.placement.useSystem:
                         // todo
                         abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateAdvanced;
                         break;
-                    case CONSTS.placement.cone.self:
+                    case CONSTS.placement.line.self:
                     default:
                         abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateLineFromSelf;
                         break;
                 }
                 break;
             case 'rect':
-                switch (placementType) {
-                    case CONSTS.placement.useSystem:
-                        // todo
-                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateAdvanced;
-                        break;
-                    case CONSTS.placement.rect.centered:
-                    default:
-                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateRectCentered;
-                        break;
-                }
-                break;
-            case 'ray':
-                // use default
-                abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateAdvanced;
+                abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateRectCentered;
                 break;
         }
 
