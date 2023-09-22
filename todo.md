@@ -6,9 +6,7 @@
 - cone
   - target square - add hint to right click to re-choose square
 - rect
-  - centered rect
-    - rangefinding is broken
-  - default
+  - allow rotation
 - line
   - line from token
     - add hint for mouse wheel to rotate spot
