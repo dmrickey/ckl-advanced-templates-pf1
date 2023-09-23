@@ -6,7 +6,7 @@
 - cone
   - target square - add hint to right click to re-choose square
 - rect
-  - allow rotation
+  - allow rotation in gridless maps
 - line
   - line from token
     - add hint for mouse wheel to rotate spot

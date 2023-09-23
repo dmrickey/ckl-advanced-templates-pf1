@@ -37,6 +37,7 @@ export default async function (sheet, jq, _options) {
                     case 'cone':
                         showConeSettings(action);
                         break;
+                    case 'ray':
                     case 'line':
                         showLineSettings(action);
                         break;

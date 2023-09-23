@@ -53,6 +53,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                         break;
                 }
                 break;
+            case 'ray':
             case 'line':
                 switch (placementType) {
                     case CONSTS.placement.line.selectTargetSquare:

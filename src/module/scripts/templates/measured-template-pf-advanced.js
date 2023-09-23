@@ -210,7 +210,6 @@ export class MeasuredTemplatePFAdvanced extends PlaceableObject {
 
     /** @override */
     async _draw() {
-
         // Load Fill Texture
         if (this.document.texture) {
             this.texture = await loadTexture(this.document.texture, { fallback: "icons/svg/hazard.svg" });
@@ -220,8 +219,6 @@ export class MeasuredTemplatePFAdvanced extends PlaceableObject {
 
         // Template Shape
         this.template = this.addChild(new PIXI.Graphics());
-
-        // handle preview ?
 
         // Control Icon
         this.controlIcon = this.addChild(this.#createControlIcon());
