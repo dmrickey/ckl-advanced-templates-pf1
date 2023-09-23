@@ -60,7 +60,7 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
 
                     const ray = new Ray(this._tokenSquare.center, crosshairs);
                     const angle = radToNormalizedAngle(ray.angle);
-                    const spotIndex = Math.ceil(angle / 360 * totalSpots);
+                    const spotIndex = Math.ceil(angle / 360 * totalSpots) % totalSpots;
                     if (spotIndex === currentSpotIndex && offsetAngle === currentOffsetAngle) {
                         continue;
                     }

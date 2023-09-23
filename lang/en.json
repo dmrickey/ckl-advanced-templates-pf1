@@ -68,6 +68,7 @@
         },
         "cancel": "Cancel",
         "coneStart": "Cone Start",
+        "lineStart": "Line Start",
         "ok": "Ok",
         "range": "{range} {unit}",
         "errors": {

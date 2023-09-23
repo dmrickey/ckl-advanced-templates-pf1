@@ -82,7 +82,10 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         return null;
     }
 
-    /** @virtual */
+    /**
+     * @virtual
+     * @returns { -1 | 0 | 1 }
+     */
     _gridInterval() { return canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? 1 : 0; }
 
     async drawPreview() {
@@ -158,7 +161,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     /**
      * sets up data specififc to template placement (initial position, rotation, set up points array for cones around token, extra width info for emanations, etc)
      *
-     * @param {ItemPF} itemPf used to grab the token data for initial placement
+     * @param {ItemPF} [itemPf] used to grab the token data for initial placement
      * @returns {Promise<Boolean>}
      */
     async initializePlacement(itemPf) {

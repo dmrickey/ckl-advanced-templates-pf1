@@ -1,5 +1,4 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
-import { Settings } from '../../../settings';
 import { ifDebug } from '../../utils';
 export class AbilityTemplateLineTargetBase extends AbilityTemplateAdvanced {
     _tokenSquare;
@@ -15,21 +14,18 @@ export class AbilityTemplateLineTargetBase extends AbilityTemplateAdvanced {
             drawOutline: false,
         };
 
-        let targetX = 0;
-        let targetY = 0;
-        let currentSpotIndex = 0;
         const totalSpots = this._tokenSquare.allSpots.length;
 
-        const radToNormalizedAngle = (rad) => {
-            let angle = (rad * 180 / Math.PI) % 360;
-            return angle < 0
-                ? angle + 360
-                : angle;
+        const radToNormalizedAngle = (rad, offset) => {
+            const degrees = Math.toDegrees(rad);
+            return Math.normalizeDegrees(degrees + offset);
         };
 
+        let currentOffsetAngle = 0;
+        let currentSpotIndex = 0;
         const updateTemplateRotation = async (crosshairs) => {
+            let offsetAngle = 0;
 
-            let tempSpotIndex = 0;
             canvas.app.view.onwheel = (event) => {
                 // Avoid rotation while zooming the browser window
                 if (event.ctrlKey) {
@@ -37,7 +33,7 @@ export class AbilityTemplateLineTargetBase extends AbilityTemplateAdvanced {
                 }
                 event.stopPropagation();
 
-                tempSpotIndex = (currentSpotIndex + totalSpots + Math.sign(event.deltaY) * 1) % totalSpots;
+                offsetAngle += 5 * Math.sign(event.deltaY);
             };
 
             while (crosshairs.inFlight) {
@@ -45,17 +41,19 @@ export class AbilityTemplateLineTargetBase extends AbilityTemplateAdvanced {
 
                 let direction, x, y;
                 if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
-                    if (tempSpotIndex === currentSpotIndex && targetX === crosshairs.x && targetY === crosshairs.y) {
+
+                    const ray = new Ray(this._tokenSquare.center, crosshairs);
+                    const followAngle = radToNormalizedAngle(ray.angle, -360 / totalSpots / 2);
+                    const spotIndex = Math.ceil(followAngle / 360 * totalSpots) % totalSpots;
+                    if (spotIndex === currentSpotIndex && offsetAngle === currentOffsetAngle) {
                         continue;
                     }
 
-                    currentSpotIndex = tempSpotIndex;
-                    targetX = crosshairs.x;
-                    targetY = crosshairs.y;
+                    currentOffsetAngle = offsetAngle;
+                    currentSpotIndex = spotIndex;
 
                     const spot = this._tokenSquare.allSpots[currentSpotIndex];
-                    const ray = new Ray(spot, crosshairs);
-                    direction = radToNormalizedAngle(ray.angle);
+                    direction = spot.direction;
                     x = spot.x;
                     y = spot.y;
                 }
@@ -66,7 +64,7 @@ export class AbilityTemplateLineTargetBase extends AbilityTemplateAdvanced {
                     y = Math.sin(ray.angle) * this._tokenSquare.h / 2 + this._tokenSquare.center.y;
                 }
 
-                this.document.direction = direction;
+                this.document.direction = direction + offsetAngle;
                 this.document.x = x;
                 this.document.y = y;
                 this.refresh();
@@ -123,43 +121,49 @@ export class AbilityTemplateLineTargetBase extends AbilityTemplateAdvanced {
         const h = gridSize * heightSquares;
         const w = gridSize * widthSquares;
 
-        // "cheat" by cutting gridsize in half since we're essentially allowing two placement spots per grid square
-        gridSize /= 2;
-
         const bottom = center.y + h / 2;
         const left = center.x - w / 2;
         const top = center.y - h / 2;
         const right = center.x + w / 2;
-        const heightSpots = heightSquares * 2 + 1;
-        const widthSpots = widthSquares * 2 + 1;
+        const heightSpots = heightSquares;
+        const widthSpots = widthSquares;
+
+        // only originate from the edge or a square (not the corner)
+        const gridOffset = gridSize / 2;
 
         const rightSpots = [...new Array(widthSpots)].map((_, i) => ({
+            direction: 0,
             x: right,
-            y: top + gridSize * i,
+            y: top + gridSize * i + gridOffset,
         }));
         const bottomSpots = [...new Array(heightSpots)].map((_, i) => ({
-            x: right - gridSize * i,
+            direction: 90,
+            x: right - gridSize * i - gridOffset,
             y: bottom,
         }));
         const leftSpots = [...new Array(widthSpots)].map((_, i) => ({
+            direction: 180,
             x: left,
-            y: bottom - gridSize * i,
+            y: bottom - gridSize * i - gridOffset,
         }));
         const topSpots = [...new Array(heightSpots)].map((_, i) => ({
-            x: left + gridSize * i,
+            direction: 270,
+            x: left + gridSize * i + gridOffset,
             y: top,
         }));
         const allSpots = [
             ...rightSpots.slice(Math.floor(rightSpots.length / 2)),
-            { x: right, y: bottom },
+            { direction: 45, x: right, y: bottom },
             ...bottomSpots,
-            { x: left, y: bottom },
+            { direction: 135, x: left, y: bottom },
             ...leftSpots,
-            { x: left, y: top },
+            { direction: 225, x: left, y: top },
             ...topSpots,
-            { x: right, y: top },
+            { direction: 315, x: right, y: top },
             ...rightSpots.slice(0, Math.floor(rightSpots.length / 2)),
         ];
+
+        console.log('allSpots', allSpots)
 
         return {
             x: left,

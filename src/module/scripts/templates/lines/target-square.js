@@ -11,7 +11,7 @@ export class AbilityTemplateLineTargetSquare extends AbilityTemplateLineTargetBa
             drawIcon: true,
             drawOutline: false,
             interval: this._gridInterval(),
-            label: localize('coneStart'),
+            label: localize('lineStart'),
             icon: this.document.flags?.[MODULE_NAME]?.icon || 'systems/pf1/icons/misc/magic-swirl.png',
         };
 

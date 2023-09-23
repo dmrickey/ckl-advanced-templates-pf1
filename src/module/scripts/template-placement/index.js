@@ -53,6 +53,10 @@ async function promptMeasureTemplate() {
             : null,
     };
 
+    if (['ray', 'line'].includes(type)) {
+        templateData.width = 5;
+    }
+
     // if (!['cone', 'circle'].includes(type)
     //     || (type === 'cone' && this.shared.action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] === CONSTS.placement.useSystem)
     // ) {
