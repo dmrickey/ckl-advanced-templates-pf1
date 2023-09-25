@@ -10,7 +10,7 @@ import { ConeFromTargetSquare } from "./cones/target-square";
 import { ConeFromSelf } from "./cones/self";
 import { LineFromSelf } from "./lines/follow-mouse-around-target/from-self";
 import { LineFromTargetSquare } from "./lines/follow-mouse-around-target/target-square";
-import { AbilityTemplateRectCentered } from "./rects/centered";
+import { RectCentered } from "./rects/centered";
 
 export const initTemplates = () => {
     CONFIG.MeasuredTemplate.objectClass = MeasuredTemplatePFAdvanced;
@@ -40,7 +40,7 @@ export const initTemplates = () => {
                     // todo AbilityTemplateLineSystem
                 },
                 rects: {
-                    AbilityTemplateRectCentered,
+                    RectCentered,
                     // todo AbilityTemplateRectSystem,
                 }
             }

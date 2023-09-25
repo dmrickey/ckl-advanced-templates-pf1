@@ -25,31 +25,35 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             case 'circle':
                 switch (placementType) {
                     case CONSTS.placement.circle.self:
-                        abilityCls = !!token ? game.modules.get(MODULE_NAME).api.ability.circles.AbilityTemplateCircleSelf : game.modules.get(MODULE_NAME).api.ability.circles.AbilityTemplateCircleGrid;
+                        abilityCls = !!token
+                            ? game.modules.get(MODULE_NAME).api.ability.circles.CircleSelf
+                            : game.modules.get(MODULE_NAME).api.ability.circles.CircleGridIntersection;
                         break;
                     case CONSTS.placement.circle.splash:
-                        abilityCls = game.modules.get(MODULE_NAME).api.ability.circles.AbilityTemplateCircleSplash;
+                        abilityCls = game.modules.get(MODULE_NAME).api.ability.circles.CircleSplash;
                         break;
                     case CONSTS.placement.useSystem:
-                        abilityCls = game.modules.get(MODULE_NAME).api.ability.circles.AbilityTemplateCircleAnywhere;
+                        abilityCls = game.modules.get(MODULE_NAME).api.ability.circles.CircleAnywhere;
                         break;
                     case CONSTS.placement.circle.grid:
                     default:
-                        abilityCls = game.modules.get(MODULE_NAME).api.ability.circles.AbilityTemplateCircleGrid;
+                        abilityCls = game.modules.get(MODULE_NAME).api.ability.circles.CircleGridIntersection;
                         break;
                 }
                 break;
             case 'cone':
                 switch (placementType) {
                     case CONSTS.placement.cone.selectTargetSquare:
-                        abilityCls = game.modules.get(MODULE_NAME).api.ability.cones.AbilityTemplateConeTarget;
+                        abilityCls = game.modules.get(MODULE_NAME).api.ability.cones.ConeFromTargetSquare;
                         break;
                     case CONSTS.placement.useSystem:
-                        abilityCls = game.modules.get(MODULE_NAME).api.ability.cones.AbilityTemplateConeSystem;
+                        abilityCls = game.modules.get(MODULE_NAME).api.ability.cones.ConeSystem;
                         break;
                     case CONSTS.placement.cone.self:
                     default:
-                        abilityCls = game.modules.get(MODULE_NAME).api.ability.cones.AbilityTemplateConeSelf;
+                        abilityCls = !!token
+                            ? game.modules.get(MODULE_NAME).api.ability.cones.ConeFromSelf
+                            : game.modules.get(MODULE_NAME).api.ability.cones.ConeFromTargetSquare;
                         break;
                 }
                 break;
@@ -57,7 +61,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             case 'line':
                 switch (placementType) {
                     case CONSTS.placement.line.selectTargetSquare:
-                        abilityCls = game.modules.get(MODULE_NAME).api.ability.lines.AbilityTemplateLineTargetSquare;
+                        abilityCls = game.modules.get(MODULE_NAME).api.ability.lines.LineFromTargetSquare;
                         break;
                     case CONSTS.placement.useSystem:
                         // todo
@@ -65,12 +69,14 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                         break;
                     case CONSTS.placement.line.self:
                     default:
-                        abilityCls = game.modules.get(MODULE_NAME).api.ability.lines.AbilityTemplateLineFromSelf;
+                        abilityCls = !!token
+                            ? game.modules.get(MODULE_NAME).api.ability.lines.LineFromSelf
+                            : game.modules.get(MODULE_NAME).api.ability.lines.LineFromTargetSquare;
                         break;
                 }
                 break;
             case 'rect':
-                abilityCls = game.modules.get(MODULE_NAME).api.ability.rects.AbilityTemplateRectCentered;
+                abilityCls = game.modules.get(MODULE_NAME).api.ability.rects.RectCentered;
                 break;
         }
 

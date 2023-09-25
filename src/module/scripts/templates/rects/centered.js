@@ -2,7 +2,7 @@ import { AbilityTemplateAdvanced } from "../ability-template";
 import { getToken, ifDebug, localize, localizeFull } from '../../utils';
 import { MODULE_NAME } from "../../../consts";
 
-export class AbilityTemplateRectCentered extends AbilityTemplateAdvanced {
+export class RectCentered extends AbilityTemplateAdvanced {
     get distance() { return this.document.distance; }
     set distance(value) { this.document.distance = value; }
 

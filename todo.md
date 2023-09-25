@@ -7,6 +7,7 @@
 - cone
   - target square - add hint to right click to re-choose square
 - rect
+  - make sure rects that re on odd squares (distance ends with '5') work
   - allow rotation in gridless maps
 - line
   - refactor line to fire from "center" of a grid square
@@ -16,6 +17,7 @@
     - add hint for mouse wheel to rotate spot
   - default
   - implement line with no width
+- add warning if A-A is installed and pf1 line width is set to 1 instead of 5
 ---
 
 ## Targeting types
