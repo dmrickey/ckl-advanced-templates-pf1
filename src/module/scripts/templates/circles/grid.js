@@ -2,7 +2,7 @@ import { AbilityTemplateAdvanced } from "../ability-template";
 import { MODULE_NAME } from '../../../consts';
 import { getToken, ifDebug, localize, localizeFull } from '../../utils';
 
-export class AbilityTemplateCircleGrid extends AbilityTemplateAdvanced {
+export class CircleGridIntersection extends AbilityTemplateAdvanced {
     _maxRange;
     _hasMaxRange;
     _minRange;

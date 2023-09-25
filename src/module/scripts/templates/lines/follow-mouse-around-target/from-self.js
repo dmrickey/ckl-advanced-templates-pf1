@@ -1,7 +1,7 @@
-import { getToken, ifDebug } from '../../utils';
-import { AbilityTemplateLineTargetBase } from './target-base';
+import { getToken, ifDebug } from '../../../utils';
+import { AbilityTemplateLineTargetBase } from './base';
 
-export class AbilityTemplateLineFromSelf extends AbilityTemplateLineTargetBase {
+export class LineFromSelf extends AbilityTemplateLineTargetBase {
     /** @override */
     async initializePlacement(itemPf) {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));

@@ -1,6 +1,6 @@
-import { AbilityTemplateCircleGrid } from "./grid";
+import { CircleGridIntersection } from "./grid";
 
-export class AbilityTemplateCircleAnywhere extends AbilityTemplateCircleGrid {
+export class CircleAnywhere extends CircleGridIntersection {
     /** @override */
     _gridInterval() { return canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? 2 : 0; }
 }

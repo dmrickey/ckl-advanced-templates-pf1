@@ -1,6 +1,6 @@
-import { AbilityTemplateCircleGrid } from "./grid";
+import { CircleGridIntersection } from "./grid";
 
-export class AbilityTemplateCircleSplash extends AbilityTemplateCircleGrid {
+export class CircleSplash extends CircleGridIntersection {
     /** @override */
     _crosshairsOverride(crosshairs) {
         const boundsContains = (bounds, point) =>

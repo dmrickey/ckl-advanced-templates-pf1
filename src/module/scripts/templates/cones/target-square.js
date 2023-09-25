@@ -2,7 +2,7 @@ import { MODULE_NAME } from '../../../consts';
 import { ifDebug, localize } from '../../utils';
 import { AbilityTemplateFollowMouseAngleCone } from './follow-mouse-angle-base';
 
-export class AbilityTemplateConeTarget extends AbilityTemplateFollowMouseAngleCone {
+export class ConeFromTargetSquare extends AbilityTemplateFollowMouseAngleCone {
     /** @override */
     async initializePlacement(_itemPf) {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));

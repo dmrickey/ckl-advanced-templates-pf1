@@ -1,5 +1,5 @@
-import { AbilityTemplateAdvanced } from "../ability-template";
-import { ifDebug } from '../../utils';
+import { AbilityTemplateAdvanced } from "../../ability-template";
+import { ifDebug } from '../../../utils';
 export class AbilityTemplateLineTargetBase extends AbilityTemplateAdvanced {
     _tokenSquare;
 
@@ -33,7 +33,7 @@ export class AbilityTemplateLineTargetBase extends AbilityTemplateAdvanced {
                 }
                 event.stopPropagation();
 
-                offsetAngle += 5 * Math.sign(event.deltaY);
+                offsetAngle += 3 * Math.sign(event.deltaY);
             };
 
             while (crosshairs.inFlight) {
@@ -64,7 +64,7 @@ export class AbilityTemplateLineTargetBase extends AbilityTemplateAdvanced {
                     y = Math.sin(ray.angle) * this._tokenSquare.h / 2 + this._tokenSquare.center.y;
                 }
 
-                this.document.direction = direction + offsetAngle;
+                this.document.direction = Math.normalizeDegrees(direction + offsetAngle);
                 this.document.x = x;
                 this.document.y = y;
                 this.refresh();

@@ -1,7 +1,7 @@
 import { AbilityTemplateFollowMouseAngleCone } from "./follow-mouse-angle-base";
 import { getToken, ifDebug } from '../../utils';
 
-export class AbilityTemplateConeSelf extends AbilityTemplateFollowMouseAngleCone {
+export class ConeFromSelf extends AbilityTemplateFollowMouseAngleCone {
     /** @override */
     async initializePlacement(itemPf) {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));

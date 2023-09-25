@@ -1,8 +1,8 @@
-import { MODULE_NAME } from '../../../consts';
-import { ifDebug, localize } from '../../utils';
-import { AbilityTemplateLineTargetBase } from './target-base';
+import { MODULE_NAME } from '../../../../consts';
+import { ifDebug, localize } from '../../../utils';
+import { AbilityTemplateLineTargetBase } from './base';
 
-export class AbilityTemplateLineTargetSquare extends AbilityTemplateLineTargetBase {
+export class LineFromTargetSquare extends AbilityTemplateLineTargetBase {
     /** @override */
     async initializePlacement(_itemPf) {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));

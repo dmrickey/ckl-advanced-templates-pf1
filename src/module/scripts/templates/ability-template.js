@@ -25,31 +25,31 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             case 'circle':
                 switch (placementType) {
                     case CONSTS.placement.circle.self:
-                        abilityCls = !!token ? game.modules.get(MODULE_NAME).api.AbilityTemplateCircleSelf : game.modules.get(MODULE_NAME).api.AbilityTemplateCircleGrid;
+                        abilityCls = !!token ? game.modules.get(MODULE_NAME).api.ability.circles.AbilityTemplateCircleSelf : game.modules.get(MODULE_NAME).api.ability.circles.AbilityTemplateCircleGrid;
                         break;
                     case CONSTS.placement.circle.splash:
-                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateCircleSplash;
+                        abilityCls = game.modules.get(MODULE_NAME).api.ability.circles.AbilityTemplateCircleSplash;
                         break;
                     case CONSTS.placement.useSystem:
-                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateCircleAnywhere;
+                        abilityCls = game.modules.get(MODULE_NAME).api.ability.circles.AbilityTemplateCircleAnywhere;
                         break;
                     case CONSTS.placement.circle.grid:
                     default:
-                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateCircleGrid;
+                        abilityCls = game.modules.get(MODULE_NAME).api.ability.circles.AbilityTemplateCircleGrid;
                         break;
                 }
                 break;
             case 'cone':
                 switch (placementType) {
                     case CONSTS.placement.cone.selectTargetSquare:
-                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateConeTarget;
+                        abilityCls = game.modules.get(MODULE_NAME).api.ability.cones.AbilityTemplateConeTarget;
                         break;
                     case CONSTS.placement.useSystem:
-                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateConeSystem;
+                        abilityCls = game.modules.get(MODULE_NAME).api.ability.cones.AbilityTemplateConeSystem;
                         break;
                     case CONSTS.placement.cone.self:
                     default:
-                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateConeSelf;
+                        abilityCls = game.modules.get(MODULE_NAME).api.ability.cones.AbilityTemplateConeSelf;
                         break;
                 }
                 break;
@@ -57,20 +57,20 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             case 'line':
                 switch (placementType) {
                     case CONSTS.placement.line.selectTargetSquare:
-                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateLineTargetSquare;
+                        abilityCls = game.modules.get(MODULE_NAME).api.ability.lines.AbilityTemplateLineTargetSquare;
                         break;
                     case CONSTS.placement.useSystem:
                         // todo
-                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateAdvanced;
+                        abilityCls = game.modules.get(MODULE_NAME).api.ability.lines.AbilityTemplateAdvanced;
                         break;
                     case CONSTS.placement.line.self:
                     default:
-                        abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateLineFromSelf;
+                        abilityCls = game.modules.get(MODULE_NAME).api.ability.lines.AbilityTemplateLineFromSelf;
                         break;
                 }
                 break;
             case 'rect':
-                abilityCls = game.modules.get(MODULE_NAME).api.AbilityTemplateRectCentered;
+                abilityCls = game.modules.get(MODULE_NAME).api.ability.rects.AbilityTemplateRectCentered;
                 break;
         }
 

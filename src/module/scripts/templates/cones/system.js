@@ -1,7 +1,7 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
 import { ifDebug } from '../../utils';
 
-export class AbilityTemplateConeSystem extends AbilityTemplateAdvanced {
+export class ConeSystem extends AbilityTemplateAdvanced {
     /** @override */
     async commitPreview() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));

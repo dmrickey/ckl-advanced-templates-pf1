@@ -1,7 +1,7 @@
 import { AbilityTemplateAdvanced } from '../ability-template';
 import { getToken, ifDebug } from '../../utils';
 
-export class AbilityTemplateCircleSelf extends AbilityTemplateAdvanced {
+export class CircleSelf extends AbilityTemplateAdvanced {
     /** @override */
     async commitPreview() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
