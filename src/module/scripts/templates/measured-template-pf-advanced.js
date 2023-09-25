@@ -7,8 +7,8 @@ import { CONSTS, MODULE_NAME } from '../../consts';
  * @see {@link MeasuredTemplateDocument}
  * @see {@link TemplateLayer}
  */
-// export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
-export class MeasuredTemplatePFAdvanced extends PlaceableObject {
+// export class MeasuredTemplatePFAdvanced extends PlaceableObject {
+export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
 
     // COPIED FROM PF1
     withinAngle(min, max, value) {

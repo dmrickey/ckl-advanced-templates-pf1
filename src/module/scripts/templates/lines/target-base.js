@@ -163,8 +163,6 @@ export class AbilityTemplateLineTargetBase extends AbilityTemplateAdvanced {
             ...rightSpots.slice(0, Math.floor(rightSpots.length / 2)),
         ];
 
-        console.log('allSpots', allSpots)
-
         return {
             x: left,
             y: top,
