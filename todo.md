@@ -1,5 +1,6 @@
 # TODO
 ## v.9
+- Use default measured template width defined in pf1 settings (or maybe config -- especially for line/ray)
 - add hint popup in lower right corner
 - circle
   - update initializePlacement to use getters instead of setting local variables to flag values (see cone)
@@ -8,6 +9,7 @@
 - rect
   - allow rotation in gridless maps
 - line
+  - refactor line to fire from "center" of a grid square
   - line from token
     - add hint for mouse wheel to rotate spot
   - line from target
