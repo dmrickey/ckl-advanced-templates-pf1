@@ -877,7 +877,15 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
             const ray = Ray.fromAngle(this.ray.A.x, this.ray.A.y, this.ray.angle, this.ray.distance + gridSizePx / 2);
 
             // Get resulting squares
-            line(ray.A.x, ray.A.y, ray.B.x, ray.B.y);
+            let xOffset = 0;
+            let yOffset = 0;
+            if (90 <= templateDirection && templateDirection <= 270) {
+                xOffset = -1;
+            }
+            if (180 <= templateDirection && templateDirection <= 360) {
+                yOffset = -1;
+            }
+            line(ray.A.x + xOffset, ray.A.y + yOffset, ray.B.x, ray.B.y);
 
             return result;
         }
