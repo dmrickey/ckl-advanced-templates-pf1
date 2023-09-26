@@ -1,6 +1,5 @@
 # TODO
 ## v.9
-- Use default measured template width defined in pf1 settings (or maybe config -- especially for line/ray)
 - add hint popup in lower right corner
 - circle
   - update initializePlacement to use getters instead of setting local variables to flag values (see cone)

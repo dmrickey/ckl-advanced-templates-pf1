@@ -54,18 +54,8 @@ async function promptMeasureTemplate() {
     };
 
     if (['ray', 'line'].includes(type)) {
-        templateData.width = 5;
+        templateData.width = CONFIG.MeasuredTemplate.defaults.width;
     }
-
-    // if (!['cone', 'circle'].includes(type)
-    //     || (type === 'cone' && this.shared.action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] === CONSTS.placement.useSystem)
-    // ) {
-    //     const wrappedResult = await wrapped();
-    //     if (this.shared.template) {
-    //         await this.shared.template.update({ flags: templateData.flags });
-    //     }
-    //     return wrappedResult;
-    // }
 
     const windows = Object.values(ui.windows).filter((x) => !!x.minimize && !x._minimized);
     await Promise.all(windows.map((x) => x.minimize()));
