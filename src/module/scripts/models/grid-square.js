@@ -46,30 +46,50 @@ export class GridSquare {
             x: right,
             y: top + gridSize * i,
         }));
+        const bottomRight = {
+            direction: 45,
+            x: right,
+            y: bottom,
+        };
         const bottomSpots = [...new Array(heightSpots)].map((_, i) => ({
             direction: 90,
             x: right - gridSize * i,
             y: bottom,
         }));
+        const bottomLeft = {
+            direction: 135,
+            x: left - gridSize,
+            y: bottom,
+        };
         const leftSpots = [...new Array(widthSpots)].map((_, i) => ({
             direction: 180,
-            x: left,
+            x: left - gridSize,
             y: bottom - gridSize * i,
         }));
+        const topLeft = {
+            direction: 225,
+            x: left - gridSize,
+            y: top - gridSize,
+        };
         const topSpots = [...new Array(heightSpots)].map((_, i) => ({
             direction: 270,
             x: left + gridSize * i,
-            y: top,
+            y: top - gridSize,
         }));
+        const topRight = {
+            direction: 315,
+            x: right,
+            y: top - gridSize,
+        };
         const allSpots = [
             ...rightSpots.slice(Math.floor(rightSpots.length / 2)),
-            { direction: 45, x: right, y: bottom },
+            bottomRight,
             ...bottomSpots,
-            { direction: 135, x: left, y: bottom },
+            bottomLeft,
             ...leftSpots,
-            { direction: 225, x: left, y: top },
+            topLeft,
             ...topSpots,
-            { direction: 315, x: right, y: top },
+            topRight,
             ...rightSpots.slice(0, Math.floor(rightSpots.length / 2)),
         ].map((spot) => ({
             ...spot,

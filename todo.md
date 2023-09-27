@@ -1,7 +1,6 @@
 # TODO
 ## v.9
-- test "attached to caster"
-- grid square adjacent does not give adjacent squares on left and top but inset squares
+- fix "attached to caster"
 - add hint popup in lower right corner
 - circle
   - update initializePlacement to use getters instead of setting local variables to flag values (see cone)
