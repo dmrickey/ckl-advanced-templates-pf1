@@ -530,10 +530,12 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
 
     _setPreviewVisibility(show) {
         this.document.flags[MODULE_NAME][CONSTS.flags.hidePreview] = !show;
+        this.ruler.alpha = show ? 1 : 0;
+    }
+
+    _setErrorIconVisibility(show) {
         const existingIcon = this.document.flags[MODULE_NAME].icon;
         const icon = show ? existingIcon : 'icons/svg/hazard.svg';
-        this.ruler.alpha = show ? 1 : 0;
-
         if (icon && icon !== this.controlIcon?.iconSrc) {
             this.document.flags[MODULE_NAME].icon = icon;
             if (this.controlIcon) {

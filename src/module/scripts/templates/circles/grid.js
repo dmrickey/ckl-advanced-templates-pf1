@@ -104,6 +104,7 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
                     isInRange = !(this._hasMinRange && range < this._minRange
                         || this._hasMaxRange && range > this._maxRange);
                     this._setPreviewVisibility(isInRange);
+                    this._setErrorIconVisibility(isInRange);
 
                     const unit = game.settings.get('pf1', 'units') === 'imperial'
                         ? localizeFull('PF1.DistFtShort')
