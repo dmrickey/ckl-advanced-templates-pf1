@@ -5,14 +5,11 @@ import { LineTargetFromSquareCenterBase } from './base';
 
 export class LineFromSquareCenterSelf extends LineTargetFromSquareCenterBase {
 
-    #token;
-
     /** @override */
-    async initializePlacement(itemPf) {
+    async initializePlacement() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
-        const token = this.#token ??= getToken(itemPf);
-        const tokenSquare = GridSquare.fromToken(token);
+        const tokenSquare = GridSquare.fromToken(this.token);
         const availableSquares = tokenSquare.adjacentSquares;
 
         const totalSpots = availableSquares.length;

@@ -13,10 +13,10 @@ export class CircleSelf extends AbilityTemplateAdvanced {
     }
 
     /** @override */
-    async initializePlacement(itemPf) {
+    async initializePlacement() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
-        const token = getToken(itemPf) || { center: { x: 0, y: 0 } };
+        const token = this.token || { center: { x: 0, y: 0 } };
         const { x, y } = token.center;
         this.document.x = x;
         this.document.y = y;

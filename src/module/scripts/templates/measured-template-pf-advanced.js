@@ -43,8 +43,7 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
     }
 
     get tokenSizeSquares() {
-        const tokenId = this.document.flags?.[MODULE_NAME]?.tokenId;
-        const token = canvas.tokens.placeables.find((x) => x.id === tokenId);
+        const { token } = this;
         const sizeSquares = token?.document.width || 1;
         return { token, sizeSquares };
     }
@@ -88,6 +87,12 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         ];
 
         return allSpots;
+    }
+
+    get token() {
+        const tokenId = this.document.flags?.[MODULE_NAME]?.tokenId;
+        const token = canvas.tokens.placeables.find((x) => x.id === tokenId);
+        return token;
     }
     /** END MY CODE */
 

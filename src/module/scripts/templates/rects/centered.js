@@ -154,10 +154,10 @@ export class RectCentered extends AbilityTemplateAdvanced {
     }
 
     /** @override */
-    async initializePlacement(itemPf) {
+    async initializePlacement() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
-        const token = getToken(itemPf);
+        const token = this.token;
 
         if (token) {
             this._tokenSquare = this._calculateTokenSquare(token);

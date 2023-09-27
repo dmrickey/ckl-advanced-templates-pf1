@@ -82,7 +82,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         }
 
         const thisTemplate = new abilityCls(template);
-        if (await thisTemplate.initializePlacement(action.parent)) {
+        if (await thisTemplate.initializePlacement()) {
             return thisTemplate;
         }
 
@@ -155,8 +155,6 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         return this;
     }
 
-
-    // todo fill in default here for rect / line
     /**
      * returns true if committed, false if cancelled
      * @virtual
@@ -164,14 +162,12 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
      */
     async commitPreview() { }
 
-    // todo fill in default here for rect / line
     /**
      * sets up data specififc to template placement (initial position, rotation, set up points array for cones around token, extra width info for emanations, etc)
      *
-     * @param {ItemPF} [itemPf] used to grab the token data for initial placement
      * @returns {Promise<Boolean>}
      */
-    async initializePlacement(itemPf) {
+    async initializePlacement() {
         const { x, y } = canvas.mousePosition;
         this.document.x = x;
         this.document.y = y;
@@ -183,6 +179,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             game.user.updateTokenTargets();
         }
     }
+
     targetIfEnabled() {
         if (Settings.target) {
             const targets = this.getTokensWithin();

@@ -4,7 +4,7 @@ import { LineTargetFromSquareCenterBase } from './base';
 
 export class LineFromSquareCenterTarget extends LineTargetFromSquareCenterBase {
     /** @override */
-    async initializePlacement(_itemPf) {
+    async initializePlacement() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
         const sourceConfig = {

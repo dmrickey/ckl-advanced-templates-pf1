@@ -147,18 +147,16 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
     }
 
     /** @override */
-    async initializePlacement(itemPf) {
+    async initializePlacement() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
-        const token = getToken(itemPf);
-
-        if (token) {
+        if (this.token) {
             this._maxRange = this.document.flags?.[MODULE_NAME]?.maxRange;
             this._hasMaxRange = !!this._maxRange && !isNaN(this._maxRange);
             this._minRange = this.document.flags?.[MODULE_NAME]?.minRange;
             this._hasMinRange = !!this._minRange && !isNaN(this._minRange);
 
-            this._tokenSquare = this._calculateTokenSquare(token);
+            this._tokenSquare = this._calculateTokenSquare(this.token);
         }
 
         const { x, y } = canvas.mousePosition;

@@ -4,7 +4,7 @@ import { AbilityTemplateFollowMouseAngleCone } from './follow-mouse-angle-base';
 
 export class ConeFromTargetSquare extends AbilityTemplateFollowMouseAngleCone {
     /** @override */
-    async initializePlacement(_itemPf) {
+    async initializePlacement() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
 
         const sourceConfig = {
