@@ -1,7 +1,7 @@
 import { getToken, ifDebug } from '../../../utils';
-import { AbilityTemplateLineTargetBase } from './base';
+import { LineTargetFromSquareEdgeBase } from './base';
 
-export class LineFromSelf extends AbilityTemplateLineTargetBase {
+export class LineFromSquareEdgeSelf extends LineTargetFromSquareEdgeBase {
     /** @override */
     async initializePlacement(itemPf) {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));

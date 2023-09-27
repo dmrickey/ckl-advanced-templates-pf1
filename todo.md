@@ -1,5 +1,7 @@
 # TODO
 ## v.9
+- grid square adjacent does not give adjacent squares on left and top but inset squares
+- refactor `initializePlacement(itemPf)` to `initializePlacement()` and implement a token getter that reads from the flag I set up in `template-placement`
 - add hint popup in lower right corner
 - circle
   - update initializePlacement to use getters instead of setting local variables to flag values (see cone)
@@ -10,6 +12,7 @@
   - allow rotation in gridless maps
 - line
   - refactor line to fire from "center" of a grid square
+    - Add way to choose which line to use
   - line from token
     - add hint for mouse wheel to rotate spot
   - line from target
@@ -17,6 +20,8 @@
   - default
   - implement line with no width
 - add warning if A-A is installed and pf1 line width is set to 1 instead of 5
+- Grid Square
+  - Add "start" property that shows the adjacent centered point on the grid square for adjacent squares (null for the token's square)
 ---
 
 ## Targeting types

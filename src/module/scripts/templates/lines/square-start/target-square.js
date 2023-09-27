@@ -1,8 +1,8 @@
 import { MODULE_NAME } from '../../../../consts';
 import { ifDebug, localize } from '../../../utils';
-import { LineTargetFromSquareEdgeBase } from './base';
+import { LineTargetFromSquareCenterBase } from './base';
 
-export class LineFromSquareEdgeTarget extends LineTargetFromSquareEdgeBase {
+export class LineFromSquareCenterTarget extends LineTargetFromSquareCenterBase {
     /** @override */
     async initializePlacement(_itemPf) {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));

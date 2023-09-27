@@ -1,6 +1,6 @@
 import { AbilityTemplateAdvanced } from "../../ability-template";
 import { ifDebug } from '../../../utils';
-export class AbilityTemplateLineTargetBase extends AbilityTemplateAdvanced {
+export class LineTargetFromSquareEdgeBase extends AbilityTemplateAdvanced {
     _tokenSquare;
 
     /** @override */
