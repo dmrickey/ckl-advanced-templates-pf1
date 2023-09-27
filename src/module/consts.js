@@ -31,6 +31,7 @@ export const CONSTS = {
         allowConeRotation: 'allowConeRotation',
         colorAlpha: 'colorAlpha',
         coneRotationAngle: 'coneRotationAngle',
+        controlIconText: 'controlIconText',
         expireAtTurnEnd: 'expireAtTurnEnd',
         hideHighlight: 'hideHighlight',
         hideOutline: 'hideOutline',

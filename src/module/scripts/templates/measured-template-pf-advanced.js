@@ -42,6 +42,11 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
             || !!this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.hidePreview];
     }
 
+    set hideHighlight(value) {
+        this.document.flags ||= { [MODULE_NAME]: {} };
+        this.document.flags[MODULE_NAME][CONSTS.flags.hideHighlight] = value;
+    }
+
     get tokenSizeSquares() {
         const { token } = this;
         const sizeSquares = token?.document.width || 1;
@@ -93,6 +98,44 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         const tokenId = this.document.flags?.[MODULE_NAME]?.tokenId;
         const token = canvas.tokens.placeables.find((x) => x.id === tokenId);
         return token;
+    }
+
+    /**
+     * The control icon label
+     * @type {PreciseText}
+     */
+    controlIconTextLabel;
+
+    get controlIconText() {
+        return this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.controlIconText] || '';
+    }
+
+    set controlIconText(value) {
+        this.document.flags ||= { [MODULE_NAME]: {} };
+        this.document.flags[MODULE_NAME][CONSTS.flags.controlIconText] = value;
+    }
+
+    /**
+     * Draw the Text label used for the MeasuredTemplate
+     * @returns {PreciseText}
+     */
+    #drawControlIconText() {
+        const style = CONFIG.canvasTextStyle.clone();
+        style.fontSize = Math.max(Math.round(canvas.dimensions.size * 0.36 * 12) / 12, 36);
+        const text = new PreciseText(null, style);
+        text.anchor.set(.5, 1);
+        return text;
+    }
+
+    /**
+     * Update the displayed ruler tooltip text
+     * @protected
+     */
+    _refreshControlIconText() {
+        const text = this.controlIconText;
+        this.controlIconTextLabel.text = text;
+        // todo fix text position
+        this.controlIconTextLabel.position.set(0, 80);
     }
     /** END MY CODE */
 
@@ -229,6 +272,10 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         this.controlIcon = this.addChild(this.#createControlIcon());
         await this.controlIcon.draw();
 
+        // BEGIN MY CODE
+        this.controlIconTextLabel = this.addChild(this.#drawControlIconText());
+        // END MY CODE
+
         // Ruler Text
         this.ruler = this.addChild(this.#drawRulerText());
 
@@ -284,6 +331,10 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         if (flags.refreshShape) this.#refreshShape();
         if (flags.refreshGrid) this.highlightGrid();
         if (flags.refreshText) this._refreshRulerText();
+
+        // BEGIN MY CODE
+        if (flags.refreshPosition) this._refreshControlIconText();
+        // END MY CODE
     }
 
     /* -------------------------------------------- */
@@ -534,7 +585,7 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
     }
 
     _setErrorIconVisibility(show) {
-        const existingIcon = this.document.flags[MODULE_NAME].icon;
+        const existingIcon = this.document.flags[MODULE_NAME]?.icon;
         const icon = show ? existingIcon : 'icons/svg/hazard.svg';
         if (icon && icon !== this.controlIcon?.iconSrc) {
             this.document.flags[MODULE_NAME].icon = icon;

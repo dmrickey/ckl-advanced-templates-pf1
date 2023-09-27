@@ -1,25 +1,23 @@
 import { AbilityTemplateAdvanced } from "../../ability-template";
 import { ifDebug } from '../../../utils';
 export class LineTargetFromSquareCenterBase extends AbilityTemplateAdvanced {
-    _gridSquare;
-
     /** @override */
     async commitPreview() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
 
         super.clearTargetIfEnabled();
 
-        const targetConfig = {
-            drawIcon: false,
-            drawOutline: false,
-        };
+        const gridSquare = await this.getSourceGridSquare();
+        if (!gridSquare) {
+            return false;
+        }
 
         const updateTemplateRotation = async (crosshairs) => {
             while (crosshairs.inFlight) {
                 await warpgate.wait(100);
 
                 let direction, x, y;
-                const ray = new Ray(this._gridSquare.center, crosshairs);
+                const ray = new Ray(gridSquare.center, crosshairs);
                 direction = Math.toDegrees(ray.angle);
 
                 this.document.direction = Math.normalizeDegrees(direction);
@@ -32,7 +30,10 @@ export class LineTargetFromSquareCenterBase extends AbilityTemplateAdvanced {
         };
 
         const followCrosshairs = await warpgate.crosshairs.show(
-            targetConfig,
+            {
+                drawIcon: false,
+                drawOutline: false,
+            },
             {
                 show: updateTemplateRotation
             }
@@ -40,13 +41,8 @@ export class LineTargetFromSquareCenterBase extends AbilityTemplateAdvanced {
 
         if (followCrosshairs.cancelled) {
             super.clearTargetIfEnabled();
-
             super.clearTempate();
-            if (await this.initializePlacement()) {
-                return await this.commitPreview();
-            }
-
-            return false;
+            return await this.commitPreview();
         }
 
         return true;
@@ -55,19 +51,18 @@ export class LineTargetFromSquareCenterBase extends AbilityTemplateAdvanced {
     /** @override */
     _gridInterval() { return canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? -1 : 0; }
 
-    /**
-     * @virtual
-     * @return {Promise<Boolean>}
-     */
-    async initializeLineData(square) {
+    /** @override */
+    async initializePlacement() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
-
-        this._gridSquare = square;
-
-        const { x, y } = square.center;
+        const { x, y } = this.token?.center ?? { x: 0, y: 0 };
         this.document.x = x;
         this.document.y = y;
-
         return true;
     }
+
+    /**
+     * @abstract
+     * @returns {GridSquare | null | undefined}
+     */
+    async getSourceGridSquare() { }
 }
