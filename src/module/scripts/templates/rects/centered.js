@@ -1,6 +1,7 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
 import { ifDebug, localize, localizeFull } from '../../utils';
 import { MODULE_NAME } from "../../../consts";
+import { GridSquare } from "../../models/grid-square";
 
 export class RectCentered extends AbilityTemplateAdvanced {
     get distance() { return this.document.distance; }
@@ -9,64 +10,58 @@ export class RectCentered extends AbilityTemplateAdvanced {
     get direction() { return this.document.direction; }
     set direction(value) { this.document.direction = value; }
 
-    _tokenSquare;
-
     get offset() { return this.document.flags?.[MODULE_NAME]?.offset ?? 0; }
 
-    _calculateTokenSquare(token) {
-        const heightSquares = Math.max(Math.round(token.document.height), 1);
-        const widthSquares = Math.max(Math.round(token.document.width), 1);
+    // _calculateTokenSquare(token) {
+    //     const heightSquares = Math.max(Math.round(token.document.height), 1);
+    //     const widthSquares = Math.max(Math.round(token.document.width), 1);
 
-        const gridSize = canvas.grid.h;
-        const { x, y, h, w } = token;
+    //     const gridSize = canvas.grid.h;
+    //     const { x, y, h, w } = token;
 
-        const bottom = y + h;
-        const left = x;
-        const top = y;
-        const right = x + w;
+    //     const bottom = y + h;
+    //     const left = x;
+    //     const top = y;
+    //     const right = x + w;
 
-        const rightSpots = [...new Array(heightSquares)].map((_, i) => ({
-            x: right,
-            y: top + gridSize * i,
-        }));
-        const leftSpots = [...new Array(heightSquares)].map((_, i) => ({
-            x: left,
-            y: bottom - gridSize * i,
-        }));
-        const topSpots = [...new Array(widthSquares)].map((_, i) => ({
-            x: left + gridSize * i,
-            y: top,
-        }));
-        const bottomSpots = [...new Array(widthSquares)].map((_, i) => ({
-            x: right - gridSize * i,
-            y: bottom,
-        }));
-        const allSpots = [
-            ...rightSpots,
-            ...bottomSpots,
-            ...leftSpots,
-            ...topSpots,
-        ];
+    //     const rightSpots = [...new Array(heightSquares)].map((_, i) => ({
+    //         x: right,
+    //         y: top + gridSize * i,
+    //     }));
+    //     const leftSpots = [...new Array(heightSquares)].map((_, i) => ({
+    //         x: left,
+    //         y: bottom - gridSize * i,
+    //     }));
+    //     const topSpots = [...new Array(widthSquares)].map((_, i) => ({
+    //         x: left + gridSize * i,
+    //         y: top,
+    //     }));
+    //     const bottomSpots = [...new Array(widthSquares)].map((_, i) => ({
+    //         x: right - gridSize * i,
+    //         y: bottom,
+    //     }));
+    //     const allSpots = [
+    //         ...rightSpots,
+    //         ...bottomSpots,
+    //         ...leftSpots,
+    //         ...topSpots,
+    //     ];
 
-        return {
-            x: left,
-            y: top,
-            center: token.center,
-            top,
-            bottom,
-            left,
-            right,
-            h,
-            w,
-            heightSquares,
-            widthSquares,
-            allSpots,
-        };
-    }
-
-    tokenContains(x, y) {
-        return new PIXI.Rectangle(this._tokenSquare.x, this._tokenSquare.y, this._tokenSquare.w, this._tokenSquare.h).contains(x, y);
-    }
+    //     return {
+    //         x: left,
+    //         y: top,
+    //         center: token.center,
+    //         top,
+    //         bottom,
+    //         left,
+    //         right,
+    //         h,
+    //         w,
+    //         heightSquares,
+    //         widthSquares,
+    //         allSpots,
+    //     };
+    // }
 
     /** @override */
     async commitPreview() {
@@ -75,6 +70,10 @@ export class RectCentered extends AbilityTemplateAdvanced {
 
         const existingIcon = this.controlIcon?.iconSrc;
         let isInRange = true;
+
+        const tokenSquare = GridSquare.fromToken(this.token);
+
+        const tokenContains = (x, y) => new PIXI.Rectangle(tokenSquare.x, tokenSquare.y, tokenSquare.w, tokenSquare.h).contains(x, y);
 
         const updateTemplateLocation = async (crosshairs) => {
             while (crosshairs.inFlight) {
@@ -91,7 +90,7 @@ export class RectCentered extends AbilityTemplateAdvanced {
                 }
 
                 if ((this.hasMaxRange || this.hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
-                    const rays = this._tokenSquare.allSpots.map((spot) => ({
+                    const rays = tokenSquare.adjacentSquares.map((spot) => ({
                         ray: new Ray(spot, crosshairs),
                     }));
                     const distances = rays.map((ray) => canvas.grid.measureDistances([ray], { gridSpaces: true })[0]);
@@ -99,7 +98,7 @@ export class RectCentered extends AbilityTemplateAdvanced {
                     range = !!(range % 1)
                         ? range.toFixed(1)
                         : range;
-                    const isInToken = this.tokenContains(centerX, centerY);
+                    const isInToken = tokenContains(centerX, centerY);
                     if (isInToken) {
                         range = 0;
                     }
@@ -153,12 +152,6 @@ export class RectCentered extends AbilityTemplateAdvanced {
     /** @override */
     async initializeVariables() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializeVariables.name}`));
-
-        const token = this.token;
-
-        if (token) {
-            this._tokenSquare = this._calculateTokenSquare(token);
-        }
 
         const d = this.distance;
         const squares = d / canvas.scene.grid.distance;

@@ -1,5 +1,6 @@
 # TODO
 ## v.9
+- make sure tareting works for all shapes and all token sizes
 - add hint popup in lower right corner
 - circle
   - fix "center on token"
@@ -8,8 +9,9 @@
 - rect
   - make sure rects that are on odd squares (distance ends with '5') work
   - allow rotation in gridless maps
-  - follow new pattern of choosing start position within `commitPreview`
+  - verify range checks
 - line
+  - fix targeting for large tokens
   - Move start position of line to "back" of GridSquare
   - refactor line to fire from "center" of a grid square
     - show line start not working for new implementation
