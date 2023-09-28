@@ -5,70 +5,68 @@ import { LineFromTargetBase } from './base';
 export class LineFromSelf extends LineFromTargetBase {
 
     /** @override */
-    async getSourceGridSquare() {
-        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.getSourceGridSquare.name}`));
+    async getSourcePoint() {
+        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.getSourcePoint.name}`));
 
         this._setPreviewVisibility(false);
         this.controlIconText = localize('lineStart');
         super.clearTempate();
 
         const tokenSquare = GridSquare.fromToken(this.token);
-        const availableSquares = tokenSquare.adjacentSquares;
+        const availablePoints = tokenSquare.gridPoints;
 
-        const totalSpots = availableSquares.length;
+        const totalSpots = availablePoints.length;
 
         const radToNormalizedAngle = (rad, offsetDegrees) => {
             const degrees = Math.toDegrees(rad);
             return Math.normalizeDegrees(degrees + offsetDegrees);
         };
 
-        const sourceSquareConfig = {
-            drawIcon: false,
-            drawOutline: false,
-            interval: 0,
-            icon: this.iconImg,
-        };
-
-        let square;
+        let point;
         const selectSquareFromCrosshairsRotation = async (crosshairs) => {
             let currentSpotIndex = 0;
 
             while (crosshairs.inFlight) {
-                let tempSquare;
+                let tempPoint;
                 await warpgate.wait(100);
 
                 const ray = new Ray(tokenSquare.center, crosshairs);
                 if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
                     // todo fix math for figuring out angle for spot
                     const followAngle = radToNormalizedAngle(ray.angle, -360 / totalSpots / 2);
-                    const squareIndex = Math.ceil(followAngle / 360 * totalSpots) - 1 % totalSpots;
-                    if (squareIndex === currentSpotIndex) {
+                    const pointIndex = Math.ceil(followAngle / 360 * totalSpots) - 1 % totalSpots;
+                    if (pointIndex === currentSpotIndex) {
                         continue;
                     }
-                    currentSpotIndex = squareIndex;
-                    square = availableSquares[squareIndex];
+                    currentSpotIndex = pointIndex;
+                    point = availablePoints[pointIndex];
 
-                    if (tempSquare === square) {
+                    if (tempPoint === point) {
                         continue;
                     }
                 }
                 else {
                     const edge = tokenSquare.edgePoint(ray);
-                    if (edge.center.x === tempSquare.center.x && edge.center.y === tempSquare.center.y) {
+                    if (edge.center.x === tempPoint.center.x && edge.center.y === tempPoint.center.y) {
                         continue;
                     }
 
-                    square = GridSquare.fromCenter(edge, 0, 0);
+                    point = GridSquare.fromCenter(edge, 0, 0);
                 }
-                tempSquare = square;
+                tempPoint = point;
 
-                this.document.x = square.center.x;
-                this.document.y = square.center.y;
+                super.setCenter = point;
                 this.refresh();
             };
         }
 
-        const sourceSquare = await warpgate.crosshairs.show(sourceSquareConfig, { show: selectSquareFromCrosshairsRotation });
+        const sourcePointConfig = {
+            drawIcon: false,
+            drawOutline: false,
+            interval: 0,
+            icon: this.iconImg,
+        };
+        const sourceSquare = await warpgate.crosshairs.show(sourcePointConfig, { show: selectSquareFromCrosshairsRotation });
         if (sourceSquare.cancelled) {
             return false;
         }
@@ -76,6 +74,6 @@ export class LineFromSelf extends LineFromTargetBase {
         this._setPreviewVisibility(true);
         this.controlIconText = null;
 
-        return square;
+        return point;
     }
 }

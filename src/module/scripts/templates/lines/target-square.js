@@ -1,11 +1,10 @@
-import { GridSquare } from '../../models/grid-square';
 import { ifDebug, localize } from '../../utils';
 import { LineFromTargetBase } from './base';
 
 export class LineFromSquare extends LineFromTargetBase {
     /** @override */
-    async getSourceGridSquare() {
-        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.getSourceGridSquare.name}`));
+    async getSourcePoint() {
+        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.getSourcePoint.name}`));
 
         this._setPreviewVisibility(false);
         super.clearTempate();
@@ -20,9 +19,7 @@ export class LineFromSquare extends LineFromTargetBase {
         const show = async (crosshairs) => {
             while (crosshairs.inFlight) {
                 await warpgate.wait(100);
-                this.document.x = crosshairs.center.x;
-                this.document.y = crosshairs.center.y;
-                this.refresh();
+                super.setCenter = crosshairs.center;
             }
         }
         const source = await warpgate.crosshairs.show(sourceConfig, { show });
@@ -32,11 +29,6 @@ export class LineFromSquare extends LineFromTargetBase {
 
         this._setPreviewVisibility(true);
 
-        const size = canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? 1 : 0;
-
-        const square = GridSquare.fromCenter(source, size, size);
-        this.document.x = square.center.x;
-        this.document.y = square.center.y;
-        return square;
+        return source;
     }
 }

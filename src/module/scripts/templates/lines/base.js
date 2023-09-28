@@ -7,16 +7,17 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
 
         super.clearTargetIfEnabled();
 
-        const gridSquare = await this.getSourceGridSquare();
-        if (!gridSquare) {
+        const gridPoint = await this.getSourcePoint();
+        if (!gridPoint) {
             return false;
         }
+        super.setCenter = gridPoint;
 
         const updateTemplateRotation = async (crosshairs) => {
             while (crosshairs.inFlight) {
                 await warpgate.wait(100);
 
-                const ray = new Ray(gridSquare.center, crosshairs);
+                const ray = new Ray(gridPoint, crosshairs);
                 const direction = Math.toDegrees(ray.angle);
 
                 this.document.direction = Math.normalizeDegrees(direction);
@@ -54,15 +55,14 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
     /** @override */
     async initializeVariables() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializeVariables.name}`));
-        const { x, y } = this.token?.center ?? { x: 0, y: 0 };
-        this.document.x = x;
-        this.document.y = y;
+        const center = this.token?.center ?? { x: 0, y: 0 };
+        super.setCenter = center;
         return true;
     }
 
     /**
      * @abstract
-     * @returns {GridSquare | null | undefined}
+     * @returns {Promise<{x: number, y: number, direction?: number} | null | undefined | false>}
      */
-    async getSourceGridSquare() { }
+    async getSourcePoint() { }
 }

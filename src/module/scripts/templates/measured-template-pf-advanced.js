@@ -107,6 +107,12 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
 
     get iconImg() { return this.document.flags?.[MODULE_NAME]?.icon || 'systems/pf1/icons/misc/magic-swirl.png'; }
 
+    set setCenter({ x, y }) {
+        this.document.x = x;
+        this.document.y = y;
+        this.refresh();
+    }
+
     /**
      * The control icon label
      * @type {PreciseText}
