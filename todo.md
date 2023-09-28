@@ -13,13 +13,8 @@
 - line
   - fix targeting for large tokens
   - Move start position of line to "back" of GridSquare
-  - refactor line to fire from "center" of a grid square
-    - show line start not working for new implementation
-    - add hint for mouse wheel to rotate spot
-  - line from target
-    - add hint for mouse wheel to rotate spot
-  - default
-  - implement line with no width
+  - make "fake default" implementation
+  - implement line with no width for walls
 - add warning if A-A is installed and pf1 line width is set to 1 instead of 5
 - Grid Square
   - Add "start" property that shows the adjacent centered point on the grid square for adjacent squares (null for the token's square)

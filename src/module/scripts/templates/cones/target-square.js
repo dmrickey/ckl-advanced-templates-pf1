@@ -12,7 +12,7 @@ export class ConeFromTargetSquare extends AbilityTemplateFollowMouseAngleCone {
             drawOutline: false,
             interval: this._gridInterval(),
             label: localize('coneStart'),
-            icon: this.document.flags?.[MODULE_NAME]?.icon || 'systems/pf1/icons/misc/magic-swirl.png',
+            icon: this.iconImg,
         };
 
         const source = await warpgate.crosshairs.show(sourceConfig);

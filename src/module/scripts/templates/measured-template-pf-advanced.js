@@ -105,6 +105,8 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
     get maxRange() { return this.document.flags?.[MODULE_NAME]?.maxRange; }
     get minRange() { return this.document.flags?.[MODULE_NAME]?.minRange; }
 
+    get iconImg() { return this.document.flags?.[MODULE_NAME]?.icon || 'systems/pf1/icons/misc/magic-swirl.png'; }
+
     /**
      * The control icon label
      * @type {PreciseText}

@@ -101,6 +101,76 @@ export class GridSquare {
         return allSpots;
     }
 
+    #gridPoints;
+    /**
+     * returns grid intersections on perimeter of the square
+     */
+    get gridPoints() { return this.#gridPoints ??= this.#initGridPoints(); }
+
+    #initGridPoints() {
+        const bottom = this.#y + this.#h;
+        const left = this.#x;
+        const top = this.#y;
+        const right = this.#x + this.#w;
+        const heightSpots = this.#heightSquares - 1;
+        const widthSpots = this.#widthSquares - 1;
+
+        const gridSize = canvas.grid.h;
+
+        const rightPoints = [...new Array(widthSpots)].map((_, i) => ({
+            direction: 0,
+            x: right,
+            y: top + gridSize * (i + 1),
+        }));
+        const bottomRight = {
+            direction: 45,
+            x: right,
+            y: bottom,
+        };
+        const bottomPoints = [...new Array(heightSpots)].map((_, i) => ({
+            direction: 90,
+            x: right - gridSize * (i + 1),
+            y: bottom,
+        }));
+        const bottomLeft = {
+            direction: 135,
+            x: left,
+            y: bottom,
+        };
+        const leftPoints = [...new Array(widthSpots)].map((_, i) => ({
+            direction: 180,
+            x: left,
+            y: bottom - gridSize * (i + 1),
+        }));
+        const topLeft = {
+            direction: 225,
+            x: left,
+            y: top,
+        };
+        const topPoints = [...new Array(heightSpots)].map((_, i) => ({
+            direction: 270,
+            x: left + gridSize * (i + 1),
+            y: top,
+        }));
+        const topRight = {
+            direction: 315,
+            x: right,
+            y: top,
+        };
+        const allPoints = [
+            ...rightPoints.slice(Math.floor(rightPoints.length / 2)),
+            bottomRight,
+            ...bottomPoints,
+            bottomLeft,
+            ...leftPoints,
+            topLeft,
+            ...topPoints,
+            topRight,
+            ...rightPoints.slice(0, Math.floor(rightPoints.length / 2)),
+        ];
+        return allPoints;
+    }
+
     constructor(x, y, heightSquares = 1, widthSquares = 1) {
         this.#x = x;
         this.#y = y;
@@ -121,7 +191,7 @@ export class GridSquare {
     static fromCenter({ x, y }, heightSquares = 1, widthSquares = 1) {
         const gridSize = canvas.grid.h;
         const x1 = x - gridSize * heightSquares / 2;
-        const y1 = y - gridSize * widthSquaresSquares / 2;
+        const y1 = y - gridSize * widthSquares / 2;
         return new GridSquare(x1, y1, heightSquares, widthSquares);
     }
 

@@ -8,10 +8,8 @@ import { CircleSplash } from "./circles/splash";
 import { ConeSystem } from "./cones/system";
 import { ConeFromTargetSquare } from "./cones/target-square";
 import { ConeFromSelf } from "./cones/self";
-import { LineFromSquareEdgeSelf } from "./lines/follow-mouse-around-target/from-self";
-import { LineFromSquareEdgeTarget } from "./lines/follow-mouse-around-target/target-square";
-import { LineFromSquareCenterSelf } from "./lines/square-start/from-self";
-import { LineFromSquareCenterTarget } from "./lines/square-start/target-square";
+import { LineFromSelf } from "./lines/from-self";
+import { LineFromSquare } from "./lines/target-square";
 import { RectCentered } from "./rects/centered";
 
 export const initTemplates = () => {
@@ -37,10 +35,8 @@ export const initTemplates = () => {
                     ConeSystem,
                 },
                 lines: {
-                    LineFromSquareEdgeSelf,
-                    LineFromSquareEdgeTarget,
-                    LineFromSquareCenterSelf,
-                    LineFromSquareCenterTarget,
+                    LineFromSelf,
+                    LineFromSquare,
                     // todo AbilityTemplateLineSystem
                 },
                 rects: {

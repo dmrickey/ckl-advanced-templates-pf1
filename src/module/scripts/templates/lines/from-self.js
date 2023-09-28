@@ -1,9 +1,8 @@
-import { MODULE_NAME } from '../../../../consts';
-import { GridSquare } from '../../../models/grid-square';
-import { ifDebug, localize } from '../../../utils';
-import { LineTargetFromSquareCenterBase } from './base';
+import { GridSquare } from '../../models/grid-square';
+import { ifDebug, localize } from '../../utils';
+import { LineFromTargetBase } from './base';
 
-export class LineFromSquareCenterSelf extends LineTargetFromSquareCenterBase {
+export class LineFromSelf extends LineFromTargetBase {
 
     /** @override */
     async getSourceGridSquare() {
@@ -27,44 +26,44 @@ export class LineFromSquareCenterSelf extends LineTargetFromSquareCenterBase {
             drawIcon: false,
             drawOutline: false,
             interval: 0,
-            icon: this.document.flags?.[MODULE_NAME]?.icon || 'systems/pf1/icons/misc/magic-swirl.png',
+            icon: this.iconImg,
         };
 
-        let spot;
+        let square;
         const selectSquareFromCrosshairsRotation = async (crosshairs) => {
             let currentSpotIndex = 0;
 
             while (crosshairs.inFlight) {
-                let tempSpot;
+                let tempSquare;
                 await warpgate.wait(100);
 
                 const ray = new Ray(tokenSquare.center, crosshairs);
                 if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
                     // todo fix math for figuring out angle for spot
                     const followAngle = radToNormalizedAngle(ray.angle, -360 / totalSpots / 2);
-                    const spotIndex = Math.ceil(followAngle / 360 * totalSpots) - 1 % totalSpots;
-                    if (spotIndex === currentSpotIndex) {
+                    const squareIndex = Math.ceil(followAngle / 360 * totalSpots) - 1 % totalSpots;
+                    if (squareIndex === currentSpotIndex) {
                         continue;
                     }
-                    currentSpotIndex = spotIndex;
-                    spot = availableSquares[spotIndex];
+                    currentSpotIndex = squareIndex;
+                    square = availableSquares[squareIndex];
 
-                    if (tempSpot === spot) {
+                    if (tempSquare === square) {
                         continue;
                     }
                 }
                 else {
                     const edge = tokenSquare.edgePoint(ray);
-                    if (edge.center.x === tempSpot.center.x && edge.center.y === tempSpot.center.y) {
+                    if (edge.center.x === tempSquare.center.x && edge.center.y === tempSquare.center.y) {
                         continue;
                     }
 
-                    spot = GridSquare.fromCenter(edge, 0, 0);
+                    square = GridSquare.fromCenter(edge, 0, 0);
                 }
-                tempSpot = spot;
+                tempSquare = square;
 
-                this.document.x = spot.center.x;
-                this.document.y = spot.center.y;
+                this.document.x = square.center.x;
+                this.document.y = square.center.y;
                 this.refresh();
             };
         }
@@ -77,6 +76,6 @@ export class LineFromSquareCenterSelf extends LineTargetFromSquareCenterBase {
         this._setPreviewVisibility(true);
         this.controlIconText = null;
 
-        return spot;
+        return square;
     }
 }

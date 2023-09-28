@@ -61,7 +61,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             case 'line':
                 switch (placementType) {
                     case CONSTS.placement.line.selectTargetSquare:
-                        abilityCls = game.modules.get(MODULE_NAME).api.ability.lines.LineFromSquareEdgeTarget;
+                        abilityCls = game.modules.get(MODULE_NAME).api.ability.lines.LineFromSquare;
                         break;
                     case CONSTS.placement.useSystem:
                         // todo
@@ -71,8 +71,9 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                     default:
                         abilityCls = !!token
                             // ? game.modules.get(MODULE_NAME).api.ability.lines.LineFromSquareEdgeSelf
-                            ? game.modules.get(MODULE_NAME).api.ability.lines.LineFromSquareCenterSelf
-                            : game.modules.get(MODULE_NAME).api.ability.lines.LineFromSquareEdgeTarget;
+                            ? game.modules.get(MODULE_NAME).api.ability.lines.LineFromSelf
+                            // : game.modules.get(MODULE_NAME).api.ability.lines.LineFromSquareEdgeTarget;
+                            : game.modules.get(MODULE_NAME).api.ability.lines.LineFromSquare;
                         break;
                 }
                 break;
