@@ -12,7 +12,6 @@
   - verify range checks
 - line
   - fix targeting for large tokens
-  - Move start position of line to "back" of GridSquare
   - make "fake default" implementation
   - implement line with no width for walls
 - add warning if A-A is installed and pf1 line width is set to 1 instead of 5
