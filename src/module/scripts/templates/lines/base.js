@@ -50,9 +50,6 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
     }
 
     /** @override */
-    _gridInterval() { return canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? 1 : 0; }
-
-    /** @override */
     async initializeVariables() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializeVariables.name}`));
         const center = this.token?.center ?? { x: 0, y: 0 };

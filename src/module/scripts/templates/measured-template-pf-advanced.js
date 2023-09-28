@@ -114,6 +114,12 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
     }
 
     /**
+     * @virtual
+     * @returns { -1 | 0 | 1 }
+     */
+    _gridInterval() { return canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? 1 : 0; }
+
+    /**
      * The control icon label
      * @type {PreciseText}
      */
