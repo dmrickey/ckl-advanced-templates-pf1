@@ -4,8 +4,8 @@ import { LineTargetFromSquareCenterBase } from './base';
 
 export class LineFromSquareCenterTarget extends LineTargetFromSquareCenterBase {
     /** @override */
-    async initializePlacement() {
-        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
+    async initializeVariables() {
+        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializeVariables.name}`));
 
         const sourceConfig = {
             drawIcon: true,

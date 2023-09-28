@@ -87,7 +87,7 @@ export class LineTargetFromSquareEdgeBase extends AbilityTemplateAdvanced {
 
             if (this.canRestart) {
                 super.clearTempate();
-                if (await this.initializePlacement()) {
+                if (await this.initializeVariables()) {
                     return await this.commitPreview();
                 }
             }
@@ -105,7 +105,7 @@ export class LineTargetFromSquareEdgeBase extends AbilityTemplateAdvanced {
      * @return {Promise<Boolean>}
      */
     async initializeLineData(center, width, height) {
-        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
+        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializeVariables.name}`));
 
         this._tokenSquare = this.#sourceSquare(center, width, height);
 

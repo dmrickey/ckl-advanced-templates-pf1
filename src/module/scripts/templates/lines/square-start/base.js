@@ -52,8 +52,8 @@ export class LineTargetFromSquareCenterBase extends AbilityTemplateAdvanced {
     _gridInterval() { return canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? -1 : 0; }
 
     /** @override */
-    async initializePlacement() {
-        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
+    async initializeVariables() {
+        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializeVariables.name}`));
         const { x, y } = this.token?.center ?? { x: 0, y: 0 };
         this.document.x = x;
         this.document.y = y;

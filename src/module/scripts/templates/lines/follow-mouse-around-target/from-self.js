@@ -3,8 +3,8 @@ import { LineTargetFromSquareEdgeBase } from './base';
 
 export class LineFromSquareEdgeSelf extends LineTargetFromSquareEdgeBase {
     /** @override */
-    async initializePlacement() {
-        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
+    async initializeVariables() {
+        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializeVariables.name}`));
 
         const token = this.token;
         const width = Math.max(Math.round(token.document.width), 1);

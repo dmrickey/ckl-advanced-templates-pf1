@@ -82,7 +82,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         }
 
         const thisTemplate = new abilityCls(template);
-        if (await thisTemplate.initializePlacement()) {
+        if (await thisTemplate.initializeVariables()) {
             return thisTemplate;
         }
 
@@ -167,7 +167,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
      *
      * @returns {Promise<Boolean>}
      */
-    async initializePlacement() {
+    async initializeVariables() {
         const { x, y } = canvas.mousePosition;
         this.document.x = x;
         this.document.y = y;

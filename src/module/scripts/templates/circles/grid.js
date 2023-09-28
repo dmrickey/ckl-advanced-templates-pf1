@@ -150,8 +150,8 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
     }
 
     /** @override */
-    async initializePlacement() {
-        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
+    async initializeVariables() {
+        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializeVariables.name}`));
 
         const { x, y } = canvas.mousePosition;
         this.document.x = x;
