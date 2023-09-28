@@ -1,5 +1,5 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
-import { getToken, ifDebug, localize, localizeFull } from '../../utils';
+import { ifDebug, localize, localizeFull } from '../../utils';
 import { MODULE_NAME } from "../../../consts";
 
 export class RectCentered extends AbilityTemplateAdvanced {
@@ -9,10 +9,6 @@ export class RectCentered extends AbilityTemplateAdvanced {
     get direction() { return this.document.direction; }
     set direction(value) { this.document.direction = value; }
 
-    get _maxRange() { return this.document.flags?.[MODULE_NAME]?.maxRange; };
-    get _hasMaxRange() { return !!this._maxRange && !isNaN(this._maxRange); };
-    get _minRange() { return this.document.flags?.[MODULE_NAME]?.minRange; };
-    get _hasMinRange() { return !!this._minRange && !isNaN(this._minRange); };
     _tokenSquare;
 
     get offset() { return this.document.flags?.[MODULE_NAME]?.offset ?? 0; }
@@ -94,7 +90,7 @@ export class RectCentered extends AbilityTemplateAdvanced {
                     continue;
                 }
 
-                if ((this._hasMaxRange || this._hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
+                if ((this.hasMaxRange || this.hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
                     const rays = this._tokenSquare.allSpots.map((spot) => ({
                         ray: new Ray(spot, crosshairs),
                     }));
@@ -108,8 +104,8 @@ export class RectCentered extends AbilityTemplateAdvanced {
                         range = 0;
                     }
 
-                    isInRange = !(this._hasMinRange && range < this._minRange
-                        || this._hasMaxRange && range > this._maxRange);
+                    isInRange = !(this.hasMinRange && range < this.minRange
+                        || this.hasMaxRange && range > this.maxRange);
                     this._setPreviewVisibility(isInRange);
                     this._setErrorIconVisibility(isInRange);
 

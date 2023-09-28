@@ -100,6 +100,11 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         return token;
     }
 
+    get hasMaxRange() { return !!this.token && !!this.maxRange && !isNaN(this.maxRange); }
+    get hasMinRange() { return !!this.token && !!this.minRange && !isNaN(this.minRange); }
+    get maxRange() { return this.document.flags?.[MODULE_NAME]?.maxRange; }
+    get minRange() { return this.document.flags?.[MODULE_NAME]?.minRange; }
+
     /**
      * The control icon label
      * @type {PreciseText}

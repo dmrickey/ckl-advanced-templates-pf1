@@ -1,13 +1,8 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
 import { MODULE_NAME } from '../../../consts';
-import { getToken, ifDebug, localize, localizeFull } from '../../utils';
+import { ifDebug, localize, localizeFull } from '../../utils';
 
 export class CircleGridIntersection extends AbilityTemplateAdvanced {
-    _maxRange;
-    _hasMaxRange;
-    _minRange;
-    _hasMinRange;
-    _tokenSquare;
 
     _calculateTokenSquare(token) {
         const heightSquares = Math.max(Math.round(token.document.height), 1);
@@ -60,9 +55,11 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
         };
     }
 
-    tokenContains(x, y) {
-        return new PIXI.Rectangle(this._tokenSquare.x, this._tokenSquare.y, this._tokenSquare.w, this._tokenSquare.h).contains(x, y);
-    }
+    /**
+     * @abstract
+     * @returns {GridSquare | null | undefined}
+     */
+    async getSourceGridSquare() { return this._calculateTokenSquare(this.token); }
 
     _crosshairsOverride(_crosshairs) { }
 
@@ -73,6 +70,11 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
 
         const existingIcon = this.controlIcon?.iconSrc;
         let isInRange = true;
+
+        const tokenSquare = await this.getSourceGridSquare();
+
+        const tokenContains = (x, y) =>
+            new PIXI.Rectangle(tokenSquare.x, tokenSquare.y, tokenSquare.w, tokenSquare.h).contains(x, y);
 
         const updateTemplateLocation = async (crosshairs) => {
             while (crosshairs.inFlight) {
@@ -87,8 +89,8 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
 
                 this._crosshairsOverride(crosshairs);
 
-                if ((this._hasMaxRange || this._hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
-                    const rays = this._tokenSquare.allSpots.map((spot) => ({
+                if ((this.hasMaxRange || this.hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
+                    const rays = tokenSquare.allSpots.map((spot) => ({
                         ray: new Ray(spot, { x, y }),
                     }));
                     const distances = rays.map((ray) => canvas.grid.measureDistances([ray], { gridSpaces: true })[0]);
@@ -96,13 +98,13 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
                     range = !!(range % 1)
                         ? range.toFixed(1)
                         : range;
-                    const isInToken = this.tokenContains(x, y);
+                    const isInToken = tokenContains(x, y);
                     if (isInToken) {
                         range = 0;
                     }
 
-                    isInRange = !(this._hasMinRange && range < this._minRange
-                        || this._hasMaxRange && range > this._maxRange);
+                    isInRange = !(this.hasMinRange && range < this.minRange
+                        || this.hasMaxRange && range > this.maxRange);
                     this._setPreviewVisibility(isInRange);
                     this._setErrorIconVisibility(isInRange);
 
@@ -150,15 +152,6 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
     /** @override */
     async initializePlacement() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializePlacement.name}`));
-
-        if (this.token) {
-            this._maxRange = this.document.flags?.[MODULE_NAME]?.maxRange;
-            this._hasMaxRange = !!this._maxRange && !isNaN(this._maxRange);
-            this._minRange = this.document.flags?.[MODULE_NAME]?.minRange;
-            this._hasMinRange = !!this._minRange && !isNaN(this._minRange);
-
-            this._tokenSquare = this._calculateTokenSquare(this.token);
-        }
 
         const { x, y } = canvas.mousePosition;
         this.document.x = x;

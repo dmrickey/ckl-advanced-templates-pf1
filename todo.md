@@ -2,14 +2,13 @@
 ## v.9
 - add hint popup in lower right corner
 - circle
-  - fix "attached to caster"
-  - update initializePlacement to use getters instead of setting local variables to flag values (see cone)
   - fix "center on token"
 - cone
   - target square - add hint to right click to re-choose square
 - rect
   - make sure rects that are on odd squares (distance ends with '5') work
   - allow rotation in gridless maps
+  - follow new pattern of choosing start position within `commitPreview`
 - line
   - Move start position of line to "back" of GridSquare
   - refactor line to fire from "center" of a grid square
