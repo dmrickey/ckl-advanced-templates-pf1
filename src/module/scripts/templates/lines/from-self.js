@@ -17,9 +17,9 @@ export class LineFromSelf extends LineFromTargetBase {
 
         const totalSpots = availablePoints.length;
 
-        const radToNormalizedAngle = (rad, offsetDegrees) => {
+        const radToNormalizedAngle = (rad) => {
             const degrees = Math.toDegrees(rad);
-            return Math.normalizeDegrees(degrees + offsetDegrees);
+            return Math.normalizeDegrees(degrees);
         };
 
         let point;
@@ -33,7 +33,7 @@ export class LineFromSelf extends LineFromTargetBase {
                 const ray = new Ray(tokenSquare.center, crosshairs);
                 if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
                     // todo fix math for figuring out angle for spot
-                    const followAngle = radToNormalizedAngle(ray.angle, -360 / totalSpots / 2);
+                    const followAngle = radToNormalizedAngle(ray.angle);
                     const pointIndex = Math.ceil(followAngle / 360 * totalSpots) - 1 % totalSpots;
                     if (pointIndex === currentSpotIndex) {
                         continue;
