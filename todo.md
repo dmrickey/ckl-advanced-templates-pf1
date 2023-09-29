@@ -7,9 +7,7 @@
 - cone
   - target square - add hint to right click to re-choose square
 - rect
-  - make sure rects that are on odd squares (distance ends with '5') work
   - allow rotation in gridless maps
-  - verify range checks
 - line
   - fix targeting for large tokens
   - make "fake default" implementation

@@ -39,7 +39,7 @@ export class RectCentered extends AbilityTemplateAdvanced {
                 }
 
                 if ((this.hasMaxRange || this.hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
-                    const rays = tokenSquare.adjacentSquares.map((spot) => ({
+                    const rays = tokenSquare.gridPoints.map((spot) => ({
                         ray: new Ray(spot, crosshairs),
                     }));
                     const distances = rays.map((ray) => canvas.grid.measureDistances([ray], { gridSpaces: true })[0]);
