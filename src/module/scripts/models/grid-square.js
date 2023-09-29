@@ -112,16 +112,17 @@ export class GridSquare {
         const left = this.#x;
         const top = this.#y;
         const right = this.#x + this.#w;
-        const heightSpots = Math.max(0, this.#heightSquares - 1);
-        const widthSpots = Math.max(0, this.#widthSquares - 1);
 
-        if (widthSpots == 0 && heightSpots == 0) {
+        if (this.#heightSquares == 0 && this.#widthSquares == 0) {
             return [{
                 direction: 0,
                 x: left,
                 y: top,
             }];
         }
+
+        const heightSpots = Math.max(0, this.#heightSquares - 1);
+        const widthSpots = Math.max(0, this.#widthSquares - 1);
 
         const gridSize = canvas.grid.h;
 
