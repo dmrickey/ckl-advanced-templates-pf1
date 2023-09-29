@@ -437,14 +437,6 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
 
         // Refresh the drawn template shape
         this._refreshTemplate();
-
-        // todo
-        // might need to add in grid highlight here
-
-        // todo?
-        // // Update the HUD
-        // this._refreshControlIcon();
-        // this._refreshRulerText();
     }
 
     /* -------------------------------------------- */
@@ -490,7 +482,7 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
      */
     _refreshTemplate() {
         const template = this.template.clear();
-        if (!this.isVisible || this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.hidePreview]) {
+        if (!this.isVisible || this.hideHighlight) {
             return;
         }
 
@@ -757,13 +749,15 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
 
         // If we are in grid-less mode, highlight the shape directly
         if (grid.type === CONST.GRID_TYPES.GRIDLESS) {
-            const highlightShape = this._getGridHighlightShape();
-            grid.grid.highlightGridPosition(highlightLayer, {
-                alpha,
-                border,
-                color: fillColor,
-                shape: highlightShape,
-            });
+            if (!this.hideHighlight) {
+                const highlightShape = this._getGridHighlightShape();
+                grid.grid.highlightGridPosition(highlightLayer, {
+                    alpha,
+                    border,
+                    color: fillColor,
+                    shape: highlightShape,
+                });
+            }
         }
 
         // Otherwise, highlight specific grid squares

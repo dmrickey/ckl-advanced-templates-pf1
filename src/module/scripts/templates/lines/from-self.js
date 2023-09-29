@@ -27,12 +27,11 @@ export class LineFromSelf extends LineFromTargetBase {
             let currentSpotIndex = 0;
 
             while (crosshairs.inFlight) {
-                let tempPoint;
+                let tempPoint = { x: 0, y: 0 };
                 await warpgate.wait(100);
 
                 const ray = new Ray(tokenSquare.center, crosshairs);
                 if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
-                    // todo fix math for figuring out angle for spot
                     const followAngle = radToNormalizedAngle(ray.angle);
                     const pointIndex = Math.ceil(followAngle / 360 * totalSpots) - 1 % totalSpots;
                     if (pointIndex === currentSpotIndex) {
@@ -40,18 +39,13 @@ export class LineFromSelf extends LineFromTargetBase {
                     }
                     currentSpotIndex = pointIndex;
                     point = availablePoints[pointIndex];
-
-                    if (tempPoint === point) {
-                        continue;
-                    }
                 }
                 else {
-                    const edge = tokenSquare.edgePoint(ray);
-                    if (edge.center.x === tempPoint.center.x && edge.center.y === tempPoint.center.y) {
-                        continue;
-                    }
+                    point = tokenSquare.edgePoint(ray);
+                }
 
-                    point = GridSquare.fromCenter(edge, 0, 0);
+                if (point.x === tempPoint.x && point.y === tempPoint.y) {
+                    continue;
                 }
                 tempPoint = point;
 

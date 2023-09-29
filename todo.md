@@ -1,9 +1,8 @@
 # TODO
 ## v.9
+- Disable canvas left click so it doesn't try to create a template
 - make sure tareting works for all shapes and all token sizes
 - add hint popup in lower right corner
-- circle
-  - fix "center on token"
 - cone
   - target square - add hint to right click to re-choose square
 - rect
@@ -11,7 +10,6 @@
 - line
   - fix targeting for large tokens
   - make "fake default" implementation
-  - implement line with no width for walls
 - add warning if A-A is installed and pf1 line width is set to 1 instead of 5
 ---
 
