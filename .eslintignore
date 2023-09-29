@@ -7,3 +7,5 @@ scripts/
 styles/
 templates/
 src/**/*.svelte
+/index.*
+/ckl-advanced-templates.pf1.*

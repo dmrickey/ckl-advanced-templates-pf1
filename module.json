@@ -3,27 +3,38 @@
     "name": "ckl-advanced-templates-pf1",
     "title": "Advanced Templates Pf1",
     "description": "Better, rules-based templates for Pf1",
-
     "version": "This is auto replaced",
     "url": "This is auto replaced",
     "manifest": "This is auto replaced",
     "download": "This is auto replaced",
-
     "author": "David Rickey",
     "authors": [
         {
             "name": "David Rickey",
-            "discord": "david aka claudekennilol#2244"
+            "discord": "claudekennilol"
         }
     ],
-    "minimumCoreVersion": 10,
     "compatibility": {
-        "minimum": "10",
-        "verified": "10"
+        "minimum": "11",
+        "verified": "11"
     },
     "scripts": [],
-    "esmodules": ["ckl-advanced-templates-pf1.js"],
-    "styles": ["ckl-advanced-templates-pf1.css"],
+    "esmodules": [
+        "ckl-advanced-templates-pf1.js"
+    ],
+    "styles": [
+        "ckl-advanced-templates-pf1.css"
+    ],
+    "flags": {
+        "hotReload": {
+            "extensions": [
+                "json"
+            ],
+            "paths": [
+                "lang"
+            ]
+        }
+    },
     "packs": [],
     "relationships": {
         "systems": [
@@ -68,11 +79,11 @@
     "readme": "https://github.com/dmrickey/ckl-advanced-templates-pf1/blob/master/README.md",
     "bugs": "https://github.com/dmrickey/ckl-advanced-templates-pf1/issues",
     "changelog": "https://github.com/dmrickey/ckl-advanced-templates-pf1/blob/master/changelog.md",
-
-    "system": ["pf1"],
+    "system": [
+        "pf1"
+    ],
     "minimumSystemVersion": "0.81.0",
     "library": false,
-
     "protected": false,
     "coreTranslation": false
 }
