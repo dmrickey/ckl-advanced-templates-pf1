@@ -38,6 +38,7 @@ async function promptMeasureTemplate() {
             [MODULE_NAME]: {
                 ...flags,
                 [CONSTS.flags.circle.movesWithToken]: flags[CONSTS.flags.placementType] == CONSTS.placement.circle.self && !!flags[CONSTS.flags.circle.movesWithToken],
+                baseDistance: distance,
                 icon,
                 itemId: this.item?.id,
                 maxRange,

@@ -12,57 +12,6 @@ export class RectCentered extends AbilityTemplateAdvanced {
 
     get offset() { return this.document.flags?.[MODULE_NAME]?.offset ?? 0; }
 
-    // _calculateTokenSquare(token) {
-    //     const heightSquares = Math.max(Math.round(token.document.height), 1);
-    //     const widthSquares = Math.max(Math.round(token.document.width), 1);
-
-    //     const gridSize = canvas.grid.h;
-    //     const { x, y, h, w } = token;
-
-    //     const bottom = y + h;
-    //     const left = x;
-    //     const top = y;
-    //     const right = x + w;
-
-    //     const rightSpots = [...new Array(heightSquares)].map((_, i) => ({
-    //         x: right,
-    //         y: top + gridSize * i,
-    //     }));
-    //     const leftSpots = [...new Array(heightSquares)].map((_, i) => ({
-    //         x: left,
-    //         y: bottom - gridSize * i,
-    //     }));
-    //     const topSpots = [...new Array(widthSquares)].map((_, i) => ({
-    //         x: left + gridSize * i,
-    //         y: top,
-    //     }));
-    //     const bottomSpots = [...new Array(widthSquares)].map((_, i) => ({
-    //         x: right - gridSize * i,
-    //         y: bottom,
-    //     }));
-    //     const allSpots = [
-    //         ...rightSpots,
-    //         ...bottomSpots,
-    //         ...leftSpots,
-    //         ...topSpots,
-    //     ];
-
-    //     return {
-    //         x: left,
-    //         y: top,
-    //         center: token.center,
-    //         top,
-    //         bottom,
-    //         left,
-    //         right,
-    //         h,
-    //         w,
-    //         heightSquares,
-    //         widthSquares,
-    //         allSpots,
-    //     };
-    // }
-
     /** @override */
     async commitPreview() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
@@ -147,6 +96,16 @@ export class RectCentered extends AbilityTemplateAdvanced {
         }
 
         return true;
+    }
+
+    /** @override */
+    _gridInterval() {
+        const interval = super._gridInterval();
+        if (interval === 0) {
+            return interval;
+        }
+
+        return super.baseDistance % 2 ? -1 : 1;
     }
 
     /** @override */

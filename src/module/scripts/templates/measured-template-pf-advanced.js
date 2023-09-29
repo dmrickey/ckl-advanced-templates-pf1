@@ -100,6 +100,11 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         return token;
     }
 
+    /**
+     * Used to get the original distance, i.e. for a rect.
+     */
+    get baseDistance() { return this.document.flags?.[MODULE_NAME]?.baseDistance || 0; }
+
     get hasMaxRange() { return !!this.token && !!this.maxRange && !isNaN(this.maxRange); }
     get hasMinRange() { return !!this.token && !!this.minRange && !isNaN(this.minRange); }
     get maxRange() { return this.document.flags?.[MODULE_NAME]?.maxRange; }
