@@ -8,6 +8,7 @@
 - rect
   - allow rotation in gridless maps
 - line
+  - Add "configurable line width" override on lines
   - fix targeting for large tokens
   - make "fake default" implementation
 - add warning if A-A is installed and pf1 line width is set to 1 instead of 5
