@@ -319,6 +319,14 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         let icon = new ControlIcon({ texture: iconTexture, size: size });
         icon.x -= (size * 0.5);
         icon.y -= (size * 0.5);
+
+        /** BEGIN MY CODE */
+        if (this.document.t === 'rect') {
+            icon.x += this.baseDistance / canvas.scene.grid.distance * canvas.scene.grid.size / 2;
+            icon.y += this.baseDistance / canvas.scene.grid.distance * canvas.scene.grid.size / 2;
+        }
+        /** END MY CODE */
+
         return icon;
     }
 

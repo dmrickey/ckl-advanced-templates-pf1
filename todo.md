@@ -13,8 +13,6 @@
   - make "fake default" implementation
   - implement line with no width for walls
 - add warning if A-A is installed and pf1 line width is set to 1 instead of 5
-- Grid Square
-  - Add "start" property that shows the adjacent centered point on the grid square for adjacent squares (null for the token's square)
 ---
 
 ## Targeting types
