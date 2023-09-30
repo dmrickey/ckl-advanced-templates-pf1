@@ -48,7 +48,10 @@
                 }
             },
             "line": {
-                "uses same labels as cone": ""
+                "default": "Default Value",
+                "overrideWidth": "Override Width",
+                "uses same labels as cone": "",
+                "widthOverride": "Width Override"
             },
             "rect": {
                 "placement": {

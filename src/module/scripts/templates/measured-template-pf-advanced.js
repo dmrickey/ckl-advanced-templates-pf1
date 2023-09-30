@@ -964,9 +964,6 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
                 }
             };
 
-            // Extend ray by half a square for better highlight calculation
-            const ray = Ray.fromAngle(this.ray.A.x, this.ray.A.y, this.ray.angle, this.ray.distance + gridSizePx / 2);
-
             // Get resulting squares
             let xOffset = 0;
             let yOffset = 0;
@@ -976,22 +973,55 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
             if (180 <= templateDirection && templateDirection <= 360) {
                 yOffset = -1;
             }
-            line(ray.A.x + xOffset, ray.A.y + yOffset, ray.B.x, ray.B.y);
+
+            const width = this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.line.widthOverride] && this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.line.width] || CONFIG.MeasuredTemplate.defaults.width;
+            const qty = Math.ceil(width / 5);
+
+            const rad = Math.toRadians(templateDirection);
+            const rad90 = Math.toRadians(90);
+            let points = [];
+            const isOdd = qty % 2;
+            if (qty <= 1) {
+                points.push({ x: this.document.x, y: this.document.y });
+            } else if (isOdd) {
+                points = [...new Array(Math.floor(qty / 2))].flatMap((_, i) => [{
+                    x: this.document.x + gridSizePx * (i + 1) * Math.cos(rad + rad90),
+                    y: this.document.y + gridSizePx * (i + 1) * Math.sin(rad + rad90),
+                }, {
+                    x: this.document.x + gridSizePx * (i + 1) * Math.cos(rad - rad90),
+                    y: this.document.y + gridSizePx * (i + 1) * Math.sin(rad - rad90),
+                }]);
+                points.push({ x: this.document.x, y: this.document.y });
+            } else {
+                points = [...new Array(qty / 2)].flatMap((_, i) => [{
+                    x: this.document.x + (gridSizePx * (i + 1) - gridSizePx / 2) * Math.cos(rad + rad90),
+                    y: this.document.y + (gridSizePx * (i + 1) - gridSizePx / 2) * Math.sin(rad + rad90),
+                }, {
+                    x: this.document.x + (gridSizePx * (i + 1) - gridSizePx / 2) * Math.cos(rad - rad90),
+                    y: this.document.y + (gridSizePx * (i + 1) - gridSizePx / 2) * Math.sin(rad - rad90),
+                }]);
+            }
+
+            points.forEach((point) => {
+                // Extend ray by half a square for better highlight calculation
+                const ray = Ray.fromAngle(point.x, point.y, this.ray.angle, this.ray.distance + gridSizePx / 2);
+                line(ray.A.x + xOffset, ray.A.y + yOffset, ray.B.x, ray.B.y);
+            })
 
             return result;
         }
 
         // Get number of rows and columns
-        const nr = Math.ceil((this.document.distance * 1.5) / gridSizeUnits / (gridSizePx / grid.h)),
-            nc = Math.ceil((this.document.distance * 1.5) / gridSizeUnits / (gridSizePx / grid.w));
+        const nr = Math.ceil((this.document.distance * 1.5) / gridSizeUnits / (gridSizePx / grid.h));
+        const nc = Math.ceil((this.document.distance * 1.5) / gridSizeUnits / (gridSizePx / grid.w));
 
         // Get the center of the grid position occupied by the template
         const { x, y } = this.document;
 
-        const [cx, cy] = grid.getCenter(x, y),
-            [col0, row0] = grid.grid.getGridPositionFromPixels(cx, cy),
-            minAngle = Math.normalizeDegrees(templateDirection - templateAngle / 2),
-            maxAngle = Math.normalizeDegrees(templateDirection + templateAngle / 2);
+        const [cx, cy] = grid.getCenter(x, y);
+        const [col0, row0] = grid.grid.getGridPositionFromPixels(cx, cy);
+        const minAngle = Math.normalizeDegrees(templateDirection - templateAngle / 2);
+        const maxAngle = Math.normalizeDegrees(templateDirection + templateAngle / 2);
 
         // Origin offset multiplier
         const offsetMult = { x: 0, y: 0 };

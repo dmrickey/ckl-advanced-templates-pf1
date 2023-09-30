@@ -28,6 +28,10 @@ export const CONSTS = {
         },
         cone: {
         },
+        line: {
+            width: 'width',
+            widthOverride: 'widthOverride',
+        },
         allowConeRotation: 'allowConeRotation',
         colorAlpha: 'colorAlpha',
         coneRotationAngle: 'coneRotationAngle',

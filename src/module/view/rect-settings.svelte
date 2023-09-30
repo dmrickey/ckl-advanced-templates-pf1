@@ -26,30 +26,10 @@
 </script>
 
 <form class="pf1" novalidate>
-    <!-- <div class="form-group column">
-        {#each placements as placement}
-            <label class="checkbox">
-                <input
-                    type="radio"
-                    bind:group={updates.data.flags[MODULE_NAME][CONSTS.flags.placementType]}
-                    name="placements"
-                    value={placement.value}
-                />
-                {placement.label}
-            </label>
-        {/each}
-    </div> -->
-
     <slot />
 </form>
 
 <style lang="scss">
-    .column {
-        display: flex;
-        flex-direction: column;
-        text-align: center;
-    }
-
     form {
         display: flex;
         flex-direction: column;

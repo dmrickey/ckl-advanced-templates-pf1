@@ -56,7 +56,7 @@ async function promptMeasureTemplate() {
     };
 
     if (['ray', 'line'].includes(type)) {
-        templateData.width = CONFIG.MeasuredTemplate.defaults.width;
+        templateData.width = flags[CONSTS.flags.line.widthOverride] && flags[CONSTS.flags.line.width] || CONFIG.MeasuredTemplate.defaults.width;
     }
 
     const windows = Object.values(ui.windows).filter((x) => !!x.minimize && !x._minimized);
