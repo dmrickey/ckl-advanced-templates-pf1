@@ -65,6 +65,9 @@
 - originate from selection
 - system default option
 
+### Rects
+- Figure out how to rotate `highlight shape`
+
 ### All
 - Targeting
   - Update "out of range" to show a large icon instead of updating warpgate's template's control icon

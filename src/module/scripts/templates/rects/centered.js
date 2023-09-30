@@ -25,8 +25,23 @@ export class RectCentered extends AbilityTemplateAdvanced {
         const tokenContains = (x, y) => new PIXI.Rectangle(tokenSquare.x, tokenSquare.y, tokenSquare.w, tokenSquare.h).contains(x, y);
 
         const updateTemplateLocation = async (crosshairs) => {
+
+            // leaving this here but I can't get the highlight to rotate properly
+            // if (canvas.scene.grid.type === CONST.GRID_TYPES.GRIDLESS) {
+            //     canvas.app.view.onwheel = (event) => {
+            //         // Avoid rotation while zooming the browser window
+            //         if (event.ctrlKey) {
+            //             event.preventDefault();
+            //         }
+            //         event.stopPropagation();
+
+            //         this.template.rotation += Math.toRadians(45) * Math.sign(event.deltaY);
+            //         this.actualRotation = Math.normalizeRadians(this.template.rotation);
+            //     };
+            // }
+
             while (crosshairs.inFlight) {
-                await warpgate.wait(20);
+                await warpgate.wait(100);
 
                 this.document.flags[MODULE_NAME].icon = existingIcon;
 
@@ -72,6 +87,8 @@ export class RectCentered extends AbilityTemplateAdvanced {
 
                 super.targetIfEnabled();
             }
+
+            canvas.app.view.onwheel = null;
         };
 
         const targetConfig = {

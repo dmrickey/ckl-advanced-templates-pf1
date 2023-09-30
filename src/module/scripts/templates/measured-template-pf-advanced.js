@@ -118,6 +118,12 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         this.refresh();
     }
 
+    get actualRotation() { return this.document.flags?.[MODULE_NAME]?.rotation ?? 0; }
+    set actualRotation(value) {
+        this.document.flags ||= { [MODULE_NAME]: {} };
+        this.document.flags[MODULE_NAME].rotation = value;
+    }
+
     /**
      * @virtual
      * @returns { -1 | 0 | 1 }
@@ -538,6 +544,7 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
 
                         direction = 0;
                         textureSize /= 2;
+                        template.rotation = this.actualRotation;
                     }
                     break;
             }
