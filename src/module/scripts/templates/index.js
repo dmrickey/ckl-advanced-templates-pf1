@@ -9,6 +9,7 @@ import { ConeSystem } from "./cones/system";
 import { ConeFromTargetSquare } from "./cones/target-square";
 import { ConeFromSelf } from "./cones/self";
 import { LineFromSelf } from "./lines/from-self";
+import { LineSystem } from "./lines/system";
 import { LineFromSquare } from "./lines/target-square";
 import { RectCentered } from "./rects/centered";
 
@@ -37,11 +38,10 @@ export const initTemplates = () => {
                 lines: {
                     LineFromSelf,
                     LineFromSquare,
-                    // todo AbilityTemplateLineSystem
+                    LineSystem,
                 },
                 rects: {
                     RectCentered,
-                    // todo AbilityTemplateRectSystem,
                 }
             }
         };

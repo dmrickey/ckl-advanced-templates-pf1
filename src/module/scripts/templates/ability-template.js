@@ -64,8 +64,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                         abilityCls = game.modules.get(MODULE_NAME).api.ability.lines.LineFromSquare;
                         break;
                     case CONSTS.placement.useSystem:
-                        // todo
-                        abilityCls = game.modules.get(MODULE_NAME).api.ability.lines.AbilityTemplateAdvanced;
+                        abilityCls = game.modules.get(MODULE_NAME).api.ability.lines.LineSystem;
                         break;
                     case CONSTS.placement.line.self:
                     default:
