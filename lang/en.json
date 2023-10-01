@@ -48,7 +48,7 @@
                 }
             },
             "line": {
-                "default": "Default Value",
+                "default": "Default Width",
                 "overrideWidth": "Override Width",
                 "uses same labels as cone": "",
                 "widthOverride": "Width Override"

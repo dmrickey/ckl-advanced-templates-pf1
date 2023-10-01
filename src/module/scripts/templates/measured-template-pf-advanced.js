@@ -935,7 +935,7 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         const templateAngle = this.document.angle;
 
         // Parse rays as per Bresenham's algorithm
-        if (templateType === "ray") {
+        if (templateType === "ray" || templateType === 'line') {
             const result = [];
 
             const line = (x0, y0, x1, y1) => {
@@ -1000,6 +1000,7 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
                     x: this.document.x + (gridSizePx * (i + 1) - gridSizePx / 2) * Math.cos(rad - rad90),
                     y: this.document.y + (gridSizePx * (i + 1) - gridSizePx / 2) * Math.sin(rad - rad90),
                 }]);
+                points.push({ x: this.document.x, y: this.document.y });
             }
 
             points.forEach((point) => {
@@ -1007,6 +1008,28 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
                 const ray = Ray.fromAngle(point.x, point.y, this.ray.angle, this.ray.distance + gridSizePx / 2);
                 line(ray.A.x + xOffset, ray.A.y + yOffset, ray.B.x, ray.B.y);
             })
+
+            result.sort((a, b) => a.x === b.x ? a.y - b.y : a.x - b.x);
+            const xs = new Set(result.map((p) => p.x));
+            xs.forEach((x) => {
+                const ys = new Set(result.filter((p) => p.x === x).map((p) => p.y));
+
+                const yMax = Math.max(...ys);
+                const yMin = Math.min(...ys);
+                const expected = (yMax - yMin) / gridSizePx + 1;
+                if (expected <= 2) {
+                    return;
+                }
+
+                // skip first and last because they already exist
+                for (let i = 1; i < expected - 1; i++) {
+                    const y = yMin + i * gridSizePx;
+                    if (ys.has(y)) {
+                        continue;
+                    }
+                    result.push({ x, y });
+                }
+            });
 
             return result;
         }
