@@ -1,5 +1,6 @@
 import { CONSTS, MODULE_NAME } from '../../consts';
 import { Settings } from '../../settings';
+import HintHandler from '../../view/hint-handler';
 import { MeasuredTemplatePFAdvanced } from './measured-template-pf-advanced';
 
 export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
@@ -105,6 +106,8 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
         this.destroy();
         initialLayer.activate();
+
+        HintHandler.close();
 
         return finalized
             ? {
