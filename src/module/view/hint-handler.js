@@ -25,7 +25,7 @@ export default class HintHandler {
     }
 
     static close() {
-        this.#dialog.close();
+        this.#dialog?.close();
         this.#dialog = null;
     }
 }
