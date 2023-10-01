@@ -38,7 +38,7 @@
     updates.data.flags[MODULE_NAME][CONSTS.flags.line.width] ||=
         action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.line.width] || CONFIG.MeasuredTemplate.defaults.width;
     updates.data.flags[MODULE_NAME][CONSTS.flags.line.widthOverride] ||=
-        action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.line.widthOverride] || CONFIG.MeasuredTemplate.defaults.width;
+        !!action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.line.widthOverride];
 
     ifDebug(() => console.log("Opening line settings for:", updates));
 </script>
