@@ -8,7 +8,7 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
 
         super.clearTargetIfEnabled();
 
-        HintHandler.show({ title: localize('ray'), hint: localize('hints.chooseStart') });
+        HintHandler.show({ title: localize('line'), hint: localize('hints.chooseStart') });
         const gridPoint = await this.getSourcePoint();
         if (!gridPoint) {
             return false;
@@ -31,7 +31,7 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
             canvas.app.view.onwheel = null;
         };
 
-        HintHandler.show({ title: localize('ray'), hint: localize('hints.restart') });
+        HintHandler.show({ title: localize('line'), hint: localize('hints.restart') });
         const followCrosshairs = await warpgate.crosshairs.show(
             {
                 drawIcon: false,

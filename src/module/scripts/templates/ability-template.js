@@ -13,9 +13,6 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             return null;
         }
 
-        // Return the template constructed from the item data
-        const cls = CONFIG.MeasuredTemplate.documentClass;
-        const template = new cls(templateData, { parent: canvas.scene });
         const placementType = action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType];
 
         const tokenId = templateData.flags?.[MODULE_NAME]?.tokenId;
@@ -78,10 +75,22 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                 }
                 break;
             case 'rect':
-                abilityCls = game.modules.get(MODULE_NAME).api.ability.rects.RectCentered;
+                if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
+                    abilityCls = game.modules.get(MODULE_NAME).api.ability.rects.RectCentered;
+                }
+                else {
+                    // rotating rects is too hard, so "cheat" and change it to a line that can be rotated with the mouse wheel
+                    templateData.t = 'ray';
+                    templateData.width = distance;
+                    abilityCls = game.modules.get(MODULE_NAME).api.ability.lines.LineSystem;
+                    // debugger;
+                }
                 break;
         }
 
+        // Return the template constructed from the item data
+        const cls = CONFIG.MeasuredTemplate.documentClass;
+        const template = new cls(templateData, { parent: canvas.scene });
         const thisTemplate = new abilityCls(template);
         if (await thisTemplate.initializeVariables()) {
             return thisTemplate;

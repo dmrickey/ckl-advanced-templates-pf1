@@ -1,10 +1,12 @@
 {
     "ckl-advanced-templates-pf1": {
         "cone": "Cone",
-        "ray": "Ray",
+        "line": "Line",
+        "rotation": "Rotation",
         "hints": {
             "chooseStart": "Left click to choose starting point.",
-            "restart": "Right click to re-choose starting point. Left click to submit."
+            "mouseWheelRotate": "Left click to submit. Use mouse wheel to rotate.",
+            "restart": "Left click to submit. Right click to re-choose starting point."
         },
         "settings": {
             "debug": {

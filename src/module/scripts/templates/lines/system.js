@@ -1,5 +1,6 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
-import { ifDebug } from '../../utils';
+import { ifDebug, localize } from '../../utils';
+import HintHandler from "../../../view/hint-handler";
 
 export class LineSystem extends AbilityTemplateAdvanced {
     /** @override */
@@ -17,6 +18,7 @@ export class LineSystem extends AbilityTemplateAdvanced {
 
         const delta = canvas.grid.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
 
+        HintHandler.show({ title: localize('rotation'), hint: localize('hints.mouseWheelRotate') });
         const updatePosition = async (crosshairs) => {
 
             let newDirection = 0;
