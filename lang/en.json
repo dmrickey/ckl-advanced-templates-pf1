@@ -1,5 +1,11 @@
 {
     "ckl-advanced-templates-pf1": {
+        "cone": "Cone",
+        "ray": "Ray",
+        "hints": {
+            "chooseStart": "Left click to choose starting point.",
+            "restart": "Right click to re-choose starting point. Left click to submit."
+        },
         "settings": {
             "debug": {
                 "name": "Enable Debug Logging",

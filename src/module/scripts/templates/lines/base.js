@@ -1,5 +1,5 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
-import { ifDebug } from '../../utils';
+import { ifDebug, localize } from '../../utils';
 import HintHandler from "../../../view/hint-handler";
 export class LineFromTargetBase extends AbilityTemplateAdvanced {
     /** @override */
@@ -8,7 +8,7 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
 
         super.clearTargetIfEnabled();
 
-        HintHandler.show({ title: 'Ray', hint: 'Left click to choose starting point.' });
+        HintHandler.show({ title: localize('ray'), hint: localize('hints.chooseStart') });
         const gridPoint = await this.getSourcePoint();
         if (!gridPoint) {
             return false;
@@ -31,7 +31,7 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
             canvas.app.view.onwheel = null;
         };
 
-        HintHandler.show({ title: 'Ray', hint: 'Right click to re-choose starting point. Left click to submit.' });
+        HintHandler.show({ title: localize('ray'), hint: localize('hints.restart') });
         const followCrosshairs = await warpgate.crosshairs.show(
             {
                 drawIcon: false,

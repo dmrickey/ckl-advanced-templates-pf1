@@ -1,15 +1,14 @@
 # TODO
 ## v.9
+- Setting
+  - Disable hint
+  - default ray width
 - Disable canvas left click so it doesn't try to create a template
 - make sure tareting works for all shapes and all token sizes
-- cone
-  - target square - add hint to right click to re-choose square
 - rect
   - allow rotation in gridless maps
 - line
   - fix targeting for large tokens
-- add measured template configuration to change default line width to 5
-- add warning if A-A is installed and pf1 line width is set to 1 instead of 5
 - remove nested forms from template dialogs
 ---
 
