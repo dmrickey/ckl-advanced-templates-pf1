@@ -1175,10 +1175,31 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         const gridSizePx = dimensions.size;
         const gridSizeUnits = dimensions.distance;
 
-        const maxDistance = Math.max(this.height, this.width);
-        // Get tokens within max potential distance from the template
+        const getCenter = () => {
+            if (shape !== "rect") return this.center;
+            // Hack: Fix for Foundry bug where .center for rectangle template returns top-left corner instead.
+            return {
+                x: this.x + this.width / 2,
+                y: this.y + this.height / 2,
+            };
+        };
+        const tCenter = getCenter();
+
+        let maxDistance;
+        switch (this.document.t) {
+            case 'rect':
+                maxDistance = this.baseDistance / gridSizeUnits * gridSizePx + gridSizePx;
+                break;
+            case 'ray':
+                maxDistance = this.document.distance / gridSizeUnits * gridSizePx + gridSizePx;
+                break;
+            default:
+                Math.max(this.height, this.width);
+                break;
+        }
+
         const relevantTokens = new Set(
-            canvas.tokens.placeables.filter((t) => new Ray(t.center, this.center).distance + t.sizeErrorMargin <= maxDistance)
+            canvas.tokens.placeables.filter((t) => new Ray(t.center, tCenter).distance <= maxDistance + t.sizeErrorMargin)
         );
 
         const result = new Set();
@@ -1189,7 +1210,7 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
             for (const t of relevantTokens) {
                 switch (shape) {
                     case "circle": {
-                        const ray = new Ray(this.center, t.center);
+                        const ray = new Ray(tCenter, t.center);
                         // Calculate ray length in relation to circle radius
                         const raySceneLength = (ray.distance / gridSizePx) * gridSizeUnits;
                         // Include this token if its center is within template radius
@@ -1202,7 +1223,7 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
                         const minAngle = Math.normalizeDegrees(templateDirection - templateAngle / 2);
                         const maxAngle = Math.normalizeDegrees(templateDirection + templateAngle / 2);
 
-                        const ray = new Ray(this.center, t.center);
+                        const ray = new Ray(tCenter, t.center);
                         const rayAngle = Math.normalizeDegrees(Math.toDegrees(ray.angle));
 
                         const rayWithinAngle = this.withinAngle(minAngle, maxAngle, rayAngle);
