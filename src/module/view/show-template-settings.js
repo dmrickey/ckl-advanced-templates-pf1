@@ -1,6 +1,8 @@
 import { TJSDialog } from '@typhonjs-fvtt/runtime/svelte/application'
 import CircleSettings from './circle-settings.svelte';
 import ConeSettings from './cone-settings.svelte';
+import LineSettings from './line-settings.svelte';
+import RectSettings from './rect-settings.svelte';
 import TemplateSettings from './template-settings.svelte';
 
 const _show = (app, action = {}) => {
@@ -28,10 +30,14 @@ const _show = (app, action = {}) => {
     dialog.render(true, { focus: true });
 }
 
-const showConeSettings = (action = {}) => _show(ConeSettings, action);
 const showCircleSettings = (action = {}) => _show(CircleSettings, action);
+const showConeSettings = (action = {}) => _show(ConeSettings, action);
+const showLineSettings = (action = {}) => _show(LineSettings, action);
+const showRectSettings = (action = {}) => _show(RectSettings, action);
 
 export {
-    showConeSettings,
     showCircleSettings,
+    showConeSettings,
+    showLineSettings,
+    showRectSettings,
 };

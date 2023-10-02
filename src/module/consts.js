@@ -11,6 +11,13 @@ export const CONSTS = {
             selectTargetSquare: 'selectTargetSquare',
             self: 'self',
         },
+        line: {
+            selectTargetSquare: 'selectTargetSquare',
+            self: 'self',
+        },
+        rect: {
+            centered: 'centered',
+        },
         useSystem: 'useSystem',
     },
     flags: {
@@ -21,9 +28,14 @@ export const CONSTS = {
         },
         cone: {
         },
+        line: {
+            width: 'width',
+            widthOverride: 'widthOverride',
+        },
         allowConeRotation: 'allowConeRotation',
         colorAlpha: 'colorAlpha',
         coneRotationAngle: 'coneRotationAngle',
+        controlIconText: 'controlIconText',
         expireAtTurnEnd: 'expireAtTurnEnd',
         hideHighlight: 'hideHighlight',
         hideOutline: 'hideOutline',

@@ -1,19 +1,27 @@
 # TODO
+## v.9
+- Disable canvas left click so it doesn't try to create a template
 
 ---
 
 ## Targeting types
 ### Circles
-  - centered on self circle
-    - disable dragging to update location (also editing x/y in details since it should be stuck to token)
-    - add a preview with a modal to commit or cancel - keep the preview attached to the token so the caster can move until deciding to commit it
-  - centered on target (e.g. Silence, Meteor Swarm)
-    - don't show template unless cursor is over a token
-  - target grid
-    - make sure dragging respects template placement rules
-  - Rangefinding
-    - Add "out of range" to distance to give pre-feedback
-  - Interval logic needs to be at the root level of the class so when I overwrite the update/drag implementation it has the same snap logic (i.e. grid intersection or not)
+- centered on self circle
+  - disable dragging to update location (also editing x/y in details since it should be stuck to token)
+  - add a preview with a modal to commit or cancel - keep the preview attached to the token so the caster can move until deciding to commit it
+- centered on target (e.g. Silence, Meteor Swarm)
+  - don't show template unless cursor is over a token
+- target grid
+  - make sure dragging respects template placement rules
+- Interval logic needs to be at the root level of the class so when I overwrite the update/drag implementation it has the same snap logic (i.e. grid intersection or not)
+- Range Increments
+  - Automatically reduce attack bonus based on range increment penalties
+    - include option for Far Shot (reduce penalty by half)
+    - include static decreases (multiple shots reduce by two)
+      - Arc Slinger
+      - Distance Thrower
+- Splash
+  - Add "miss" button that will automatically move the template and update the chat targets
 
 ### Configurable Token Auras
 - Add aura ability to prompt buffs/debuffs
@@ -35,18 +43,16 @@
 ### Cones
 - disable dragging and/or make sure dragging respects placement rules
 - Add some kind of targeting indicator and/or fill highlight when targeting via "select square"
-- Add an "offset degrees" label for when the GM has that option turned on so the user knows what offset from 0 they've onto their cone as an extra rotation (hide label if 0)
+- Allow Rotation
+  - Add a "directions pop-up in the lower right"
+  - Add an "offset degrees" label for when the GM has that option turned on so the user knows what offset from 0 they've onto their cone as an extra rotation (hide label if 0)
 - "place from target location" - after placing, and selecting the rotation, right click should go back to choosing a location, a second right click should cancel the template
-
-### Rays
-- On startup add it to the selectable types
-- originate from caster
-- originate from selection
-- system default option
+- Restarting "choose start location cone" on gridless map doesn't remove template preview until new start is chosen
 
 ### All
 - Targeting
-  - Update "out of range" to show a large icon instead of updating warpgate's template's control icon 
+  - Update "out of range" to show a large icon instead of updating warpgate's template's control icon
+  - Add Attack note for `Cover`
   - Choose who to target
     - Only Allies
     - Only Hostiles
@@ -77,6 +83,10 @@
   - needs to account for any extra logic like "has to be within x ft of main target"
   - will need to be able to commit while not using all available targets
 - Add targeting options hostile/all/allies
+- Limited number of targets within an area
+  - User selection
+  - hit die
+    - lowest or highest
 
 ---
 

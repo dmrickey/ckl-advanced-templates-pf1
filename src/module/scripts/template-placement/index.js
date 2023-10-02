@@ -5,13 +5,11 @@ import { Settings } from '../../settings';
 /**
  * Common logic and switch statement for placing all templates
  *
- * @param {Function} wrapped The base `promptMeasureTemplate`
- *
  * @param {object} shared The shared context passed between different functions when executing an Attack
  *
  * @returns {object} The template creation data
  */
-async function promptMeasureTemplate(wrapped) {
+async function promptMeasureTemplate() {
     ifDebug(() => console.log('promptMeasureTemplate', this));
 
     // return success early if user isn't allowed to place templates
@@ -26,20 +24,23 @@ async function promptMeasureTemplate(wrapped) {
     const type = this.shared.action.data.measureTemplate.type;
 
     const token = getToken(this.item) || {};
-    const icon = this.shared.action.data.img === 'systems/pf1/icons/misc/magic-swirl.png' ? undefined : this.shared.action.data.img;
+    const icon = this.shared.action.data.img === 'systems/pf1/icons/misc/magic-swirl.png' ? this.item.img : this.shared.action.data.img;
     const maxRange = this.shared.action.getRange();
     const minRange = this.shared.action.getRange({ type: "min" });
     const flags = this.shared.action.data.flags?.[MODULE_NAME] || {};
+    let distance = _getSize(this.shared) || 5;
 
     const templateData = {
         _id: randomID(16),
-        distance: _getSize(this.shared) || 5,
+        distance,
         t: type,
         flags: {
             [MODULE_NAME]: {
                 ...flags,
                 [CONSTS.flags.circle.movesWithToken]: flags[CONSTS.flags.placementType] == CONSTS.placement.circle.self && !!flags[CONSTS.flags.circle.movesWithToken],
+                baseDistance: distance,
                 icon,
+                itemId: this.item?.id,
                 maxRange,
                 minRange,
                 tokenId: token?.id,
@@ -54,20 +55,14 @@ async function promptMeasureTemplate(wrapped) {
             : null,
     };
 
-    if (!['cone', 'circle'].includes(type)
-        || (type === 'cone' && this.shared.action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] === CONSTS.placement.useSystem)
-    ) {
-        const wrappedResult = await wrapped();
-        if (this.shared.template) {
-            await this.shared.template.update({ flags: templateData.flags });
-        }
-        return wrappedResult;
+    if (['ray', 'line'].includes(type)) {
+        templateData.width = flags[CONSTS.flags.line.widthOverride] && flags[CONSTS.flags.line.width] || Settings.defaultLineWidth;
     }
 
     const windows = Object.values(ui.windows).filter((x) => !!x.minimize && !x._minimized);
     await Promise.all(windows.map((x) => x.minimize()));
 
-    const template = await game[MODULE_NAME].AbilityTemplateAdvanced.fromData(templateData, this.shared.action);
+    const template = await game.modules.get(MODULE_NAME).api.AbilityTemplateAdvanced.fromData(templateData, this.shared.action);
     if (!template) {
         return { result: false };
     }

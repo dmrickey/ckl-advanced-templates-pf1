@@ -72,7 +72,7 @@
     };
 </script>
 
-<form class="pf1" on:submit|preventDefault novalidate>
+<form class="pf1" on:submit|preventDefault>
     <!-- override texture (same as vanilla plus scale/alpha) -->
     <div class="form-group right-me">
         <label class="checkbox">

@@ -2,9 +2,11 @@
 .DS_Store
 .idea
 .vscode/**/*
+.vite-cache/
 /.vite-cache
 /ckl-advanced-templates-pf1.*
 /style.css
 ckl-advanced-templates-pf1.lock
 dist/*
 node_modules/
+tools/link.bat
