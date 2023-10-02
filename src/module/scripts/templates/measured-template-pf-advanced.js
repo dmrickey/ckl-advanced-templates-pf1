@@ -549,6 +549,17 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
                         template.rotation = this.actualRotation;
                     }
                     break;
+                case 'line':
+                case 'ray':
+                    {
+                        yOffset = this.document.width / d.distance * d.size / 2;
+
+                        xScale = textureSize / this.texture.width;
+                        yScale = textureSize / this.texture.height;
+
+                        yScale *= this.document.width / this.document.distance;
+                    }
+                    break;
             }
 
             template.beginTextureFill({

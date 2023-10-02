@@ -1,9 +1,6 @@
 # TODO
 ## v.9
 - Disable canvas left click so it doesn't try to create a template
-- make sure tareting works for all shapes and all token sizes
-- line
-  - fix texture so it fits the template
 
 ---
 
