@@ -101,6 +101,36 @@ export class GridSquare {
         return allSpots;
     }
 
+    #containedSquares;
+    get containedSquares() { return this.#containedSquares ??= this.#initContainedSquares(); }
+
+    #initContainedSquares() {
+        const left = this.#x;
+        const top = this.#y;
+        const heightSpots = this.#heightSquares;
+        const widthSpots = this.#widthSquares;
+
+        const gridSize = canvas.grid.h;
+
+        const squares = [];
+        for (let x = 0; x < widthSpots; x++) {
+            for (let y = 0; y < heightSpots; y++) {
+                squares.push({
+                    x: left + x * gridSize,
+                    y: top + y * gridSize,
+                });
+            }
+        }
+        const allSquares = squares.map((spot) => ({
+            ...spot,
+            center: {
+                x: spot.x + canvas.scene.grid.size / 2,
+                y: spot.y + canvas.scene.grid.size / 2,
+            }
+        }));
+        return allSquares;
+    }
+
     #gridPoints;
     /**
      * returns grid intersections on perimeter of the square

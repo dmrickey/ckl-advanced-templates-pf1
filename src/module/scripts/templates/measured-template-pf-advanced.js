@@ -1,5 +1,6 @@
 import { CONSTS, MODULE_NAME } from '../../consts';
 import { Settings } from '../../settings';
+import { GridSquare } from '../models/grid-square';
 
 
 /**
@@ -1233,11 +1234,15 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
                 return { x: Number(x), y: Number(y), width: gridSizePx, height: gridSizePx };
             });
 
-            for (const square of highlightSquares) {
-                for (const t of relevantTokens) {
-                    if (this.withinRect(t.center, square)) {
-                        result.add(t);
-                        relevantTokens.delete(t);
+            for (const highlightSquare of highlightSquares) {
+                for (const token of relevantTokens) {
+                    const tokenSquares = GridSquare.fromToken(token).containedSquares;
+                    for (const tokenSquare of tokenSquares) {
+                        if (this.withinRect(tokenSquare.center, highlightSquare)) {
+                            result.add(token);
+                            relevantTokens.delete(token);
+                            break;
+                        }
                     }
                 }
             }

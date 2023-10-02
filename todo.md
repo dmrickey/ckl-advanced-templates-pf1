@@ -4,7 +4,6 @@
 - make sure tareting works for all shapes and all token sizes
 - line
   - fix texture so it fits the template
-  - fix targeting for large tokens
 
 ---
 
@@ -52,15 +51,6 @@
   - Add an "offset degrees" label for when the GM has that option turned on so the user knows what offset from 0 they've onto their cone as an extra rotation (hide label if 0)
 - "place from target location" - after placing, and selecting the rotation, right click should go back to choosing a location, a second right click should cancel the template
 - Restarting "choose start location cone" on gridless map doesn't remove template preview until new start is chosen
-
-### Rays
-- On startup add it to the selectable types
-- originate from caster
-- originate from selection
-- system default option
-
-### Rects
-- Figure out how to rotate `highlight shape`
 
 ### All
 - Targeting
