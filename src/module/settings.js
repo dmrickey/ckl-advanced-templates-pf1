@@ -4,19 +4,14 @@ const keys = {
     cone15Alternate: 'cone15Alternate',
     coneRotation: 'coneRotation',
     debug: 'debug',
+    defaultLineWidth: 'defaultLineWidth',
+    disableHints: 'disableHints',
     migrationVersion: 'migrationVersion',
     reExpand: 'reExpand',
     target: 'target',
-    useSystem: 'useSystem',
 };
 
 const settings = {
-    [keys.debug]: {
-        config: true,
-        default: false,
-        type: Boolean,
-        scope: 'client',
-    },
     [keys.target]: {
         config: true,
         default: true,
@@ -41,18 +36,35 @@ const settings = {
         type: Number,
         scope: 'world',
     },
-    [keys.useSystem]: {
-        config: false,
+    [keys.debug]: {
+        config: true,
         default: false,
         type: Boolean,
-        scope: 'world',
+        scope: 'client',
+    },
+    [keys.defaultLineWidth]: {
+        config: true,
+        default: 5,
+        type: Number,
+        scope: 'client',
+        range: {
+            min: .1,
+            max: 5,
+            step: .1
+        },
+    },
+    [keys.disableHints]: {
+        config: true,
+        default: false,
+        type: Boolean,
+        scope: 'client',
     },
     [keys.migrationVersion]: {
         config: false,
         default: 0,
         type: Number,
         scope: 'world',
-    }
+    },
 };
 
 const initSettings = () =>
@@ -94,6 +106,20 @@ export class Settings {
         return Settings.#getSetting(keys.debug);
     }
 
+    /**
+     * User: default width for line templates
+     */
+    static get defaultLineWidth() {
+        return Settings.#getSetting(keys.defaultLineWidth);
+    }
+
+    /**
+     * User: disables template placement hints
+     */
+    static get disableHints() {
+        return Settings.#getSetting(keys.disableHints);
+    }
+
     static get migrationVersion() {
         return Settings.#getSetting(keys.migrationVersion);
     }
@@ -114,13 +140,6 @@ export class Settings {
      */
     static get target() {
         return Settings.#getSetting(keys.target);
-    }
-
-    /**
-     * GM: allows user to use the "use system" option (currently unused)
-     */
-    static get useSystem() {
-        return Settings.#getSetting(keys.useSystem);
     }
 
     static #getSetting(key) {

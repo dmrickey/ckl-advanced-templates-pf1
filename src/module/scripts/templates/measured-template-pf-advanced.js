@@ -1,4 +1,5 @@
 import { CONSTS, MODULE_NAME } from '../../consts';
+import { Settings } from '../../settings';
 
 
 /**
@@ -974,7 +975,7 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
                 yOffset = -1;
             }
 
-            const width = this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.line.widthOverride] && this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.line.width] || CONFIG.MeasuredTemplate.defaults.width;
+            const width = this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.line.widthOverride] && this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.line.width] || Settings.defaultLineWidth;
             const qty = Math.ceil(width / 5);
 
             const rad = Math.toRadians(templateDirection);

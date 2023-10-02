@@ -2,7 +2,8 @@
 
 <script>
     import { CONSTS, MODULE_NAME } from "../consts";
-    import { ifDebug, localize, localizeFull } from "../scripts/utils";
+    import { Settings } from "../settings";
+    import { ifDebug, localize } from "../scripts/utils";
 
     export let action = void 0;
     export let updates = void 0;
@@ -11,7 +12,7 @@
     let defaultWidth;
 
     $: {
-        defaultWidth = CONFIG.MeasuredTemplate.defaults.width;
+        defaultWidth = Settings.defaultLineWidth;
         widthOverrideEnabled = !!updates.data.flags?.[MODULE_NAME]?.[CONSTS.flags.line.widthOverride];
     }
 
@@ -36,7 +37,7 @@
         action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] || CONSTS.placement.line.selectTargetSquare;
 
     updates.data.flags[MODULE_NAME][CONSTS.flags.line.width] ||=
-        action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.line.width] || CONFIG.MeasuredTemplate.defaults.width;
+        action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.line.width] || Settings.defaultLineWidth;
     updates.data.flags[MODULE_NAME][CONSTS.flags.line.widthOverride] ||=
         !!action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.line.widthOverride];
 

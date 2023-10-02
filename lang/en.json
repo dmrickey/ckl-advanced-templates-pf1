@@ -9,18 +9,6 @@
             "restart": "Left click to submit. Right click to re-choose starting point."
         },
         "settings": {
-            "debug": {
-                "name": "Enable Debug Logging",
-                "hint": "If enabled, then various log messages are logged to the console to help with debugging. Only useful when something is not working as expected."
-            },
-            "target": {
-                "name": "Target Tokens in Template",
-                "hint": "If enabled, then your targeted tokens will update as you place the template."
-            },
-            "reExpand": {
-                "name": "Re-expand Collapsed Sheets",
-                "hint": "If enabled, any sheets that were collapsed to allow for template placement will be re-expanded after the template has been placed."
-            },
             "cone15Alternate": {
                 "name": "Allow 15' Alternate Cone",
                 "hint": "If enabled, your players can use 15' cones that originate from a grid intersection when orienting the cone left/right/up/down instead of only the standard 15' cone grid outlines (as described by normal cone placement rules but not shown as any options in the 15' template diagrams)."
@@ -29,9 +17,21 @@
                 "name": "Allow Non-Standard Cone Rotations",
                 "hint": "Set this number to allow your players to rotate cones with the mouse wheel. The number determins each incremental rotation. 0 means the cone will always be pointed \"away from the caster\". For best results, set this to 45 or lower and it should be a divisor of 45 (e.g. 45, 22.5, 9, 5, etc.). This will result in some very weird \"cones\" but will give you more freedom in how you want to place them."
             },
-            "useSystem": {
-                "name": "Allow System Template Placement",
-                "hint": "If enabled, templates can be configured with \"use default\". Enable this option if this mod does not provide a placement option that satisfies a given need. If that's the case please let me know so I can provide a new template placement option."
+            "debug": {
+                "name": "Enable Debug Logging",
+                "hint": "If enabled, then various log messages are logged to the console to help with debugging. Only useful when something is not working as expected."
+            },
+            "disableHints": {
+                "name": "Disable Template Placement Hints",
+                "hint": "If disabled, Hints for rotation, re-selecting starting position, and final template placement will not show."
+            },
+            "reExpand": {
+                "name": "Re-expand Collapsed Sheets",
+                "hint": "If enabled, any sheets that were collapsed to allow for template placement will be re-expanded after the template has been placed."
+            },
+            "target": {
+                "name": "Target Tokens in Template",
+                "hint": "If enabled, then your targeted tokens will update as you place the template."
             }
         },
         "templates": {

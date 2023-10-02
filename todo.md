@@ -1,14 +1,11 @@
 # TODO
 ## v.9
-- Setting
-  - Disable hint
-  - default ray width
 - Disable canvas left click so it doesn't try to create a template
 - make sure tareting works for all shapes and all token sizes
 - line
   - fix texture so it fits the template
   - fix targeting for large tokens
-- remove nested forms from template dialogs
+
 ---
 
 ## Targeting types
