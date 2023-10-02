@@ -1194,7 +1194,7 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
                 maxDistance = this.document.distance / gridSizeUnits * gridSizePx + gridSizePx;
                 break;
             default:
-                Math.max(this.height, this.width);
+                maxDistance = Math.max(this.height, this.width);
                 break;
         }
 
