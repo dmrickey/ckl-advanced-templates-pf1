@@ -1,16 +1,16 @@
 # Advanced Templates PF1
 
-Advanced template placement options for PF1. Go into any Item where you've got a Cone/Circle template configured for when it's used, hit the new "Choose Options" button to open a dialog and configure the new options. This new button is located underneath the drop down for choosing a template type in the Item's details. By default, with no configuration, circles will default to "grid targeting" and cones will default to "self".
+Advanced template placement options for PF1. Go into any Action where you've got a template configured for when it's used, hit the new "Choose Options" button to open a dialog and configure the new options. This new button is located underneath the drop down for choosing a template type in the Item's details. By default, with no configuration, circles will default to "Select Grid Placement". Lines and cones will default to "Originate from Caster".
 
-If you need to place the template in such a way that the new options don't account for, you can still configure the template to be placed via "Use System Default" to use PF1's built in template placement without any of my modifications Picking this option will ignore any other options (e.g. if you check "delete template at end of turn" but are using the default placement rules, then the template will not be deleted at the end of the turn).
+If you need to place the template in such a way that the new options don't account for, you can still configure the template to be placed via "Use System Default" which mirrors placing a template without this mod.
 
 Spread types include burst, emanation, and spread. These are only configurable for circles. They currently only have any effect when the circle is "centered on you" as this combination actually effects the size of the template. E.g. Bursts/emanationas aren't blocked by cover (i.e. walls) and spread is also not blocked by cover while continuing around corners. These are currently configurable in case this functionality is added in a future version.
 
 ## Configurations
 
-Go into the details tab of any of your spells/abilities/items/etc. If it is configured for a Circle or Cone Measured Template, there will be a new "Choose Options" button available.
+Go into an Action's Miscellaneous tab. If it is configured to use a Measured Template, there will be a new "Choose Options" button available.
 
-![image](https://user-images.githubusercontent.com/3664822/158039749-0fe511cf-73f9-4020-abc1-36805f8feed7.png)
+![image](https://github.com/dmrickey/ckl-advanced-templates-pf1/assets/3664822/1df4f16a-96d1-4e4d-aadf-7392bd29da07)
 
 Clicking it will open the configuration menu, this is what the options look like for a Circle
 
@@ -46,27 +46,33 @@ This is the configuration menu for a cone
   - Use System Default - see circle for full description. There's a caveat here, if you have a custom texture or a Color Alpha set, it won't show up as expected until _after_ the cone has been placed.
 - Extra options
   - For the remaining options, see circle
+ 
+Lines have a width override setting.
+
+Rectangles have no unique options.
+
+## Other Changes
+
+- If your circle or rectangle template has a defined min and/or max range, that will be reflected with the template preview. If you go outside of that range (there is visual feedback when you are not within range), then you will not be able to use the ability. When the range is configured like this, there is added text to show how far the template is from your token.
+- I have replaced the default icons with the icons that are configured for the Action -- if the action has no icon, then the action's parent Item's icon will be used. So when you're looking at the Template layer, each template will now have a specific icon that correlates with the ability instead of a sea of the same generic icon.
+- When a texture is provided for a template, they now fit correctly within their template.
 
 ## Game Settings
 
-![image](https://user-images.githubusercontent.com/3664822/163084801-6bf5adde-d21c-42bc-8474-f0db2967b538.png)
+![image](https://github.com/dmrickey/ckl-advanced-templates-pf1/assets/3664822/e2635569-3823-4b7f-be9e-5898cc27338d)
 
 ### Player Settings
 
 - Enable Debug Logging - this is a bunch of random log messages that I added in during development. If you have a problem, turning this on and reproducing it could provide me with useful info to know what went wrong.
 - Target Tokens in Template - This updates your targets as you move the template preview to show you what tokens your template will effect.
 - Re-expand Collapsed Sheets - When you start placing a template, any sheets you have open will be collapsed so you can fully see the scene to choose where to place your template. By default they remain collapsed after the template has been placed. This is mainly because if have extra things that happen (like animations) and want to be able to see those results, if the sheets re-exapnded to cover the scene you wouldn't get to see to those. If you enable this, then the sheets will be re-expanded after the template is placed.
+- Default Line Width - The thickness of your line templates. This is the global default but can be overriden on an individual basis. I suggest leaving this at 5 if you're also using Otigon's Automated Animations as the animations will otherwise be squished to fit within the narrow template.
+- Disable Template Placement Hints - There's a small dialog that pops up when placing templates with extra options. This option disables that dialog.
 
 ### GM Settings
 
 - Allow 15' Alternate Cone - The rules text says spells originate from a grid intersection. The graphic for showing valid cone placement and the Paizo FAQ indicates that the 15' cone is an exception to this and that the graphic is correct. If you want to allow your players (and yourself) to also use an alternate (and wider) 15' cone (though it's not really a cone any more..) then enable this option
-- ALlow Non-Standard Cone Rotations - The rules say that cones are cast away from the caster, leaving this disabled is rules as written. However, if you want your players (or yourself) to be able to cast a cone from the corner of your square but the rotate it so it cuts across in front of you, then enable this option. For best results, set it to `22.5`, `15`, or `5`. `45` is also a completely valid value if you want the cone to be able to be rotated and don't want "weird" shapes mixed in at different angles--setting it to `45` will basically rotate through legal cones at illegal angles.
-
-## Other Changes
-
-Here's a few random changes that don't specifically fit into the above categories
-- If your circle template has a defined min and/or max range, that will be reflected with the template preview. If you go outside of that range (there is visual feedback when you are not within range), then you will not be able to use the ability. When the range is configured like this, there is added text to show how far the template is from your token. I plan to expand this to Rays when I start implementing targeting options for spells that have individual targets and not templates.
-- I have replaced the default icons with the icons that are configured for the Item you're using (Item being a foundry term for basically any spell/item/feature/ability/etc on your character--basically if it's something in your character sheet that has it's own details window, then it's an Item). So when you're looking at the Template layer, each template will now have a specific icon that correlates with that Item instead of a sea of the same icon.
+- Allow Non-Standard Cone Rotations - The rules say that cones are cast away from the caster, leaving this disabled is rules as written. However, if you want your players (or yourself) to be able to cast a cone from the corner of your square but the rotate it so it cuts across in front of you, then enable this option. For best results, set it to `22.5`, `15`, or `5`. `45` is also a completely valid value if you want the cone to be able to be rotated and don't want "weird" shapes mixed in at different angles--setting it to `45` will basically rotate through legal cones at illegal angles.
 
 ## Installation
 
@@ -74,8 +80,8 @@ manifest link: https://github.com/dmrickey/ckl-advanced-templates-pf1/releases/l
 
 Last tested versions
 Advanced Templates PF1 1.4.2
-Foundry v10 291
-PF1e 0.82.5
+Foundry v11 306
+PF1e 9.5
 
 Here's a quick visual demo of how to configure some of the options and how they work (no audio was recorded)
 https://youtu.be/r7oAkXw6-zU
