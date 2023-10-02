@@ -82,7 +82,7 @@
     "system": [
         "pf1"
     ],
-    "minimumSystemVersion": "0.81.0",
+    "minimumSystemVersion": "9.5",
     "library": false,
     "protected": false,
     "coreTranslation": false
