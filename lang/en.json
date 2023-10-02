@@ -21,6 +21,10 @@
                 "name": "Enable Debug Logging",
                 "hint": "If enabled, then various log messages are logged to the console to help with debugging. Only useful when something is not working as expected."
             },
+            "defaultLineWidth": {
+                "name": "Default Line Width",
+                "hint": "Default width for line templates. This is mostly aesthetic but if you're using Automated Animations, then I suggest leaving it at 5 so the line animations aren't squished within a narrow template."
+            },
             "disableHints": {
                 "name": "Disable Template Placement Hints",
                 "hint": "If disabled, Hints for rotation, re-selecting starting position, and final template placement will not show."
