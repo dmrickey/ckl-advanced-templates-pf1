@@ -952,10 +952,10 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
             const result = [];
 
             const line = (x0, y0, x1, y1) => {
-                x0 = Math.floor(Math.floor(x0) / gridSizePx);
-                x1 = Math.floor(Math.floor(x1) / gridSizePx);
-                y0 = Math.floor(Math.floor(y0) / gridSizePx);
-                y1 = Math.floor(Math.floor(y1) / gridSizePx);
+                x0 = Math.floor(x0 / gridSizePx);
+                x1 = Math.floor(x1 / gridSizePx);
+                y0 = Math.floor(y0 / gridSizePx);
+                y1 = Math.floor(y1 / gridSizePx);
 
                 const dx = Math.abs(x1 - x0);
                 const dy = Math.abs(y1 - y0);
