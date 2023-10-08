@@ -578,11 +578,18 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         // Draw the shape
         template.drawShape(this.shape);
 
+        let endx = this.ray.dx;
+        let endy = this.ray.dy;
+
+        if (this.shouldOverrideTokenEmanation) {
+            endx += this.tokenSizeSquares.sizeSquares * canvas.scene.grid.size / 2;
+        }
+
         // Draw origin and destination points
         template.lineStyle(this._borderThickness, 0x000000)
             .beginFill(0x000000, 0.5)
             .drawCircle(0, 0, 6)
-            .drawCircle(this.ray.dx, this.ray.dy, 6)
+            .drawCircle(endx, endy, 6)
             .endFill();
     }
     /** END MY CODE */
@@ -736,7 +743,14 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
             text = `${d}${u}`;
         }
         this.ruler.text = text;
-        this.ruler.position.set(this.ray.dx + 10, this.ray.dy + 5);
+
+
+        let endx = this.ray.dx;
+        if (this.shouldOverrideTokenEmanation) {
+            endx += this.tokenSizeSquares.sizeSquares * canvas.scene.grid.size / 2;
+        }
+
+        this.ruler.position.set(endx + 10, this.ray.dy + 5);
     }
 
     /* -------------------------------------------- */
@@ -1261,11 +1275,8 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         }
         // Non-gridless
         else {
-            const highlightSquares = this.getHighlightLayer().positions.map((p) => {
-                const [x, y] = p.split(".");
-                return { x: Number(x), y: Number(y), width: gridSizePx, height: gridSizePx };
-            });
-
+            const highlightSquares = this.getHighlightedSquares()
+                .map(({ x, y }) => ({ x, y, width: gridSizePx, height: gridSizePx }));
             for (const highlightSquare of highlightSquares) {
                 for (const token of relevantTokens) {
                     const tokenSquares = GridSquare.fromToken(token).containedSquares;
