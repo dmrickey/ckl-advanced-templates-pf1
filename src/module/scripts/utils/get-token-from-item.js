@@ -1,3 +1,3 @@
-const getToken = (itemPf) => itemPf?.parentActor?.getActiveTokens()?.[0] || undefined;
+const getToken = (itemPf) => itemPf?.actor?.getActiveTokens()?.[0] || undefined;
 
 export { getToken };

@@ -24,7 +24,7 @@ async function promptMeasureTemplate() {
 
     const type = this.shared.action.data.measureTemplate.type;
 
-    const actor = this.item?.parentActor;
+    const actor = this.item?.actor;
     const token = getToken(this.item) || {};
     const icon = this.shared.action.data.img === 'systems/pf1/icons/misc/magic-swirl.png' ? this.item.img : this.shared.action.data.img;
     const { maxRange, minRange } = this.shared.action;
