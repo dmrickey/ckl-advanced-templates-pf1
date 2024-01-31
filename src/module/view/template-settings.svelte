@@ -11,7 +11,10 @@
 
     const updates = prepareData(action);
 
-    ifDebug(() => console.log("Opening settings for:", action));
+    ifDebug(() => {
+        console.log("Opening settings for:", action);
+        console.log("  with current values:", updates);
+    });
 
     const applyTemplate = async () => {
         ifDebug(() => console.log("Applying updates:", updates));
