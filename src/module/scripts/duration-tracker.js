@@ -1,28 +1,6 @@
 import { CONSTS, MODULE_NAME } from "../consts";
 
 class DurationTracker {
-    static endOfTurn = 'endOfTurn';
-
-    static endOfTurnExpirations = [];
-
-    static endOfTurnCallback(callback) {
-        DurationTracker.endOfTurnExpirations.push(callback);
-    }
-
-    static async expireAll() {
-        for (const e of DurationTracker.endOfTurnExpirations) {
-            try {
-                await e();
-            }
-            catch {
-                // don't really care
-            }
-        }
-        DurationTracker.endOfTurnExpirations = [];
-
-        await DurationTracker.removeExpiredTemplates();
-    }
-
     static isExpired = (templatePlaceable) => {
         const now = game.time.worldTime;
         const { combat } = game;
@@ -60,7 +38,7 @@ class DurationTracker {
 
     static init() {
         Hooks.on('deleteCombat', async (_combat) => {
-            warpgate.plugin.queueUpdate(() => DurationTracker.expireAll());
+            warpgate.plugin.queueUpdate(() => DurationTracker.removeExpiredTemplates());
         });
 
         Hooks.on('updateCombat', async (combat, changed) => {
@@ -73,12 +51,12 @@ class DurationTracker {
                 return;
             }
 
-            warpgate.plugin.queueUpdate(() => DurationTracker.expireAll());
+            warpgate.plugin.queueUpdate(() => DurationTracker.removeExpiredTemplates());
         });
 
         Hooks.on('updateWorldTime', async (_worldTime, delta) => {
             if (delta) {
-                warpgate.plugin.queueUpdate(() => DurationTracker.expireAll());
+                warpgate.plugin.queueUpdate(() => DurationTracker.removeExpiredTemplates());
             }
         });
     }
