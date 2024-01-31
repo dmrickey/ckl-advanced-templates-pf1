@@ -1,44 +1,15 @@
 <script>
     import { getContext } from "svelte";
     import SharedSettings from "./shared-settings.svelte";
-    import { CONSTS, MODULE_NAME } from "../consts";
     import { ifDebug, localize } from "../scripts/utils";
+    import { prepareData } from "./prepare-template-data";
 
     export let action = void 0;
     export let TemplateApplication = void 0;
 
     const { application } = getContext("external");
 
-    const flags = action.data.flags?.[MODULE_NAME];
-    const updates = {
-        data: {
-            measureTemplate: {
-                customColor: action.data.measureTemplate.customColor || game.user.color,
-                customTexture: action.data.measureTemplate.customTexture,
-                overrideColor: action.data.measureTemplate.overrideColor,
-                overrideTexture: action.data.measureTemplate.overrideTexture,
-            },
-            flags: {
-                [MODULE_NAME]: {
-                    [CONSTS.flags.colorAlpha]:
-                        !!flags?.[CONSTS.flags.colorAlpha] || flags?.[CONSTS.flags.colorAlpha] === 0
-                            ? flags?.[CONSTS.flags.colorAlpha]
-                            : 0.5,
-                    [CONSTS.flags.expireAtTurnEnd]: !!flags?.[CONSTS.flags.expireAtTurnEnd],
-                    [CONSTS.flags.hideOutline]: !!flags?.[CONSTS.flags.hideOutline],
-                    [CONSTS.flags.placementType]: flags?.[CONSTS.flags.placementType],
-                    [CONSTS.flags.textureAlpha]:
-                        !!flags?.[CONSTS.flags.textureAlpha] || flags?.[CONSTS.flags.textureAlpha] === 0
-                            ? flags?.[CONSTS.flags.textureAlpha]
-                            : 0.5,
-                    [CONSTS.flags.textureScale]:
-                        !!flags?.[CONSTS.flags.textureScale] || flags?.[CONSTS.flags.textureScale] === 0
-                            ? flags?.[CONSTS.flags.textureScale]
-                            : 1,
-                },
-            },
-        },
-    };
+    const updates = prepareData(action);
 
     ifDebug(() => console.log("Opening settings for:", action));
 

@@ -1,6 +1,7 @@
 import { CONSTS, MODULE_NAME } from '../../consts';
 import { getToken, ifDebug } from '../utils';
 import { Settings } from '../../settings';
+import { calculateExpiration } from './calculate-expiration';
 
 /**
  * Common logic and switch statement for placing all templates
@@ -30,6 +31,8 @@ async function promptMeasureTemplate() {
     const flags = this.shared.action.data.flags?.[MODULE_NAME] || {};
     let distance = _getSize(this.shared) || 5;
 
+    const expirationTime = calculateExpiration(flags);
+
     const templateData = {
         _id: randomID(16),
         distance,
@@ -44,6 +47,7 @@ async function promptMeasureTemplate() {
                 maxRange,
                 minRange,
                 tokenId: token?.id,
+                [CONSTS.flags.expirationTime]: expirationTime,
             },
         },
         user: game.userId,

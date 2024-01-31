@@ -1,8 +1,9 @@
 import { Settings } from '../../settings';
 import { isFirstGM } from '../utils';
 import * as v1 from './migrate-v1';
+import * as v2 from './migrate-v2';
 
-const currentMigrationVersion = 1;
+const currentMigrationVersion = 2;
 
 export default async () => {
     if (!isFirstGM()) {
@@ -16,6 +17,12 @@ export default async () => {
         await v1.migratePacks();
         await v1.migrateWorldActors();
         await v1.migrateSyntheticActors();
-        Settings.migrationVersion = currentMigrationVersion;
     }
+
+    if (current < 2) {
+        // TODO do migration
+        // await v2.whatever();
+    }
+
+    Settings.migrationVersion = currentMigrationVersion;
 }

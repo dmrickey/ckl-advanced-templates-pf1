@@ -17,11 +17,41 @@
     let colorOverrideEnabled;
 
     const currentUserColor = game.user.color;
+    const deletionOptions = [
+        {
+            value: CONSTS.deletionOptions.doNotDelete,
+            label: localize("templates.deletion.doNotDelete"),
+        },
+        {
+            value: CONSTS.deletionOptions.endOfTurn,
+            label: localize("templates.deletion.endOfTurn"),
+        },
+        {
+            value: CONSTS.deletionOptions.timespan,
+            label: localize("templates.deletion.timespan"),
+        },
+    ];
+    const deletionIntervalOptions = [
+        {
+            value: CONSTS.deletionIntervals.rounds,
+            label: localizeFull("PF1.TimeRound"),
+        },
+        {
+            value: CONSTS.deletionIntervals.minutes,
+            label: localizeFull("PF1.TimeMinute"),
+        },
+        {
+            value: CONSTS.deletionIntervals.hours,
+            label: localizeFull("PF1.TimeHour"),
+        },
+    ];
 
     ifDebug(() => console.log("Opening shared settings for:", updates));
 
     $: {
         colorOverrideEnabled = updates.data.measureTemplate.overrideColor;
+        durationInputEnabled =
+            updates.data.flags[MODULE_NAME][CONSTS.flags.deletion] === CONSTS.deletionOptions.timespan;
         textureOverrideEnabled = updates.data.measureTemplate.overrideTexture;
     }
 
@@ -53,21 +83,21 @@
         updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha] = clamp(
             updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha],
             colorAlphaMin,
-            colorAlphaMax
+            colorAlphaMax,
         );
     };
     const clampTextureAlpha = () => {
         updates.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha] = clamp(
             updates.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha],
             textureAlphaMin,
-            textureAlphaMax
+            textureAlphaMax,
         );
     };
     const clampTextureScale = () => {
         updates.data.flags[MODULE_NAME][CONSTS.flags.textureScale] = clamp(
             updates.data.flags[MODULE_NAME][CONSTS.flags.textureScale],
             textureScaleMin,
-            textureScaleMax
+            textureScaleMax,
         );
     };
 </script>
@@ -195,7 +225,7 @@
         </div>
     </div>
 
-    <!-- color alpha override (default .5) (0 to 1)-->
+    <!-- color alpha override (default .5) (0 to 1) -->
     <div class="form-group no-border">
         <label for="colorAlpha">{localize("templates.colorAlpha.label")}</label>
         <div class="form-fields">
@@ -217,22 +247,69 @@
         </div>
     </div>
 
+    <!-- template deletion options -->
+    <div class="form-group column">
+        <label for="colorAlpha">{localize("templates.deletion.label")}</label>
+        <div class="form-group row">
+            {#each deletionOptions as option}
+                <label class="checkbox">
+                    <input
+                        type="radio"
+                        bind:group={updates.data.flags[MODULE_NAME][CONSTS.flags.deletion]}
+                        name="deletionOptions"
+                        value={option.value}
+                    />
+                    {option.label}
+                </label>
+            {/each}
+        </div>
+        <div class="form-group row">
+            <label>{localizeFull("PF1.Duration")}</label>
+            <input
+                type="text"
+                disabled={!durationInputEnabled}
+                id="deletionDurationUnits"
+                bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.deleteDuration][
+                    CONSTS.flags.deleteDuration.unit
+                ]}
+            />
+            <select
+                disabled={!durationInputEnabled}
+                bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.deleteDuration][
+                    CONSTS.flags.deleteDuration.interval
+                ]}
+            >
+                {#each deletionIntervalOptions as interval}
+                    <option value={interval.value}>
+                        {interval.label}
+                    </option>
+                {/each}
+            </select>
+        </div>
+    </div>
+
     <div class="form-group stacked no-border">
         <!-- hide outline -->
         <label class="checkbox">
             <input type="checkbox" bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.hideOutline]} />
             {localize("templates.hideOutline.label")}
         </label>
-
-        <!-- delete at turn end -->
-        <label class="checkbox">
-            <input type="checkbox" bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.expireAtTurnEnd]} />
-            {localize("templates.deleteAtTurnEnd")}
-        </label>
     </div>
 </form>
 
 <style lang="scss">
+    .form-group.column {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .form-group.row {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
     .file-picker-button {
         max-width: fit-content;
     }

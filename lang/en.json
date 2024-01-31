@@ -70,9 +70,14 @@
                     "centered.label": "Centered on cursor"
                 }
             },
+            "deletion": {
+                "label": "When to Delete",
+                "doNotDelete": "Do not delete",
+                "endOfTurn": "End of turn",
+                "timespan": ""
+            },
             "chooseOptions": "Choose Options",
             "colorAlpha.label": "Color Alpha",
-            "deleteAtTurnEnd": "Delete Template at End of Turn",
             "hideOutline.label": "Hide Outline",
             "ignoreRange": "Ignore Range Restriction",
             "modalTitle": "{itemName} Template",

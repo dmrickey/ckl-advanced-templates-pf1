@@ -20,12 +20,37 @@ class DurationTracker {
         }
         DurationTracker.endOfTurnExpirations = [];
 
-        await DurationTracker.removeEndOfTurnTemplates();
+        await DurationTracker.removeExpiredTemplates();
     }
 
-    static async removeEndOfTurnTemplates() {
+    static isExpired = (templatePlaceable) => {
+        const now = game.time.worldTime;
+        const { combat } = game;
+
+        const expireAtTurnEnd = !!templatePlaceable.document.flags?.[MODULE_NAME]?.[CONSTS.flags.expireAtTurnEnd];
+        if (expireAtTurnEnd) {
+            return true;
+        }
+
+        const expiration = templatePlaceable.document.flags?.[MODULE_NAME]?.[CONSTS.flags.expirationTime]?.at;
+        if (!expiration) {
+            return false;
+        }
+
+        if (combat?.combatant?.initiative !== null) {
+            const initiative = templatePlaceable.document.flags?.[MODULE_NAME]?.[CONSTS.flags.expirationTime]?.initiative || 0;
+
+            return expiration === now
+                ? initiative >= combat.combatant.initiative
+                : expiration < now;
+        }
+
+        return expiration <= now;
+    };
+
+    static async removeExpiredTemplates() {
         const templateIds = canvas.templates.placeables
-            .filter((t) => !!t.document.flags?.[MODULE_NAME]?.[CONSTS.flags.expireAtTurnEnd])
+            .filter(DurationTracker.isExpired)
             .map((t) => t.id);
 
         if (templateIds.length) {
@@ -39,7 +64,10 @@ class DurationTracker {
         });
 
         Hooks.on('updateCombat', async (combat, changed) => {
-            if (!('turn' in changed || 'round' in changed) && changed.round !== 1
+            if (
+                // if going from "beginnging of combat" to "first round of combat"
+                !('turn' in changed || 'round' in changed) && changed.round !== 1
+                // if there are no combatants.. double check how this behaves and whether or not I need it
                 || !game.combats.get(combat.id).combatants.size
             ) {
                 return;
