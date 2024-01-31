@@ -24,14 +24,14 @@ async function promptMeasureTemplate() {
 
     const type = this.shared.action.data.measureTemplate.type;
 
+    const actor = this.item?.parentActor;
     const token = getToken(this.item) || {};
     const icon = this.shared.action.data.img === 'systems/pf1/icons/misc/magic-swirl.png' ? this.item.img : this.shared.action.data.img;
-    const maxRange = this.shared.action.getRange();
-    const minRange = this.shared.action.getRange({ type: "min" });
+    const { maxRange, minRange } = this.shared.action;
     const flags = this.shared.action.data.flags?.[MODULE_NAME] || {};
     let distance = _getSize(this.shared) || 5;
 
-    const expirationTime = calculateExpiration(flags);
+    const expirationTime = calculateExpiration(actor, flags);
 
     const templateData = {
         _id: randomID(16),
@@ -41,13 +41,13 @@ async function promptMeasureTemplate() {
             [MODULE_NAME]: {
                 ...flags,
                 [CONSTS.flags.circle.movesWithToken]: flags[CONSTS.flags.placementType] == CONSTS.placement.circle.self && !!flags[CONSTS.flags.circle.movesWithToken],
+                [CONSTS.flags.expirationTime]: expirationTime,
                 baseDistance: distance,
                 icon,
                 itemId: this.item?.id,
                 maxRange,
                 minRange,
                 tokenId: token?.id,
-                [CONSTS.flags.expirationTime]: expirationTime,
             },
         },
         user: game.userId,

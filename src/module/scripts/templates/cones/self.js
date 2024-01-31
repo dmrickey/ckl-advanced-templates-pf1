@@ -1,5 +1,5 @@
 import { AbilityTemplateFollowMouseAngleCone } from "./follow-mouse-angle-base";
-import { getToken, ifDebug } from '../../utils';
+import { ifDebug } from '../../utils';
 
 export class ConeFromSelf extends AbilityTemplateFollowMouseAngleCone {
     /** @override */

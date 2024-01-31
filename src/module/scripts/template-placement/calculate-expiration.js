@@ -1,11 +1,11 @@
 import { CONSTS, MODULE_NAME } from '../../consts';
 
-export const calculateExpiration = (flags) => {
+export const calculateExpiration = (actor, flags) => {
     const now = game.time.worldTime;
 
-    const duration = flags[MODULE_NAME]?.[CONSTS.flags.deleteDuration.interval] || CONSTS.deletionOptions.doNotDelete;
+    const deletionType = flags[MODULE_NAME]?.[CONSTS.flags.deletion] || CONSTS.deletionOptions.doNotDelete;
 
-    switch (duration) {
+    switch (deletionType) {
         case CONSTS.deletionOptions.doNotDelete:
             return undefined;
         case CONSTS.deletionOptions.endOfTurn:
@@ -14,7 +14,8 @@ export const calculateExpiration = (flags) => {
                 initiative: game?.combat?.combatant?.initiative || 99
             };
         case CONSTS.deletionOptions.timespan:
-            const units = flags[MODULE_NAME]?.[CONSTS.flags.deleteDuration.unit] || 0;
+            let units = flags[MODULE_NAME]?.[CONSTS.flags.deleteDuration.unit] || 0;
+            units = !isNaN(+units) ? +units : RollPF.safeTotal(units, actor?.getRollData() ?? {})
             const interval = flags[MODULE_NAME]?.[CONSTS.flags.deleteDuration.interval] || CONSTS.deletionIntervals.rounds;
 
             const duration = (() => {

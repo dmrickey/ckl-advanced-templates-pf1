@@ -1,5 +1,5 @@
 import { AbilityTemplateAdvanced } from '../ability-template';
-import { getToken, ifDebug } from '../../utils';
+import { ifDebug } from '../../utils';
 
 export class CircleSelf extends AbilityTemplateAdvanced {
     /** @override */
