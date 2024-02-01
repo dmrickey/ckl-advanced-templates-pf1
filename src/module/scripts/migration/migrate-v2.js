@@ -6,6 +6,9 @@ const log = msg => console.log(`${MODULE_NAME} - ${msg}`);
 
 // if I ever need to do a v2, the "get action and update" methods are all exactly the same, so call a single method next time
 
+// move `expireAtTurnEnd` to `CONSTS.flags.deletion -> CONSTS.deletionOptions.endOfTurn`
+// remove `expireAtTurnEnd` and `exireAtTurnEnd` flags
+
 export const migrateGameItem = async () => {
     log('migrating game items');
 
