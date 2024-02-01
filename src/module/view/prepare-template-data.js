@@ -29,8 +29,8 @@ export const prepareData = (action) => {
                             : 1,
                     [CONSTS.flags.deletion]: flags?.[CONSTS.flags.deletion] || CONSTS.deletionOptions.doNotDelete,
                     [CONSTS.flags.deleteDuration]: {
-                        [CONSTS.flags.deleteDuration.unit]: CONSTS.flags.deleteDuration.unit || 0,
-                        [CONSTS.flags.deleteDuration.interval]: CONSTS.flags.deleteDuration.interval || CONSTS.deletionIntervals.rounds,
+                        [CONSTS.flags.deleteDuration.unit]: flags?.[CONSTS.flags.deleteDuration]?.[CONSTS.flags.deleteDuration.unit] || 0,
+                        [CONSTS.flags.deleteDuration.interval]: flags?.[CONSTS.flags.deleteDuration]?.[CONSTS.flags.deleteDuration.interval] || CONSTS.deletionIntervals.rounds,
                     },
                 },
             },
