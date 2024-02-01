@@ -127,7 +127,7 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
      * @return {Promise<Boolean>}
      */
     async initializeConeData(center, width, height) {
-        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializeVariables.name}`));
+        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializeConeData.name}`));
 
         this._tokenSquare = this.#sourceSquare(center, width, height);
 
