@@ -37,10 +37,8 @@ export const CONSTS = {
         coneRotationAngle: 'coneRotationAngle',
         controlIconText: 'controlIconText',
         deletion: 'deletion',
-        deleteDuration: {
-            interval: 'interval',
-            unit: 'unit',
-        },
+        deletionInterval: 'interval',
+        deletionUnit: 'unit',
         expirationTime: 'expirationTime',
         expireAtTurnEnd: 'expireAtTurnEnd',
         hideHighlight: 'hideHighlight',

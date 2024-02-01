@@ -28,10 +28,8 @@ export const prepareData = (action) => {
                             ? flags?.[CONSTS.flags.textureScale]
                             : 1,
                     [CONSTS.flags.deletion]: flags?.[CONSTS.flags.deletion] || CONSTS.deletionOptions.doNotDelete,
-                    [CONSTS.flags.deleteDuration]: {
-                        [CONSTS.flags.deleteDuration.unit]: CONSTS.flags.deleteDuration.unit || 0,
-                        [CONSTS.flags.deleteDuration.interval]: CONSTS.flags.deleteDuration.interval || CONSTS.deletionIntervals.rounds,
-                    },
+                    [CONSTS.flags.deletionInterval]: flags?.[CONSTS.flags.deletionInterval] || 0,
+                    [CONSTS.flags.deletionUnit]: flags?.[CONSTS.flags.deletionUnit] || CONSTS.deletionIntervals.rounds,
                 },
             },
         },

@@ -14,9 +14,9 @@ export const calculateExpiration = (actor, flags) => {
                 initiative: game?.combat?.combatant?.initiative || 99
             };
         case CONSTS.deletionOptions.timespan:
-            let units = flags[MODULE_NAME]?.[CONSTS.flags.deleteDuration.unit] || 0;
+            let units = flags[MODULE_NAME]?.[CONSTS.flags.deletionUnit] || 0;
             units = !isNaN(+units) ? +units : RollPF.safeTotal(units, actor?.getRollData() ?? {})
-            const interval = flags[MODULE_NAME]?.[CONSTS.flags.deleteDuration.interval] || CONSTS.deletionIntervals.rounds;
+            const interval = flags[MODULE_NAME]?.[CONSTS.flags.deletionInterval] || CONSTS.deletionIntervals.rounds;
 
             const duration = (() => {
                 switch (interval) {

@@ -268,13 +268,11 @@
             type="text"
             disabled={!durationInputEnabled}
             id="deletionDurationUnits"
-            bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.deleteDuration][CONSTS.flags.deleteDuration.unit]}
+            bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.deletionUnit]}
         />
         <select
             disabled={!durationInputEnabled}
-            bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.deleteDuration][
-                CONSTS.flags.deleteDuration.interval
-            ]}
+            bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.deletionInterval]}
         >
             {#each deletionIntervalOptions as interval}
                 <option value={interval.value}>
