@@ -40,7 +40,6 @@ export const CONSTS = {
         deletionInterval: 'deletionInterval',
         deletionUnit: 'deletionUnit',
         expirationTime: 'expirationTime',
-        expireAtTurnEnd: 'expireAtTurnEnd',
         hideHighlight: 'hideHighlight',
         hideOutline: 'hideOutline',
         hidePreview: 'hidePreview',
