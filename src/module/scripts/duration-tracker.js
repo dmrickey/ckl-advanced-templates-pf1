@@ -5,11 +5,6 @@ class DurationTracker {
         const now = game.time.worldTime;
         const { combat } = game;
 
-        const expireAtTurnEnd = !!templatePlaceable.document.flags?.[MODULE_NAME]?.[CONSTS.flags.expireAtTurnEnd];
-        if (expireAtTurnEnd) {
-            return true;
-        }
-
         const expiration = templatePlaceable.document.flags?.[MODULE_NAME]?.[CONSTS.flags.expirationTime]?.at;
         if (!expiration) {
             return false;
