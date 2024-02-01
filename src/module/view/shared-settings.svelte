@@ -13,8 +13,9 @@
     const textureScaleMin = 0.1;
     const textureScaleMax = 10;
 
-    let textureOverrideEnabled;
     let colorOverrideEnabled;
+    let durationInputEnabled;
+    let textureOverrideEnabled;
 
     const currentUserColor = game.user.color;
     const deletionOptions = [
@@ -248,8 +249,8 @@
 
 <!-- template deletion options -->
 <div class="form-group column">
-    <label for="colorAlpha">{localize("templates.deletion.label")}</label>
-    <div class="form-group row">
+    <label for="deleteOptions">{localize("templates.deletion.label")}</label>
+    <div id="deleteOptions" class="form-group row">
         {#each deletionOptions as option}
             <label class="checkbox">
                 <input
@@ -263,7 +264,7 @@
         {/each}
     </div>
     <div class="form-group row">
-        <label>{localizeFull("PF1.Duration")}</label>
+        <label for="deletionDurationUnits">{localizeFull("PF1.Duration")}</label>
         <input
             type="text"
             disabled={!durationInputEnabled}
