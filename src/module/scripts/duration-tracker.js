@@ -5,20 +5,19 @@ class DurationTracker {
         const now = game.time.worldTime;
         const { combat } = game;
 
-        const expiration = templatePlaceable.document.flags?.[MODULE_NAME]?.[CONSTS.flags.expirationTime]?.at;
-        if (!expiration) {
+        const { at, initiative } = templatePlaceable.document.flags?.[MODULE_NAME]?.[CONSTS.flags.expirationTime] || {};
+
+        if (!at) {
             return false;
         }
 
         if (combat?.combatant?.initiative !== null) {
-            const initiative = templatePlaceable.document.flags?.[MODULE_NAME]?.[CONSTS.flags.expirationTime]?.initiative || 0;
-
-            return expiration === now
-                ? initiative >= combat.combatant.initiative
-                : expiration < now;
+            return at === now
+                ? (initiative || 0) >= combat.combatant.initiative
+                : at < now;
         }
 
-        return expiration <= now;
+        return at <= now;
     };
 
     static async removeExpiredTemplates() {
