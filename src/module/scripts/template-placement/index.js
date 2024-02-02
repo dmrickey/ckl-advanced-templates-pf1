@@ -31,7 +31,7 @@ async function promptMeasureTemplate() {
     const flags = this.shared.action.data.flags?.[MODULE_NAME] || {};
     let distance = _getSize(this.shared) || 5;
 
-    const expirationTime = calculateExpiration(actor, flags);
+    const expirationTime = calculateExpiration(this.getRollData(), flags);
 
     const templateData = {
         _id: randomID(16),

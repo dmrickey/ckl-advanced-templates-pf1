@@ -1,6 +1,6 @@
 import { CONSTS, MODULE_NAME } from '../../consts';
 
-export const calculateExpiration = (actor, flags = {}) => {
+export const calculateExpiration = (rollData = {}, flags = {}) => {
     const now = game.time.worldTime;
 
     const deletionType = flags[CONSTS.flags.deletion] || CONSTS.deletionOptions.doNotDelete;
@@ -15,7 +15,7 @@ export const calculateExpiration = (actor, flags = {}) => {
             };
         case CONSTS.deletionOptions.timespan:
             let units = flags[CONSTS.flags.deletionUnit] || 0;
-            units = !isNaN(+units) ? +units : RollPF.safeTotal(units, actor?.getRollData() ?? {})
+            units = !isNaN(+units) ? +units : RollPF.safeTotal(units, rollData)
             const interval = flags[CONSTS.flags.deletionInterval] || CONSTS.deletionIntervals.rounds;
 
             const duration = (() => {
