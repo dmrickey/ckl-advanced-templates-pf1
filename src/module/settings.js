@@ -87,6 +87,8 @@ export function registerSettings() {
 export class Settings {
     /**
      * GM: allows users to place cones per the rules text in addition to the rules picture
+     *
+     * @returns {boolean} True if alternate cone placement is allowed
      */
     static get cone15Alternate() {
         return Settings.#getSetting(keys.cone15Alternate);
@@ -94,6 +96,8 @@ export class Settings {
 
     /**
      * GM: Gets the degrees the user are allowed to rotate a cone
+     *
+     * @returns {number} Degrees for cone rotation offset
      */
     static get coneRotation() {
         return Settings.#getSetting(keys.coneRotation);
@@ -101,6 +105,8 @@ export class Settings {
 
     /**
      * User: displays extra console logs that I placed during development
+     *
+     * @returns {boolean} True if debug logging is enabled
      */
     static get debug() {
         return Settings.#getSetting(keys.debug);
@@ -108,6 +114,8 @@ export class Settings {
 
     /**
      * User: default width for line templates
+     *
+     * @returns {number} Width for line templates
      */
     static get defaultLineWidth() {
         return Settings.#getSetting(keys.defaultLineWidth);
@@ -115,6 +123,8 @@ export class Settings {
 
     /**
      * User: disables template placement hints
+     *
+     * @returns {boolean} True if hints are disabled
      */
     static get disableHints() {
         return Settings.#getSetting(keys.disableHints);
@@ -130,6 +140,8 @@ export class Settings {
 
     /**
      * User: automatically re-expand collapsed sheets after placing a template
+     *
+     * @returns {boolean} True if windows should re-expand after placing a template
      */
     static get reExpand() {
         return Settings.#getSetting(keys.reExpand);
@@ -137,6 +149,8 @@ export class Settings {
 
     /**
      * User: automatically target tokens when placing a template
+     *
+     * @returns {boolean} True if tokens should automatically be targeted when placing a template
      */
     static get target() {
         return Settings.#getSetting(keys.target);

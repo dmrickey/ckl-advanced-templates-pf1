@@ -1,31 +1,28 @@
 import { CONSTS, MODULE_NAME } from "../consts";
 
 class DurationTracker {
-    static endOfTurn = 'endOfTurn';
+    static isExpired = (templatePlaceable) => {
+        const now = game.time.worldTime;
+        const { combat } = game;
 
-    static endOfTurnExpirations = [];
+        const { at, initiative } = templatePlaceable.document.flags?.[MODULE_NAME]?.[CONSTS.flags.expirationTime] || {};
 
-    static endOfTurnCallback(callback) {
-        DurationTracker.endOfTurnExpirations.push(callback);
-    }
-
-    static async expireAll() {
-        for (const e of DurationTracker.endOfTurnExpirations) {
-            try {
-                await e();
-            }
-            catch {
-                // don't really care
-            }
+        if (!at) {
+            return false;
         }
-        DurationTracker.endOfTurnExpirations = [];
 
-        await DurationTracker.removeEndOfTurnTemplates();
-    }
+        if (combat?.combatant?.initiative !== null) {
+            return at === now
+                ? (initiative || 0) >= combat.combatant.initiative
+                : at < now;
+        }
 
-    static async removeEndOfTurnTemplates() {
+        return at <= now;
+    };
+
+    static async removeExpiredTemplates() {
         const templateIds = canvas.templates.placeables
-            .filter((t) => !!t.document.flags?.[MODULE_NAME]?.[CONSTS.flags.expireAtTurnEnd])
+            .filter(DurationTracker.isExpired)
             .map((t) => t.id);
 
         if (templateIds.length) {
@@ -35,22 +32,25 @@ class DurationTracker {
 
     static init() {
         Hooks.on('deleteCombat', async (_combat) => {
-            warpgate.plugin.queueUpdate(() => DurationTracker.expireAll());
+            warpgate.plugin.queueUpdate(() => DurationTracker.removeExpiredTemplates());
         });
 
         Hooks.on('updateCombat', async (combat, changed) => {
-            if (!('turn' in changed || 'round' in changed) && changed.round !== 1
+            if (
+                // if going from "beginnging of combat" to "first round of combat"
+                !('turn' in changed || 'round' in changed) && changed.round !== 1
+                // if there are no combatants.. double check how this behaves and whether or not I need it
                 || !game.combats.get(combat.id).combatants.size
             ) {
                 return;
             }
 
-            warpgate.plugin.queueUpdate(() => DurationTracker.expireAll());
+            warpgate.plugin.queueUpdate(() => DurationTracker.removeExpiredTemplates());
         });
 
         Hooks.on('updateWorldTime', async (_worldTime, delta) => {
             if (delta) {
-                warpgate.plugin.queueUpdate(() => DurationTracker.expireAll());
+                warpgate.plugin.queueUpdate(() => DurationTracker.removeExpiredTemplates());
             }
         });
     }

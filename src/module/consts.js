@@ -36,7 +36,10 @@ export const CONSTS = {
         colorAlpha: 'colorAlpha',
         coneRotationAngle: 'coneRotationAngle',
         controlIconText: 'controlIconText',
-        expireAtTurnEnd: 'expireAtTurnEnd',
+        deletion: 'deletion',
+        deletionInterval: 'deletionInterval',
+        deletionUnit: 'deletionUnit',
+        expirationTime: 'expirationTime',
         hideHighlight: 'hideHighlight',
         hideOutline: 'hideOutline',
         hidePreview: 'hidePreview',
@@ -48,6 +51,16 @@ export const CONSTS = {
         burst: 'burst',
         emanation: 'emanation',
         spread: 'spread',
+    },
+    deletionIntervals: {
+        hours: 'hours',
+        minutes: 'minutes',
+        rounds: 'rounds',
+    },
+    deletionOptions: {
+        doNotDelete: 'doNotDelete',
+        endOfTurn: 'endOfTurn',
+        timespan: 'timespan',
     },
 };
 

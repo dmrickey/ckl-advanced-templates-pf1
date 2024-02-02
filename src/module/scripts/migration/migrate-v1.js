@@ -1,8 +1,5 @@
-import { CONSTS, MODULE_NAME } from "../../consts";
-
-const log = msg => console.log(`${MODULE_NAME} - ${msg}`);
-
-// if I ever need to do a v2, the "get action and update" methods are all exactly the same, so call a single method next time
+import { MODULE_NAME } from "../../consts";
+import { log } from './migration-log';
 
 export const migrateGameItem = async () => {
     log('migrating game items');
@@ -16,7 +13,7 @@ export const migrateGameItem = async () => {
                 {
                     [MODULE_NAME]: {
                         ...item.data.flags[MODULE_NAME],
-                        [CONSTS.flags.expireAtTurnEnd]: item.data.flags[MODULE_NAME].exireAtTurnEnd
+                        expireAtTurnEnd: !!item.data.flags[MODULE_NAME]?.exireAtTurnEnd
                     }
                 }
             });
@@ -39,7 +36,7 @@ export const migratePacks = async () => {
                     flags: {
                         [MODULE_NAME]: {
                             ...doc.data.flags[MODULE_NAME],
-                            [CONSTS.flags.expireAtTurnEnd]: doc.data.flags[MODULE_NAME].exireAtTurnEnd
+                            expireAtTurnEnd: !!doc.data.flags[MODULE_NAME]?.exireAtTurnEnd
                         }
                     }
                 });
@@ -63,7 +60,7 @@ export const migrateWorldActors = async () => {
                         flags: {
                             [MODULE_NAME]: {
                                 ...item.data.flags[MODULE_NAME],
-                                [CONSTS.flags.expireAtTurnEnd]: item.data.flags[MODULE_NAME].exireAtTurnEnd
+                                expireAtTurnEnd: !!item.data.flags[MODULE_NAME]?.exireAtTurnEnd
                             }
                         }
                     });
@@ -87,7 +84,7 @@ export const migrateSyntheticActors = async () => {
                 flags: {
                     [MODULE_NAME]: {
                         ...item.data.flags[MODULE_NAME],
-                        [CONSTS.flags.expireAtTurnEnd]: item.data.flags[MODULE_NAME].exireAtTurnEnd
+                        expireAtTurnEnd: !!item.data.flags[MODULE_NAME]?.exireAtTurnEnd
                     }
                 }
             });
