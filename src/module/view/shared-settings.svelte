@@ -248,7 +248,7 @@
 </div>
 
 <!-- template deletion options -->
-<div class="form-group column">
+<div class="form-group no-border unflex">
     <label for="deleteOptions">{localize("templates.deletion.label")}</label>
     <div id="deleteOptions" class="form-group row">
         {#each deletionOptions as option}
@@ -264,7 +264,6 @@
         {/each}
     </div>
     <div class="form-group row">
-        <label for="deletionDurationUnits">{localizeFull("PF1.Duration")}</label>
         <input
             type="text"
             disabled={!durationInputEnabled}
@@ -293,24 +292,17 @@
 </div>
 
 <style lang="scss">
-    .form-group.column {
-        display: flex;
-        flex-direction: column;
-        text-align: center;
+    .unflex {
+        display: block;
     }
 
     .form-group.row {
         display: flex;
         flex-direction: row;
-        justify-content: center;
     }
 
     .file-picker-button {
         max-width: fit-content;
-    }
-
-    .form-group label {
-        max-width: 35%;
     }
 
     .color-input-border {
@@ -337,7 +329,7 @@
     }
 
     .right-me {
-        justify-content: flex-end;
+        align-self: flex-end;
     }
 
     input:disabled:not([type="range"]),
