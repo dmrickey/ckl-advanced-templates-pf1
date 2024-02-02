@@ -10,7 +10,7 @@ export const calculateExpiration = (actor, flags = {}) => {
             return undefined;
         case CONSTS.deletionOptions.endOfTurn:
             return {
-                time: now,
+                at: now,
                 initiative: game?.combat?.combatant?.initiative || 99
             };
         case CONSTS.deletionOptions.timespan:
