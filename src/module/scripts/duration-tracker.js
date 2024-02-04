@@ -1,4 +1,5 @@
 import { CONSTS, MODULE_NAME } from "../consts";
+import { isFirstGM } from "./utils";
 
 class DurationTracker {
     static isExpired = (templatePlaceable) => {
@@ -11,9 +12,10 @@ class DurationTracker {
             return false;
         }
 
-        if (combat?.combatant?.initiative !== null) {
+        const currentInitiative = combat?.combatant?.initiative;
+        if (currentInitiative || currentInitiative === 0) {
             return at === now
-                ? (initiative || 0) >= combat.combatant.initiative
+                ? (initiative || 0) >= currentInitiative
                 : at < now;
         }
 
@@ -32,10 +34,18 @@ class DurationTracker {
 
     static init() {
         Hooks.on('deleteCombat', async (_combat) => {
+            if (!isFirstGM()) {
+                return;
+            }
+
             warpgate.plugin.queueUpdate(() => DurationTracker.removeExpiredTemplates());
         });
 
         Hooks.on('updateCombat', async (combat, changed) => {
+            if (!isFirstGM()) {
+                return;
+            }
+
             if (
                 // if going from "beginnging of combat" to "first round of combat"
                 !('turn' in changed || 'round' in changed) && changed.round !== 1
@@ -49,6 +59,10 @@ class DurationTracker {
         });
 
         Hooks.on('updateWorldTime', async (_worldTime, delta) => {
+            if (!isFirstGM()) {
+                return;
+            }
+
             if (delta) {
                 warpgate.plugin.queueUpdate(() => DurationTracker.removeExpiredTemplates());
             }
