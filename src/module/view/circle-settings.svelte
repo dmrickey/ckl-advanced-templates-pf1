@@ -51,8 +51,9 @@
     ifDebug(() => console.log("Opening circle settings for:", updates));
 </script>
 
-<form class="pf1" novalidate>
-    <div class="form-group column">
+<div class="form-group radio-col-2">
+    <label for class="top-label">{localize("templates.placement.selection.label")}</label>
+    <div class="form-fields">
         {#each placements as placement}
             <label class="checkbox">
                 <input
@@ -65,11 +66,11 @@
             </label>
         {/each}
     </div>
+</div>
 
-    <hr />
-
-    <h3 class="group-header">{localize("templates.circle.placement.type.label")}</h3>
-    <div class="form-group row">
+<div class="form-group radio-col-3">
+    <label for>{localize("templates.circle.placement.type.label")}</label>
+    <div class="form-fields">
         {#each areaTypes as areaType}
             <label class="checkbox">
                 <input
@@ -82,47 +83,45 @@
             </label>
         {/each}
     </div>
+</div>
 
-    <slot />
+<slot />
 
-    <div class="form-group stacked no-border">
-        <!-- ignore range -->
-        <label class="checkbox">
-            <input type="checkbox" bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.ignoreRange]} />
-            {localize("templates.ignoreRange")}
-        </label>
+<div class="form-group stacked no-border">
+    <!-- ignore range -->
+    <label class="checkbox">
+        <input type="checkbox" bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.ignoreRange]} />
+        {localize("templates.ignoreRange")}
+    </label>
 
-        <!-- Attach to token -->
-        <label class="checkbox">
-            <input
-                type="checkbox"
-                disabled={updates.data.flags[MODULE_NAME][CONSTS.flags.placementType] !== CONSTS.placement.circle.self}
-                bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.circle.movesWithToken]}
-            />
-            {localize("templates.circle.placement.attachToToken")}
-        </label>
-    </div>
-</form>
+    <!-- Attach to token -->
+    <label class="checkbox">
+        <input
+            type="checkbox"
+            disabled={updates.data.flags[MODULE_NAME][CONSTS.flags.placementType] !== CONSTS.placement.circle.self}
+            bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.circle.movesWithToken]}
+        />
+        {localize("templates.circle.placement.attachToToken")}
+    </label>
+</div>
 
 <style lang="scss">
-    .form-group.column {
-        display: flex;
-        flex-direction: column;
-        text-align: center;
+    .form-group label.top-label {
+        margin-bottom: auto;
     }
 
-    h3.group-header {
-        text-align: center;
-    }
-    .form-group.row {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
+    .form-group.radio-col-2 {
+        .form-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
     }
 
-    form {
-        display: flex;
-        flex-direction: column;
+    .form-group.radio-col-3 {
+        .form-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+        }
     }
 
     .no-border {

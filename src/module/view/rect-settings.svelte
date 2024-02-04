@@ -25,13 +25,7 @@
     ifDebug(() => console.log("Opening rect settings for:", updates));
 </script>
 
-<form class="pf1" novalidate>
-    <slot />
-</form>
+<slot />
 
 <style lang="scss">
-    form {
-        display: flex;
-        flex-direction: column;
-    }
 </style>

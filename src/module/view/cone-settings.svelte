@@ -29,8 +29,9 @@
     ifDebug(() => console.log("Opening cone settings for:", updates));
 </script>
 
-<form class="pf1" novalidate>
-    <div class="form-group column">
+<div class="form-group radio-col-3">
+    <label for>{localize("templates.placement.selection.label")}</label>
+    <div class="form-fields">
         {#each placements as placement}
             <label class="checkbox">
                 <input
@@ -43,19 +44,9 @@
             </label>
         {/each}
     </div>
+</div>
 
-    <slot />
-</form>
+<slot />
 
 <style lang="scss">
-    .column {
-        display: flex;
-        flex-direction: column;
-        text-align: center;
-    }
-
-    form {
-        display: flex;
-        flex-direction: column;
-    }
 </style>
