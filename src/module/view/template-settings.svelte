@@ -10,8 +10,8 @@
     const updates = prepareData(action);
 
     $: {
-        updateAction(action, updates);
-        console.log("applying updates", updates);
+        // updateAction(action, updates);
+        // console.log("applying updates", updates);
     }
 </script>
 
