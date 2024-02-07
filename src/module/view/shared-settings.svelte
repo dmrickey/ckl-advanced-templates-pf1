@@ -13,10 +13,6 @@
     const textureScaleMin = 0.1;
     const textureScaleMax = 10;
 
-    // const colorOverrideEnabled = updates.data.measureTemplate.overrideColor;
-    // const durationInputEnabled =
-    //     updates.data.flags[MODULE_NAME][CONSTS.flags.deletion] === CONSTS.deletionOptions.timespan;
-    // const textureOverrideEnabled = updates.data.measureTemplate.overrideTexture;
     let colorOverrideEnabled;
     let durationInputEnabled;
     let textureOverrideEnabled;

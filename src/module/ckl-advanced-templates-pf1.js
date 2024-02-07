@@ -4,7 +4,7 @@ import { handleSingleOwner } from './scripts/utils/active-gm.js';
 import { initTemplates } from './scripts/templates';
 import { MODULE_NAME } from './consts';
 import { registerSettings } from './settings.js';
-import { injectTemplateSelector, turnOffTemplateSelector } from './scripts/template-selector-injector';
+import { injectTemplateSelector, destroyTemplateSelector } from './scripts/template-selector-injector';
 import migrateIfNeeded from './scripts/migration';
 import promptMeasureTemplate from './scripts/template-placement/';
 
@@ -18,7 +18,7 @@ Hooks.once('init', async () => {
 // When ready
 Hooks.once('ready', async () => {
     Hooks.on('renderItemActionSheet', injectTemplateSelector);
-    Hooks.on('closeItemActionSheet', turnOffTemplateSelector);
+    Hooks.on('closeItemActionSheet', destroyTemplateSelector);
 
     DurationTracker.init();
 });

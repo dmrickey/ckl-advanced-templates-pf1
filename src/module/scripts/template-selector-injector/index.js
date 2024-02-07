@@ -13,6 +13,10 @@ import {
  * @param {*} _options unused
  */
 const injectTemplateSelector = async (sheet, jq, _options) => {
+    if (typeof sheet?._templateSettings?.$destroy === 'function') {
+        sheet._templateSettings.$destroy();
+    }
+
     const action = sheet.action;
     const type = action?.data.measureTemplate?.type;
 
@@ -37,7 +41,8 @@ const injectTemplateSelector = async (sheet, jq, _options) => {
             return;
         }
 
-        // hide system's default color and texture options
+        // remove system's default color and texture options since I replace them within my mod
+        // simply hiding causes multiple inputs with the same `name` property and breaks the data
         jq.find('input[name="measureTemplate.overrideColor"]')?.parent()?.remove();
         jq.find('input[name="measureTemplate.overrideTexture"]')?.parent()?.remove();
         jq.find('input[name="measureTemplate.customColor"]')?.parent()?.parent()?.remove();
@@ -48,7 +53,7 @@ const injectTemplateSelector = async (sheet, jq, _options) => {
     }
 }
 
-const turnOffTemplateSelector = (sheet, ...args) => {
+const destroyTemplateSelector = (sheet, ...args) => {
     if (typeof sheet?._templateSettings?.$destroy === 'function') {
         sheet._templateSettings.$destroy();
     }
@@ -56,5 +61,5 @@ const turnOffTemplateSelector = (sheet, ...args) => {
 
 export {
     injectTemplateSelector,
-    turnOffTemplateSelector,
+    destroyTemplateSelector,
 }
