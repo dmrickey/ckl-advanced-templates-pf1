@@ -12,7 +12,7 @@ import {
  * @param {*} jq jquery
  * @param {*} _options unused
  */
-const injectTemplateSelector = async (sheet, jq, _options) => {
+const injectTemplateSelector = async (sheet, [html], _options) => {
     if (typeof sheet?._templateSettings?.$destroy === 'function') {
         sheet._templateSettings.$destroy();
     }
@@ -20,7 +20,7 @@ const injectTemplateSelector = async (sheet, jq, _options) => {
     const action = sheet.action;
     const type = action?.data.measureTemplate?.type;
 
-    const templateGroupOptions = jq[0].querySelector('div[data-tab=misc]');
+    const templateGroupOptions = html.querySelector('div[data-tab=misc]');
 
     if (templateGroupOptions) {
         const injected = (() => {
@@ -43,12 +43,12 @@ const injectTemplateSelector = async (sheet, jq, _options) => {
 
         // remove system's default color and texture options since I replace them within my mod
         // simply hiding causes multiple inputs with the same `name` property and breaks the data
-        jq.find('input[name="measureTemplate.overrideColor"]')?.parent()?.remove();
-        jq.find('input[name="measureTemplate.overrideTexture"]')?.parent()?.remove();
-        jq.find('input[name="measureTemplate.customColor"]')?.parent()?.parent()?.remove();
-        jq.find('input[name="measureTemplate.customTexture"]')?.parent()?.parent()?.remove();
+        html.querySelector('input[name="measureTemplate.overrideColor"]')?.parentElement?.remove();
+        html.querySelector('input[name="measureTemplate.overrideTexture"]')?.parentElement?.remove();
+        html.querySelector('input[name="measureTemplate.customColor"]')?.parentElement?.parentElement?.remove();
+        html.querySelector('input[name="measureTemplate.customTexture"]')?.parentElement?.parentElement?.remove();
 
-        const sibling = jq[0].querySelector('.tab[data-tab=misc] .form-group.stacked');
+        const sibling = html.querySelector('.tab[data-tab=misc] .form-group.stacked');
         sheet._templateSettings = injected(templateGroupOptions, sibling, action);
     }
 }
