@@ -2,17 +2,16 @@
 
 <script>
     import { CONSTS, MODULE_NAME } from "../consts";
-    import { Settings } from "../settings";
     import { ifDebug, localize } from "../scripts/utils";
+    import { Settings } from "../settings";
 
     export let action = void 0;
     export let updates = void 0;
 
     let widthOverrideEnabled;
-    let defaultWidth;
+    const defaultWidth = Settings.defaultLineWidth;
 
     $: {
-        defaultWidth = Settings.defaultLineWidth;
         widthOverrideEnabled = !!updates.data.flags?.[MODULE_NAME]?.[CONSTS.flags.line.widthOverride];
     }
 
@@ -52,7 +51,7 @@
                 <input
                     type="radio"
                     bind:group={updates.data.flags[MODULE_NAME][CONSTS.flags.placementType]}
-                    name="placements"
+                    name={`flags.${MODULE_NAME}.${CONSTS.flags.placementType}`}
                     value={placement.value}
                 />
                 {placement.label}
@@ -68,7 +67,11 @@
 <div class="optional-border">
     <label class="checkbox">
         {localize("templates.line.overrideWidth")}
-        <input type="checkbox" bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.line.widthOverride]} />
+        <input
+            type="checkbox"
+            bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.line.widthOverride]}
+            name={`flags.${MODULE_NAME}.${CONSTS.flags.line.widthOverride}`}
+        />
     </label>
 
     <div class="form-group">
@@ -79,6 +82,7 @@
                     id="widthOverride"
                     type="text"
                     bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.line.width]}
+                    name={`flags.${MODULE_NAME}.${CONSTS.flags.line.width}`}
                 />
             </div>
         {:else}

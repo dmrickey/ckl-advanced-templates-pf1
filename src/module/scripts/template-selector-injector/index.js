@@ -37,14 +37,14 @@ const injectTemplateSelector = async (sheet, jq, _options) => {
             return;
         }
 
-        const sibling = jq[0].querySelector('input[name="measureTemplate.customColor"]')?.parentElement.parentElement;
-        sheet._templateSettings = injected(templateGroupOptions, sibling, action);
-
         // hide system's default color and texture options
-        jq.find('input[name="measureTemplate.overrideColor"]')?.parent()?.hide();
-        jq.find('input[name="measureTemplate.overrideTexture"]')?.parent()?.hide();
-        jq.find('input[name="measureTemplate.customColor"]')?.parent()?.parent()?.hide();
-        jq.find('input[name="measureTemplate.customTexture"]')?.parent()?.parent()?.hide();
+        jq.find('input[name="measureTemplate.overrideColor"]')?.parent()?.remove();
+        jq.find('input[name="measureTemplate.overrideTexture"]')?.parent()?.remove();
+        jq.find('input[name="measureTemplate.customColor"]')?.parent()?.parent()?.remove();
+        jq.find('input[name="measureTemplate.customTexture"]')?.parent()?.parent()?.remove();
+
+        const sibling = jq[0].querySelector('.tab[data-tab=misc] .form-group.stacked');
+        sheet._templateSettings = injected(templateGroupOptions, sibling, action);
     }
 }
 

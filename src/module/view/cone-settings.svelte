@@ -37,7 +37,7 @@
                 <input
                     type="radio"
                     bind:group={updates.data.flags[MODULE_NAME][CONSTS.flags.placementType]}
-                    name="placements"
+                    name={`flags.${MODULE_NAME}.${CONSTS.flags.placementType}`}
                     value={placement.value}
                 />
                 {placement.label}

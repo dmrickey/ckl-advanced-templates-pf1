@@ -59,7 +59,7 @@
                 <input
                     type="radio"
                     bind:group={updates.data.flags[MODULE_NAME][CONSTS.flags.placementType]}
-                    name="placements"
+                    name={`flags.${MODULE_NAME}.${CONSTS.flags.placementType}`}
                     value={placement.value}
                 />
                 {placement.label}
@@ -76,7 +76,7 @@
                 <input
                     type="radio"
                     bind:group={updates.data.flags[MODULE_NAME][CONSTS.flags.circle.areaType]}
-                    name="areaTypes"
+                    name={`flags.${MODULE_NAME}.${CONSTS.flags.circle.areaType}`}
                     value={areaType.value}
                 />
                 {areaType.label}
@@ -90,7 +90,11 @@
 <div class="form-group stacked no-border">
     <!-- ignore range -->
     <label class="checkbox">
-        <input type="checkbox" bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.ignoreRange]} />
+        <input
+            type="checkbox"
+            bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.ignoreRange]}
+            name={`flags.${MODULE_NAME}.${CONSTS.flags.ignoreRange}`}
+        />
         {localize("templates.ignoreRange")}
     </label>
 
@@ -100,6 +104,7 @@
             type="checkbox"
             disabled={updates.data.flags[MODULE_NAME][CONSTS.flags.placementType] !== CONSTS.placement.circle.self}
             bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.circle.movesWithToken]}
+            name={`flags.${MODULE_NAME}.${CONSTS.flags.circle.movesWithToken}`}
         />
         {localize("templates.circle.placement.attachToToken")}
     </label>

@@ -1,8 +1,8 @@
 <svelte:options accessors={true} />
 
 <script>
-    import { CONSTS, MODULE_NAME } from "../consts";
     import { clamp, ifDebug, localize, localizeFull } from "../scripts/utils";
+    import { CONSTS, MODULE_NAME } from "../consts";
 
     export let updates;
 
@@ -13,6 +13,10 @@
     const textureScaleMin = 0.1;
     const textureScaleMax = 10;
 
+    // const colorOverrideEnabled = updates.data.measureTemplate.overrideColor;
+    // const durationInputEnabled =
+    //     updates.data.flags[MODULE_NAME][CONSTS.flags.deletion] === CONSTS.deletionOptions.timespan;
+    // const textureOverrideEnabled = updates.data.measureTemplate.overrideTexture;
     let colorOverrideEnabled;
     let durationInputEnabled;
     let textureOverrideEnabled;
@@ -112,7 +116,11 @@
 <div class="optional-border">
     <label class="checkbox right-me">
         {localize("templates.textureOverride")}
-        <input type="checkbox" bind:checked={updates.data.measureTemplate.overrideTexture} />
+        <input
+            type="checkbox"
+            bind:checked={updates.data.measureTemplate.overrideTexture}
+            name="measureTemplate.overrideTexture"
+        />
     </label>
 
     {#if updates.data.measureTemplate.overrideTexture}
@@ -125,6 +133,7 @@
                     type="text"
                     disabled={!textureOverrideEnabled}
                     id="customTexture"
+                    name="measureTemplate.customTexture"
                     bind:value={updates.data.measureTemplate.customTexture}
                 />
                 <button
@@ -149,6 +158,7 @@
                     max={textureAlphaMax}
                     min={textureAlphaMin}
                     bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha]}
+                    name={`flags.${MODULE_NAME}.${CONSTS.flags.textureAlpha}`}
                     on:input={clampTextureAlpha}
                 />
                 <input
@@ -158,6 +168,7 @@
                     min={textureAlphaMin}
                     step="0.05"
                     bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha]}
+                    data-edit={`flags.${MODULE_NAME}.${CONSTS.flags.textureAlpha}`}
                     on:input={clampTextureAlpha}
                 />
             </div>
@@ -174,6 +185,7 @@
                     max={textureScaleMax}
                     min={textureScaleMin}
                     bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureScale]}
+                    name={`flags.${MODULE_NAME}.${CONSTS.flags.textureScale}`}
                     on:input={clampTextureScale}
                 />
                 <input
@@ -183,6 +195,7 @@
                     min={textureScaleMin}
                     step="0.1"
                     bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureScale]}
+                    data-edit={`flags.${MODULE_NAME}.${CONSTS.flags.textureScale}`}
                     on:input={clampTextureScale}
                 />
             </div>
@@ -199,18 +212,28 @@
 <div class="optional-border">
     <label class="checkbox right-me">
         {localizeFull("PF1.OverrideColor")}
-        <input type="checkbox" bind:checked={updates.data.measureTemplate.overrideColor} />
+        <input
+            type="checkbox"
+            bind:checked={updates.data.measureTemplate.overrideColor}
+            name="measureTemplate.overrideColor"
+        />
     </label>
     <div class="form-group">
         {#if colorOverrideEnabled}
             <label for="colorOverride">{localizeFull("PF1.CustomColor")}</label>
             <div class="form-fields">
-                <input id="colorOverride" type="text" bind:value={updates.data.measureTemplate.customColor} />
+                <input
+                    id="colorOverride"
+                    type="text"
+                    bind:value={updates.data.measureTemplate.customColor}
+                    name="measureTemplate.customColor"
+                />
                 <div class="color-input-border">
                     <input
                         style="opacity: {updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}"
                         type="color"
                         bind:value={updates.data.measureTemplate.customColor}
+                        data-edit="measureTemplate.customColor"
                     />
                 </div>
             </div>
@@ -240,6 +263,7 @@
                 max={colorAlphaMax}
                 min={colorAlphaMin}
                 bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}
+                name={`flags.${MODULE_NAME}.${CONSTS.flags.colorAlpha}`}
                 on:input={clampColorAlpha}
             />
             <input
@@ -248,6 +272,7 @@
                 min={colorAlphaMin}
                 step="0.05"
                 bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}
+                data-edit={`flags.${MODULE_NAME}.${CONSTS.flags.colorAlpha}`}
             />
         </div>
     </div>
@@ -262,7 +287,7 @@
                 <input
                     type="radio"
                     bind:group={updates.data.flags[MODULE_NAME][CONSTS.flags.deletion]}
-                    name="deletionOptions"
+                    name={`flags.${MODULE_NAME}.${CONSTS.flags.deletion}`}
                     value={option.value}
                 />
                 {option.label}
@@ -278,10 +303,12 @@
             disabled={!durationInputEnabled}
             id="deletionDurationUnits"
             bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.deletionUnit]}
+            name={`flags.${MODULE_NAME}.${CONSTS.flags.deletionUnit}`}
         />
         <select
             disabled={!durationInputEnabled}
             bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.deletionInterval]}
+            name={`flags.${MODULE_NAME}.${CONSTS.flags.deletionInterval}`}
         >
             {#each deletionIntervalOptions as interval}
                 <option value={interval.value}>
@@ -295,12 +322,20 @@
 <div class="form-group stacked no-border">
     <!-- hide outline -->
     <label class="checkbox">
-        <input type="checkbox" bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.hideOutline]} />
+        <input
+            type="checkbox"
+            bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.hideOutline]}
+            name={`flags.${MODULE_NAME}.${CONSTS.flags.hideOutline}`}
+        />
         {localize("templates.hideOutline.label")}
     </label>
 </div>
 
 <style lang="scss">
+    input[type="color"][data-edit] {
+        margin: unset;
+    }
+
     .form-group.radio-col-3 {
         .form-fields {
             display: grid;
@@ -326,6 +361,7 @@
     .optional-border {
         border: 2px solid rgb(127, 143, 153);
         border-radius: 6px;
+        flex: 0;
         padding: 0 0.5rem;
     }
 
