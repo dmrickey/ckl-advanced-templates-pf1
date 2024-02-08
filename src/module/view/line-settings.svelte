@@ -107,6 +107,7 @@
     .optional-border {
         border: 2px solid rgb(127, 143, 153);
         border-radius: 6px;
+        flex: 0;
         padding: 0 0.5rem;
     }
 </style>
