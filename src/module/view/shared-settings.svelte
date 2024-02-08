@@ -1,8 +1,8 @@
 <svelte:options accessors={true} />
 
 <script>
-    import { CONSTS, MODULE_NAME } from "../consts";
     import { clamp, ifDebug, localize, localizeFull } from "../scripts/utils";
+    import { CONSTS, MODULE_NAME } from "../consts";
 
     export let updates;
 
@@ -104,107 +104,132 @@
 </script>
 
 <!-- override texture (same as vanilla plus scale/alpha) -->
-<div class="form-group right-me">
-    <label class="checkbox">
-        {localizeFull("PF1.OverrideTexture")}
-        <input type="checkbox" bind:checked={updates.data.measureTemplate.overrideTexture} />
-    </label>
+<div class="form-group">
+    <label for>{localize("templates.textureGroupLabel")}</label>
 </div>
 
 <!-- override texture options -->
 <div class="optional-border">
-    <div class="form-group">
-        <label for="customTexture">
-            {localizeFull("PF1.CustomTexture")}
-        </label>
-        <div class="form-fields">
-            <input
-                type="text"
-                disabled={!textureOverrideEnabled}
-                id="customTexture"
-                bind:value={updates.data.measureTemplate.customTexture}
-            />
-            <button
-                class="file-picker-button"
-                disabled={!textureOverrideEnabled}
-                on:click|preventDefault={selectTexture}
-            >
-                <i class="fas fa-file-import fa-fw" />
-            </button>
-        </div>
-    </div>
+    <label class="checkbox right-me">
+        {localize("templates.textureOverride")}
+        <input
+            type="checkbox"
+            bind:checked={updates.data.measureTemplate.overrideTexture}
+            name="measureTemplate.overrideTexture"
+        />
+    </label>
 
-    <!-- texture alpha override (default .5) (.1 to 1)-->
-    <div class="form-group">
-        <label for="textureAlpha">{localize("templates.textureAlpha.label")}</label>
-        <div class="form-fields">
-            <input
-                id="textureAlpha"
-                type="number"
-                disabled={!textureOverrideEnabled}
-                max={textureAlphaMax}
-                min={textureAlphaMin}
-                bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha]}
-                on:input={clampTextureAlpha}
-            />
-            <input
-                type="range"
-                disabled={!textureOverrideEnabled}
-                max={textureAlphaMax}
-                min={textureAlphaMin}
-                step="0.05"
-                bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha]}
-                on:input={clampTextureAlpha}
-            />
+    {#if updates.data.measureTemplate.overrideTexture}
+        <div class="form-group">
+            <label for="customTexture">
+                {localizeFull("PF1.CustomTexture")}
+            </label>
+            <div class="form-fields">
+                <input
+                    type="text"
+                    disabled={!textureOverrideEnabled}
+                    id="customTexture"
+                    name="measureTemplate.customTexture"
+                    bind:value={updates.data.measureTemplate.customTexture}
+                />
+                <button
+                    class="file-picker-button"
+                    disabled={!textureOverrideEnabled}
+                    type="button"
+                    on:click|preventDefault={selectTexture}
+                >
+                    <i class="fas fa-file-import fa-fw" />
+                </button>
+            </div>
         </div>
-    </div>
 
-    <!-- texture scale override (default 1) (.1 to 10)-->
-    <div class="form-group">
-        <label for="textureScale">{localize("templates.textureScale.label")}</label>
-        <div class="form-fields">
-            <input
-                type="number"
-                id="textureScale"
-                disabled={!textureOverrideEnabled}
-                max={textureScaleMax}
-                min={textureScaleMin}
-                bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureScale]}
-                on:input={clampTextureScale}
-            />
-            <input
-                type="range"
-                disabled={!textureOverrideEnabled}
-                max={textureScaleMax}
-                min={textureScaleMin}
-                step="0.1"
-                bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureScale]}
-                on:input={clampTextureScale}
-            />
+        <!-- texture alpha override (default .5) (.1 to 1)-->
+        <div class="form-group">
+            <label for="textureAlpha">{localize("templates.textureAlpha.label")}</label>
+            <div class="form-fields">
+                <input
+                    id="textureAlpha"
+                    type="number"
+                    disabled={!textureOverrideEnabled}
+                    max={textureAlphaMax}
+                    min={textureAlphaMin}
+                    bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha]}
+                    name={`flags.${MODULE_NAME}.${CONSTS.flags.textureAlpha}`}
+                    on:input={clampTextureAlpha}
+                />
+                <input
+                    type="range"
+                    disabled={!textureOverrideEnabled}
+                    max={textureAlphaMax}
+                    min={textureAlphaMin}
+                    step="0.05"
+                    bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureAlpha]}
+                    data-edit={`flags.${MODULE_NAME}.${CONSTS.flags.textureAlpha}`}
+                    on:input={clampTextureAlpha}
+                />
+            </div>
         </div>
-    </div>
+
+        <!-- texture scale override (default 1) (.1 to 10)-->
+        <div class="form-group">
+            <label for="textureScale">{localize("templates.textureScale.label")}</label>
+            <div class="form-fields">
+                <input
+                    type="number"
+                    id="textureScale"
+                    disabled={!textureOverrideEnabled}
+                    max={textureScaleMax}
+                    min={textureScaleMin}
+                    bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureScale]}
+                    name={`flags.${MODULE_NAME}.${CONSTS.flags.textureScale}`}
+                    on:input={clampTextureScale}
+                />
+                <input
+                    type="range"
+                    disabled={!textureOverrideEnabled}
+                    max={textureScaleMax}
+                    min={textureScaleMin}
+                    step="0.1"
+                    bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.textureScale]}
+                    data-edit={`flags.${MODULE_NAME}.${CONSTS.flags.textureScale}`}
+                    on:input={clampTextureScale}
+                />
+            </div>
+        </div>
+    {/if}
 </div>
 
 <!-- override color (same as vanilla) -->
-<div class="form-group right-me">
-    <label class="checkbox">
-        {localizeFull("PF1.OverrideColor")}
-        <input type="checkbox" bind:checked={updates.data.measureTemplate.overrideColor} />
-    </label>
+<div class="form-group">
+    <label for>{localize("templates.colorGroupLabel")}</label>
 </div>
 
 <!-- override color options (same as vanilla) -->
 <div class="optional-border">
+    <label class="checkbox right-me">
+        {localizeFull("PF1.OverrideColor")}
+        <input
+            type="checkbox"
+            bind:checked={updates.data.measureTemplate.overrideColor}
+            name="measureTemplate.overrideColor"
+        />
+    </label>
     <div class="form-group">
         {#if colorOverrideEnabled}
             <label for="colorOverride">{localizeFull("PF1.CustomColor")}</label>
             <div class="form-fields">
-                <input id="colorOverride" type="text" bind:value={updates.data.measureTemplate.customColor} />
+                <input
+                    id="colorOverride"
+                    type="text"
+                    bind:value={updates.data.measureTemplate.customColor}
+                    name="measureTemplate.customColor"
+                />
                 <div class="color-input-border">
                     <input
                         style="opacity: {updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}"
                         type="color"
                         bind:value={updates.data.measureTemplate.customColor}
+                        data-edit="measureTemplate.customColor"
                     />
                 </div>
             </div>
@@ -223,56 +248,63 @@
             </div>
         {/if}
     </div>
-</div>
 
-<!-- color alpha override (default .5) (0 to 1) -->
-<div class="form-group no-border">
-    <label for="colorAlpha">{localize("templates.colorAlpha.label")}</label>
-    <div class="form-fields">
-        <input
-            type="number"
-            id="colorAlpha"
-            max={colorAlphaMax}
-            min={colorAlphaMin}
-            bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}
-            on:input={clampColorAlpha}
-        />
-        <input
-            type="range"
-            max={colorAlphaMax}
-            min={colorAlphaMin}
-            step="0.05"
-            bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}
-        />
+    <!-- color alpha override (default .5) (0 to 1) -->
+    <div class="form-group">
+        <label for="colorAlpha">{localize("templates.colorAlpha.label")}</label>
+        <div class="form-fields">
+            <input
+                type="number"
+                id="colorAlpha"
+                max={colorAlphaMax}
+                min={colorAlphaMin}
+                bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}
+                name={`flags.${MODULE_NAME}.${CONSTS.flags.colorAlpha}`}
+                on:input={clampColorAlpha}
+            />
+            <input
+                type="range"
+                max={colorAlphaMax}
+                min={colorAlphaMin}
+                step="0.05"
+                bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.colorAlpha]}
+                data-edit={`flags.${MODULE_NAME}.${CONSTS.flags.colorAlpha}`}
+            />
+        </div>
     </div>
 </div>
 
 <!-- template deletion options -->
-<div class="form-group no-border unflex">
+<div class="form-group radio-col-3">
     <label for="deleteOptions">{localize("templates.deletion.label")}</label>
-    <div id="deleteOptions" class="form-group row">
+    <div id="deleteOptions" class="form-fields">
         {#each deletionOptions as option}
             <label class="checkbox">
                 <input
                     type="radio"
                     bind:group={updates.data.flags[MODULE_NAME][CONSTS.flags.deletion]}
-                    name="deletionOptions"
+                    name={`flags.${MODULE_NAME}.${CONSTS.flags.deletion}`}
                     value={option.value}
                 />
                 {option.label}
             </label>
         {/each}
     </div>
-    <div class="form-group row">
+</div>
+<div class="form-group input-select">
+    <label for="durationInput"></label>
+    <div id="deletionInput" class="form-fields">
         <input
             type="text"
             disabled={!durationInputEnabled}
             id="deletionDurationUnits"
             bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.deletionUnit]}
+            name={`flags.${MODULE_NAME}.${CONSTS.flags.deletionUnit}`}
         />
         <select
             disabled={!durationInputEnabled}
             bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.deletionInterval]}
+            name={`flags.${MODULE_NAME}.${CONSTS.flags.deletionInterval}`}
         >
             {#each deletionIntervalOptions as interval}
                 <option value={interval.value}>
@@ -286,19 +318,25 @@
 <div class="form-group stacked no-border">
     <!-- hide outline -->
     <label class="checkbox">
-        <input type="checkbox" bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.hideOutline]} />
+        <input
+            type="checkbox"
+            bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.hideOutline]}
+            name={`flags.${MODULE_NAME}.${CONSTS.flags.hideOutline}`}
+        />
         {localize("templates.hideOutline.label")}
     </label>
 </div>
 
 <style lang="scss">
-    .unflex {
-        display: block;
+    input[type="color"][data-edit] {
+        margin: unset;
     }
 
-    .form-group.row {
-        display: flex;
-        flex-direction: row;
+    .form-group.radio-col-3 {
+        .form-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+        }
     }
 
     .file-picker-button {
@@ -319,6 +357,7 @@
     .optional-border {
         border: 2px solid rgb(127, 143, 153);
         border-radius: 6px;
+        flex: 0;
         padding: 0 0.5rem;
     }
 
@@ -329,7 +368,8 @@
     }
 
     .right-me {
-        align-self: flex-end;
+        align-self: flex-end !important;
+        text-align: end !important;
     }
 
     input:disabled:not([type="range"]),

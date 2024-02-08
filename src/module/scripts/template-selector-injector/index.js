@@ -4,49 +4,62 @@ import {
     showLineSettings,
     showRectSettings
 } from '../../view/show-template-settings';
-import { localize } from '../utils';
-import template from './template.js';
 
 /**
  * Adds advanced template options button to abilities with configured templates (that are supported)
  *
  * @param {*} sheet The actor sheet
- *
- * @param {*} jq jquery
- *
+ * @param {[HTMLElement]} jq jquery
  * @param {*} _options unused
  */
-export default async function (sheet, jq, _options) {
+const injectTemplateSelector = async (sheet, [html], _options) => {
+    if (typeof sheet?._templateSettings?.$destroy === 'function') {
+        sheet._templateSettings.$destroy();
+    }
+
     const action = sheet.action;
     const type = action?.data.measureTemplate?.type;
 
-    const templateGroupOptions = jq[0].querySelector('input[name="measureTemplate.size"]')?.parentElement.parentElement;
+    const templateGroupOptions = html.querySelector('div[data-tab=misc]');
 
     if (templateGroupOptions) {
-        const div = document.createElement('div');
-        div.innerHTML = template;
+        const injected = (() => {
+            switch (type) {
+                case 'circle':
+                    return showCircleSettings;
+                case 'cone':
+                    return showConeSettings;
+                case 'ray':
+                case 'line':
+                    return showLineSettings;
+                case 'rect':
+                    return showRectSettings;
+            }
+        })();
 
-        const button = div.querySelector('button');
-        button.innerText = localize('templates.chooseOptions');
-        button.addEventListener('click',
-            async () => {
-                switch (type) {
-                    case 'circle':
-                        showCircleSettings(action);
-                        break;
-                    case 'cone':
-                        showConeSettings(action);
-                        break;
-                    case 'ray':
-                    case 'line':
-                        showLineSettings(action);
-                        break;
-                    case 'rect':
-                        showRectSettings(action);
-                        break;
-                }
-            });
+        if (!injected) {
+            return;
+        }
 
-        templateGroupOptions.after(div.firstElementChild);
+        // remove system's default color and texture options since I replace them within my mod
+        // simply hiding causes multiple inputs with the same `name` property and breaks the data
+        html.querySelector('input[name="measureTemplate.overrideColor"]')?.parentElement?.remove();
+        html.querySelector('input[name="measureTemplate.overrideTexture"]')?.parentElement?.remove();
+        html.querySelector('input[name="measureTemplate.customColor"]')?.parentElement?.parentElement?.remove();
+        html.querySelector('input[name="measureTemplate.customTexture"]')?.parentElement?.parentElement?.remove();
+
+        const sibling = html.querySelector('.tab[data-tab=misc] .form-group.stacked');
+        sheet._templateSettings = injected(templateGroupOptions, sibling, action);
     }
+}
+
+const destroyTemplateSelector = (sheet, ...args) => {
+    if (typeof sheet?._templateSettings?.$destroy === 'function') {
+        sheet._templateSettings.$destroy();
+    }
+}
+
+export {
+    injectTemplateSelector,
+    destroyTemplateSelector,
 }

@@ -2,17 +2,16 @@
 
 <script>
     import { CONSTS, MODULE_NAME } from "../consts";
-    import { Settings } from "../settings";
     import { ifDebug, localize } from "../scripts/utils";
+    import { Settings } from "../settings";
 
     export let action = void 0;
     export let updates = void 0;
 
     let widthOverrideEnabled;
-    let defaultWidth;
+    const defaultWidth = Settings.defaultLineWidth;
 
     $: {
-        defaultWidth = Settings.defaultLineWidth;
         widthOverrideEnabled = !!updates.data.flags?.[MODULE_NAME]?.[CONSTS.flags.line.widthOverride];
     }
 
@@ -44,76 +43,71 @@
     ifDebug(() => console.log("Opening line settings for:", updates));
 </script>
 
-<form class="pf1" novalidate>
-    <div class="form-group column">
+<div class="form-group radio-col-3">
+    <label for>{localize("templates.placement.selection.label")}</label>
+    <div class="form-fields">
         {#each placements as placement}
             <label class="checkbox">
                 <input
                     type="radio"
                     bind:group={updates.data.flags[MODULE_NAME][CONSTS.flags.placementType]}
-                    name="placements"
+                    name={`flags.${MODULE_NAME}.${CONSTS.flags.placementType}`}
                     value={placement.value}
                 />
                 {placement.label}
             </label>
         {/each}
     </div>
+</div>
 
-    <!-- override color (same as vanilla) -->
-    <div class="form-group right-me">
-        <label class="checkbox">
-            {localize("templates.line.overrideWidth")}
-            <input type="checkbox" bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.line.widthOverride]} />
-        </label>
+<!-- override line width -->
+<div class="form-group">
+    <label for>{localize("templates.line.widthLabel")}</label>
+</div>
+<div class="optional-border">
+    <label class="checkbox">
+        {localize("templates.line.overrideWidth")}
+        <input
+            type="checkbox"
+            bind:checked={updates.data.flags[MODULE_NAME][CONSTS.flags.line.widthOverride]}
+            name={`flags.${MODULE_NAME}.${CONSTS.flags.line.widthOverride}`}
+        />
+    </label>
+
+    <div class="form-group">
+        {#if widthOverrideEnabled}
+            <label for="widthOverride">{localize("templates.line.widthOverride")}</label>
+            <div class="form-fields">
+                <input
+                    id="widthOverride"
+                    type="text"
+                    bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.line.width]}
+                    name={`flags.${MODULE_NAME}.${CONSTS.flags.line.width}`}
+                />
+            </div>
+        {:else}
+            <label for="widthOverride">{localize("templates.line.default")}</label>
+            <div class="form-fields">
+                <input disabled type="text" value={defaultWidth} />
+            </div>
+        {/if}
     </div>
+</div>
 
-    <!-- override line width -->
-    <div class="optional-border">
-        <div class="form-group">
-            {#if widthOverrideEnabled}
-                <label for="widthOverride">{localize("templates.line.widthOverride")}</label>
-                <div class="form-fields">
-                    <input
-                        id="widthOverride"
-                        type="text"
-                        bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.line.width]}
-                    />
-                </div>
-            {:else}
-                <label for="widthOverride">{localize("templates.line.default")}</label>
-                <div class="form-fields">
-                    <input disabled type="text" value={defaultWidth} />
-                </div>
-            {/if}
-        </div>
-    </div>
-
-    <slot />
-</form>
+<slot />
 
 <style lang="scss">
-    .form-group label {
-        max-width: 35%;
-    }
-
-    .column {
-        display: flex;
-        flex-direction: column;
-        text-align: center;
-    }
-
-    form {
-        display: flex;
-        flex-direction: column;
+    .form-group.radio-col-3 {
+        .form-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+        }
     }
 
     .optional-border {
         border: 2px solid rgb(127, 143, 153);
         border-radius: 6px;
+        flex: 0;
         padding: 0 0.5rem;
-    }
-
-    .right-me {
-        justify-content: flex-end;
     }
 </style>
