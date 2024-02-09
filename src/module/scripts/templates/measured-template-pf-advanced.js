@@ -937,17 +937,15 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
 
         if (!this.id || !this.shape) return [];
 
-        /** BEGIN MY CODE */
         if (this.shouldOverrideTokenEmanation) {
             const { token, sizeSquares } = this.tokenSizeSquares;
             if (token && sizeSquares >= 2) {
                 return this.#getEmanationHighlightSquares();
             }
         }
-        /** END MY CODE */
 
         const templateType = this.document.t;
-        if (!game.settings.get("pf1", "measureStyle") || !["circle", "cone", "ray"].includes(templateType)) return [];
+        if (!game.settings.get("pf1", "measureStyle") || !["circle", "cone", "ray", "rect", "line"].includes(templateType)) return [];
 
         const grid = canvas.grid;
         // Size of each cell in pixels
@@ -1060,66 +1058,84 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
 
             return result;
         }
+        else if (templateType === "circle" || templateType === "cone") {
+            // Get number of rows and columns
+            const nr = Math.ceil((this.document.distance * 1.5) / gridSizeUnits / (gridSizePx / grid.h));
+            const nc = Math.ceil((this.document.distance * 1.5) / gridSizeUnits / (gridSizePx / grid.w));
 
-        // Get number of rows and columns
-        const nr = Math.ceil((this.document.distance * 1.5) / gridSizeUnits / (gridSizePx / grid.h));
-        const nc = Math.ceil((this.document.distance * 1.5) / gridSizeUnits / (gridSizePx / grid.w));
+            // Get the center of the grid position occupied by the template
+            const { x, y } = this.document;
 
-        // Get the center of the grid position occupied by the template
-        const { x, y } = this.document;
+            const [cx, cy] = grid.getCenter(x, y);
+            const [col0, row0] = grid.grid.getGridPositionFromPixels(cx, cy);
+            const minAngle = Math.normalizeDegrees(templateDirection - templateAngle / 2);
+            const maxAngle = Math.normalizeDegrees(templateDirection + templateAngle / 2);
 
-        const [cx, cy] = grid.getCenter(x, y);
-        const [col0, row0] = grid.grid.getGridPositionFromPixels(cx, cy);
-        const minAngle = Math.normalizeDegrees(templateDirection - templateAngle / 2);
-        const maxAngle = Math.normalizeDegrees(templateDirection + templateAngle / 2);
+            // Origin offset multiplier
+            const offsetMult = { x: 0, y: 0 };
+            // Offset measurement for cones
+            // Offset is to ensure that cones only start measuring from cell borders, as in https://www.d20pfsrd.com/magic/#Aiming_a_Spell
+            if (templateType === "cone") {
+                // Degrees anticlockwise from pointing right. In 45-degree increments from 0 to 360
+                const dir = (templateDirection >= 0 ? 360 - templateDirection : -templateDirection) % 360;
+                // If we're not on a border for X, offset by 0.5 or -0.5 to the border of the cell in the direction we're looking on X axis
+                // /2 turns from 1/0/-1 to 0.5/0/-0.5
+                offsetMult.x = x % gridSizePxBase != 0 ? Math.sign(Math.round(Math.cos(this.degToRad(dir)))) / 2 : 0;
+                // Same for Y, but cos Y goes down on screens, we invert
+                offsetMult.y = y % gridSizePxBase != 0 ? -Math.sign(Math.round(Math.sin(this.degToRad(dir)))) / 2 : 0;
+            }
 
-        // Origin offset multiplier
-        const offsetMult = { x: 0, y: 0 };
-        // Offset measurement for cones
-        // Offset is to ensure that cones only start measuring from cell borders, as in https://www.d20pfsrd.com/magic/#Aiming_a_Spell
-        if (templateType === "cone") {
-            // Degrees anticlockwise from pointing right. In 45-degree increments from 0 to 360
-            const dir = (templateDirection >= 0 ? 360 - templateDirection : -templateDirection) % 360;
-            // If we're not on a border for X, offset by 0.5 or -0.5 to the border of the cell in the direction we're looking on X axis
-            // /2 turns from 1/0/-1 to 0.5/0/-0.5
-            offsetMult.x = x % gridSizePxBase != 0 ? Math.sign(Math.round(Math.cos(this.degToRad(dir)))) / 2 : 0;
-            // Same for Y, but cos Y goes down on screens, we invert
-            offsetMult.y = y % gridSizePxBase != 0 ? -Math.sign(Math.round(Math.sin(this.degToRad(dir)))) / 2 : 0;
-        }
+            const result = [];
+            for (let a = -nc; a < nc; a++) {
+                for (let b = -nr; b < nr; b++) {
+                    // Position of cell's top-left corner, in pixels
+                    const [gx, gy] = canvas.grid.grid.getPixelsFromGridPosition(col0 + a, row0 + b);
+                    // Position of cell's center, in pixels
+                    const [cellCenterX, cellCenterY] = [gx + gridSizePx * 0.5, gy + gridSizePx * 0.5];
 
-        const result = [];
-        for (let a = -nc; a < nc; a++) {
-            for (let b = -nr; b < nr; b++) {
-                // Position of cell's top-left corner, in pixels
-                const [gx, gy] = canvas.grid.grid.getPixelsFromGridPosition(col0 + a, row0 + b);
-                // Position of cell's center, in pixels
-                const [cellCenterX, cellCenterY] = [gx + gridSizePx * 0.5, gy + gridSizePx * 0.5];
+                    // Determine point of origin
+                    const origin = {
+                        x: x + offsetMult.x * gridSizePxBase,
+                        y: y + offsetMult.y * gridSizePxBase,
+                    };
 
-                // Determine point of origin
-                const origin = {
-                    x: x + offsetMult.x * gridSizePxBase,
-                    y: y + offsetMult.y * gridSizePxBase,
-                };
+                    // Determine point we're measuring the distance to - always in the center of a grid square
+                    const destination = { x: cellCenterX, y: cellCenterY };
 
-                // Determine point we're measuring the distance to - always in the center of a grid square
-                const destination = { x: cellCenterX, y: cellCenterY };
+                    if (templateType === "cone") {
+                        const ray = new Ray(origin, destination);
+                        const rayAngle = Math.normalizeDegrees(ray.angle / (Math.PI / 180));
+                        if (ray.distance > 0 && !this.withinAngle(minAngle, maxAngle, rayAngle)) {
+                            continue;
+                        }
+                    }
 
-                if (templateType === "cone") {
-                    const ray = new Ray(origin, destination);
-                    const rayAngle = Math.normalizeDegrees(ray.angle / (Math.PI / 180));
-                    if (ray.distance > 0 && !this.withinAngle(minAngle, maxAngle, rayAngle)) {
-                        continue;
+                    const distance = pf1.utils.measureDistance(origin, destination);
+                    if (distance <= this.document.distance) {
+                        result.push({ x: gx, y: gy });
                     }
                 }
+            }
 
-                const distance = pf1.utils.measureDistance(origin, destination);
-                if (distance <= this.document.distance) {
+            return result;
+        }
+        else if (templateType === "rect") {
+            const { baseDistance } = this;
+            const { x, y } = this.document;
+            const nr = Math.ceil(baseDistance / gridSizeUnits);
+            const nc = Math.ceil(baseDistance / gridSizeUnits);
+            const result = [];
+            for (let a = 0; a < nc; a++) {
+                for (let b = 0; b < nr; b++) {
+                    // Position of cell's top-left corner, in pixels
+                    const [gx, gy] = [x + a * gridSizePx, y + b * gridSizePx];
                     result.push({ x: gx, y: gy });
                 }
             }
+            return result;
         }
 
-        return result;
+        return [];
     }
 
     /** BEGIN MY CODE */
