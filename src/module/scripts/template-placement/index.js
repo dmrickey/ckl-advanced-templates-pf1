@@ -63,7 +63,7 @@ async function promptMeasureTemplate() {
         templateData.width = flags[CONSTS.flags.line.widthOverride] && flags[CONSTS.flags.line.width] || Settings.defaultLineWidth;
     }
 
-    const windows = Object.values(ui.windows).filter((x) => !!x.minimize && !x._minimized);
+    const windows = Object.values(ui.windows).filter((x) => !!x.minimize && !x._minimized && !isSimpleCalender(x));
     await Promise.all(windows.map((x) => x.minimize()));
 
     const template = await game.modules.get(MODULE_NAME).api.AbilityTemplateAdvanced.fromData(templateData, this.shared.action);
@@ -92,3 +92,5 @@ export default promptMeasureTemplate;
 const _getSize = (shared) => pf1.utils.convertDistance(RollPF.safeTotal(shared.action.data.measureTemplate.size, shared.rollData))[0];
 
 const hasTemplatePermission = () => game.permissions.TEMPLATE_CREATE.includes(game.user.role);
+
+const isSimpleCalender = (x) => !!x.activeCalendar;
