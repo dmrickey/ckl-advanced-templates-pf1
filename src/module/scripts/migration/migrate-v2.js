@@ -2,7 +2,7 @@ import { CONSTS, MODULE_NAME } from "../../consts";
 import { log } from './migration-log';
 
 const migrateItem = async (item) => {
-    for (const action of item.actions) {
+    for (const action of item.actions ?? []) {
         if (action.data.flags?.[MODULE_NAME]) {
             await action.update({
                 flags:
