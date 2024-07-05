@@ -43,10 +43,8 @@ const injectTemplateSelector = async (sheet, [html], _options) => {
 
         // remove system's default color and texture options since I replace them within my mod
         // simply hiding causes multiple inputs with the same `name` property and breaks the data
-        html.querySelector('input[name="measureTemplate.overrideColor"]')?.parentElement?.remove();
-        html.querySelector('input[name="measureTemplate.overrideTexture"]')?.parentElement?.remove();
-        html.querySelector('input[name="measureTemplate.customColor"]')?.parentElement?.parentElement?.remove();
-        html.querySelector('input[name="measureTemplate.customTexture"]')?.parentElement?.parentElement?.remove();
+        html.querySelector('input[name="measureTemplate.color"]')?.parentElement?.parentElement?.remove();
+        html.querySelector('input[name="measureTemplate.texture"]')?.parentElement?.parentElement?.remove();
 
         const sibling = html.querySelector('.tab[data-tab=misc] .form-group.stacked');
         sheet._templateSettings = injected(templateGroupOptions, sibling, action);

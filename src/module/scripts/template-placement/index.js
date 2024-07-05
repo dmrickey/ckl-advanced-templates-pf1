@@ -51,12 +51,8 @@ async function promptMeasureTemplate() {
             },
         },
         user: game.userId,
-        fillColor: this.shared.action.data.measureTemplate?.overrideColor
-            ? this.shared.action.data.measureTemplate.customColor
-            : game.user.color,
-        texture: this.shared.action.data.measureTemplate?.overrideTexture
-            ? this.shared.action.data.measureTemplate.customTexture
-            : null,
+        fillColor: this.shared.action.data.measureTemplate.color || game.user.color,
+        texture: this.shared.action.data.measureTemplate.texture || null,
     };
 
     if (['ray', 'line'].includes(type)) {

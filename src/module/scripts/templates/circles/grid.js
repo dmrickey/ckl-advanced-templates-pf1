@@ -109,8 +109,8 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
                     this._setErrorIconVisibility(isInRange);
 
                     const unit = game.settings.get('pf1', 'units') === 'imperial'
-                        ? localizeFull('PF1.DistFtShort')
-                        : localizeFull('PF1.DistMShort');
+                        ? localizeFull('PF1.Distance.ftShort')
+                        : localizeFull('PF1.Distance.mShort');
                     crosshairs.label = localize('range', { range, unit });
                     if (!isInRange) {
                         crosshairs.label += '\n' + localize('errors.outOfRange');

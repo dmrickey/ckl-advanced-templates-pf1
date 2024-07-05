@@ -86,7 +86,6 @@
             "placement.selection.label": "Targeting Method",
             "placement.useSystem.label": "Use System Default",
             "textureGroupLabel": "Texture Settings",
-            "textureOverride": "Use Custom Texture",
             "textureAlpha.label": "Texture Alpha",
             "textureScale.label": "Texture Scale"
         },
