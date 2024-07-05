@@ -34,15 +34,15 @@
     const deletionIntervalOptions = [
         {
             value: CONSTS.deletionIntervals.rounds,
-            label: localizeFull("PF1.TimeRound"),
+            label: localizeFull("PF1.Time.Period.round.Label"),
         },
         {
             value: CONSTS.deletionIntervals.minutes,
-            label: localizeFull("PF1.TimeMinute"),
+            label: localizeFull("PF1.Time.Period.minute.Label"),
         },
         {
             value: CONSTS.deletionIntervals.hours,
-            label: localizeFull("PF1.TimeHour"),
+            label: localizeFull("PF1.Time.Period.hour.Label"),
         },
     ];
 
