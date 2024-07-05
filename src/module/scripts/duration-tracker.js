@@ -46,12 +46,7 @@ class DurationTracker {
                 return;
             }
 
-            if (
-                // if going from "beginnging of combat" to "first round of combat"
-                !('turn' in changed || 'round' in changed) && changed.round !== 1
-                // if there are no combatants.. double check how this behaves and whether or not I need it
-                || !game.combats.get(combat.id).combatants.size
-            ) {
+            if (changed.round === 1 && changed.turn === 0) {
                 return;
             }
 
