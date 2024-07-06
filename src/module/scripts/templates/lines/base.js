@@ -1,6 +1,9 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
 import { ifDebug, localize } from '../../utils';
 import HintHandler from "../../../view/hint-handler";
+import { wait } from '../../utils/wait';
+import { xhairs } from '../../utils/crosshairs';
+
 export class LineFromTargetBase extends AbilityTemplateAdvanced {
     /** @override */
     async commitPreview() {
@@ -17,7 +20,7 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
 
         const updateTemplateRotation = async (crosshairs) => {
             while (crosshairs.inFlight) {
-                await warpgate.wait(100);
+                await wait(100);
 
                 const ray = new Ray(gridPoint, crosshairs);
                 const direction = Math.toDegrees(ray.angle);
@@ -32,7 +35,7 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
         };
 
         HintHandler.show({ title: localize('line'), hint: localize('hints.restart') });
-        const followCrosshairs = await warpgate.crosshairs.show(
+        const followCrosshairs = await xhairs.show(
             {
                 drawIcon: false,
                 drawOutline: false,

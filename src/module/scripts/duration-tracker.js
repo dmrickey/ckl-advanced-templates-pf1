@@ -1,5 +1,6 @@
 import { CONSTS, MODULE_NAME } from "../consts";
 import { isFirstGM } from "./utils";
+import { queueUpdate } from './utils/queue-update.mjs';
 
 class DurationTracker {
     static isExpired = (templatePlaceable) => {
@@ -38,7 +39,7 @@ class DurationTracker {
                 return;
             }
 
-            warpgate.plugin.queueUpdate(() => DurationTracker.removeExpiredTemplates());
+            queueUpdate(() => DurationTracker.removeExpiredTemplates());
         });
 
         Hooks.on('updateCombat', async (combat, changed) => {
@@ -46,16 +47,11 @@ class DurationTracker {
                 return;
             }
 
-            if (
-                // if going from "beginnging of combat" to "first round of combat"
-                !('turn' in changed || 'round' in changed) && changed.round !== 1
-                // if there are no combatants.. double check how this behaves and whether or not I need it
-                || !game.combats.get(combat.id).combatants.size
-            ) {
+            if (changed.round === 1 && changed.turn === 0) {
                 return;
             }
 
-            warpgate.plugin.queueUpdate(() => DurationTracker.removeExpiredTemplates());
+            queueUpdate(() => DurationTracker.removeExpiredTemplates());
         });
 
         Hooks.on('updateWorldTime', async (_worldTime, delta) => {
@@ -64,7 +60,7 @@ class DurationTracker {
             }
 
             if (delta) {
-                warpgate.plugin.queueUpdate(() => DurationTracker.removeExpiredTemplates());
+                queueUpdate(() => DurationTracker.removeExpiredTemplates());
             }
         });
     }

@@ -5,10 +5,8 @@ export const prepareData = (action) => {
     return {
         data: {
             measureTemplate: {
-                customColor: action.data.measureTemplate.customColor || game.user.color,
-                customTexture: action.data.measureTemplate.customTexture,
-                overrideColor: action.data.measureTemplate.overrideColor,
-                overrideTexture: action.data.measureTemplate.overrideTexture,
+                color: action.data.measureTemplate.color,
+                texture: action.data.measureTemplate.texture,
             },
             flags: {
                 [MODULE_NAME]: {

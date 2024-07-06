@@ -1,5 +1,7 @@
 import { GridSquare } from '../../models/grid-square';
 import { ifDebug, localize } from '../../utils';
+import { xhairs } from '../../utils/crosshairs';
+import { wait } from '../../utils/wait';
 import { LineFromTargetBase } from './base';
 
 export class LineFromSelf extends LineFromTargetBase {
@@ -28,7 +30,7 @@ export class LineFromSelf extends LineFromTargetBase {
 
             while (crosshairs.inFlight) {
                 let tempPoint = { x: 0, y: 0 };
-                await warpgate.wait(100);
+                await wait(100);
 
                 const ray = new Ray(tokenSquare.center, crosshairs);
                 if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
@@ -60,7 +62,7 @@ export class LineFromSelf extends LineFromTargetBase {
             interval: 0,
             icon: this.iconImg,
         };
-        const sourceSquare = await warpgate.crosshairs.show(sourcePointConfig, { show: selectSquareFromCrosshairsRotation });
+        const sourceSquare = await xhairs.show(sourcePointConfig, { show: selectSquareFromCrosshairsRotation });
         if (sourceSquare.cancelled) {
             return false;
         }

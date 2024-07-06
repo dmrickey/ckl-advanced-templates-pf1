@@ -1,6 +1,8 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
 import { MODULE_NAME } from '../../../consts';
 import { ifDebug, localize, localizeFull } from '../../utils';
+import { wait } from '../../utils/wait';
+import { xhairs } from '../../utils/crosshairs';
 
 export class CircleGridIntersection extends AbilityTemplateAdvanced {
 
@@ -78,7 +80,7 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
 
         const updateTemplateLocation = async (crosshairs) => {
             while (crosshairs.inFlight) {
-                await warpgate.wait(20);
+                await wait(20);
 
                 this.document.flags[MODULE_NAME].icon = existingIcon;
 
@@ -109,8 +111,8 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
                     this._setErrorIconVisibility(isInRange);
 
                     const unit = game.settings.get('pf1', 'units') === 'imperial'
-                        ? localizeFull('PF1.DistFtShort')
-                        : localizeFull('PF1.DistMShort');
+                        ? localizeFull('PF1.Distance.ftShort')
+                        : localizeFull('PF1.Distance.mShort');
                     crosshairs.label = localize('range', { range, unit });
                     if (!isInRange) {
                         crosshairs.label += '\n' + localize('errors.outOfRange');
@@ -130,7 +132,7 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
             drawOutline: false,
             interval: this._gridInterval(),
         };
-        const crosshairs = await warpgate.crosshairs.show(
+        const crosshairs = await xhairs.show(
             targetConfig,
             {
                 show: updateTemplateLocation

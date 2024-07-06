@@ -10,7 +10,7 @@ Spread types include burst, emanation, and spread. These are only configurable f
 
 ## Configurations
 
-Go into an Action's Miscellaneous tab. 
+Go into an Action's Miscellaneous tab.
 
 ![image](https://github.com/dmrickey/ckl-advanced-templates-pf1/assets/3664822/431425c5-bce2-4375-b5e1-cd1eb030318d)
 
@@ -26,11 +26,11 @@ Go into an Action's Miscellaneous tab.
 - Effect Type
   - Rules-wise, each of these behave different regarding walls or how they effect if they're cast from a "centered on token" spell. Currently, I do not take walls into account at all and selecting this will only change how "Centered on Token" behaves. In the future, I may add the ability for these to follow the rules regarding walls, so if they're configured now, at that point they would automatically work with walls as expected.
 - Override Texture
-  - Custom Texture - Whether or not you want to use a specific piece of art to fill the template.
+  - Texture - Whether or not you want to use a specific piece of art to fill the template.
   - Texture Alpha - Allows you to alter the transparency of the texture. `1` is completely opaque while values closer to `0` are more transparent
   - Texture Scale - Allows you to alter how large the texture is. `1` is the texture's normal scale. Values closer to `0` will be smaller. `2` is twice as big, `3` is three times as big, etc. The maximum value is `10`. As is the case with pf1, the texture will not extend beyond the outline of the template.
 - Override Color
-  - Custom Color - If `Override Color` is enabled, then you can choose what color the template will be. If it is disabled, then it will show the color configured for that player (i.e. the same color as the icon next to your player name which is visible in the lower left corner of the Foundry screen (its default location)).
+  - Color - If you empty this value, then it will show the color configured for that player (i.e. the same color as the icon next to your player name which is visible in the lower left corner of the Foundry screen (its default location)).
   - Color Alpha - Allows you to alter the transparency of the template's fill color. `1` is completely opaque while `0` is completely transparent. If you want to turn the fill color off, then set this to `0`. As you change this value, the color shown just above will adjust to show you the effect of this value.
 - When to Delete
   - Do not Delete - The template stays forever until it is manually deleted
@@ -48,7 +48,6 @@ Go into an Action's Miscellaneous tab.
 - Targeting Method
   - Originate from Caster - This is the default placement type for lines/cones if no option is configured. This will make the template "stick" to the casting token and follow the cursor around the screen.
   - Originate from Selection - Allows you to select a grid square on the map, and then choose the cone direction via the same technique just described.
-  - Use System Default - see circle for full description. There's a caveat here, if you have a custom texture or a Color Alpha set, it won't show up as expected until _after_ the cone has been placed.
 - Width Settings (line only)
   - Default Width - by default, PF1 changes line template widths to `1`. This makes for a nice line, but there are some cases where someone may want a different width, this allows for that.
 

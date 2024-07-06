@@ -400,14 +400,14 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         // Alpha transparency
         const alpha = isHidden ? 0.5 : 1;
         this.template.alpha = alpha;
-        this.ruler.alpha = alpha;
+        if (this.ruler) this.ruler.alpha = alpha;
         const highlightLayer = canvas.grid.getHighlightLayer(this.highlightId);
         highlightLayer.visible = this.visible;
         highlightLayer.alpha = alpha;
         this.alpha = this._getTargetAlpha();
 
         // Ruler Visibility
-        this.ruler.visible = this.visible && this.layer.active;
+        if (this.ruler) this.ruler.visible = this.visible && this.layer.active;
     }
 
     /* -------------------------------------------- */
