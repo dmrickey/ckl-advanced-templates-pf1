@@ -1,6 +1,8 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
 import { Settings } from '../../../settings';
 import { ifDebug } from '../../utils';
+import { wait } from '../../utils/wait';
+import { xhairs } from '../../utils/crosshairs';
 
 export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced {
     _tokenSquare;
@@ -36,7 +38,7 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
             }
 
             while (crosshairs.inFlight) {
-                await warpgate.wait(100);
+                await wait(100);
 
                 let direction, x, y;
                 if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
@@ -97,7 +99,7 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
             canvas.app.view.onwheel = null;
         };
 
-        const rotateCrosshairs = await warpgate.crosshairs.show(
+        const rotateCrosshairs = await xhairs.show(
             targetConfig,
             {
                 show: updateTemplateRotation

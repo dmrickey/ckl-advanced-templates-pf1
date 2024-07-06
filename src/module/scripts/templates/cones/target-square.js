@@ -1,5 +1,6 @@
 import HintHandler from '../../../view/hint-handler';
 import { ifDebug, localize } from '../../utils';
+import { xhairs } from '../../utils/crosshairs';
 import { AbilityTemplateFollowMouseAngleCone } from './follow-mouse-angle-base';
 
 export class ConeFromTargetSquare extends AbilityTemplateFollowMouseAngleCone {
@@ -16,7 +17,7 @@ export class ConeFromTargetSquare extends AbilityTemplateFollowMouseAngleCone {
         };
 
         HintHandler.show({ title: localize('cone'), hint: localize('hints.chooseStart') });
-        const source = await warpgate.crosshairs.show(sourceConfig);
+        const source = await xhairs.show(sourceConfig);
         if (source.cancelled) {
             return false;
         }

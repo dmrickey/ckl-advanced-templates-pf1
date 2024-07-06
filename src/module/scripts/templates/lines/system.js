@@ -1,6 +1,8 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
 import { ifDebug, localize } from '../../utils';
 import HintHandler from "../../../view/hint-handler";
+import { wait } from '../../utils/wait';
+import { xhairs } from '../../utils/crosshairs';
 
 export class LineSystem extends AbilityTemplateAdvanced {
     /** @override */
@@ -35,7 +37,7 @@ export class LineSystem extends AbilityTemplateAdvanced {
             };
 
             while (crosshairs.inFlight) {
-                await warpgate.wait(100);
+                await wait(100);
 
                 const { x, y } = crosshairs;
                 if (this.document.direction === newDirection && x === this.document.x && y === this.document.y) {
@@ -53,7 +55,7 @@ export class LineSystem extends AbilityTemplateAdvanced {
             canvas.app.view.onwheel = null;
         };
 
-        const coneCrosshairs = await warpgate.crosshairs.show(
+        const coneCrosshairs = await xhairs.show(
             targetConfig,
             {
                 show: updatePosition

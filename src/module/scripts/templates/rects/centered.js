@@ -2,6 +2,8 @@ import { AbilityTemplateAdvanced } from "../ability-template";
 import { ifDebug, localize, localizeFull } from '../../utils';
 import { MODULE_NAME } from "../../../consts";
 import { GridSquare } from "../../models/grid-square";
+import { wait } from '../../utils/wait';
+import { xhairs } from '../../utils/crosshairs';
 
 export class RectCentered extends AbilityTemplateAdvanced {
     get distance() { return this.document.distance; }
@@ -41,7 +43,7 @@ export class RectCentered extends AbilityTemplateAdvanced {
             // }
 
             while (crosshairs.inFlight) {
-                await warpgate.wait(100);
+                await wait(100);
 
                 this.document.flags[MODULE_NAME].icon = existingIcon;
 
@@ -96,7 +98,7 @@ export class RectCentered extends AbilityTemplateAdvanced {
             drawOutline: false,
             interval: this._gridInterval(),
         };
-        const crosshairs = await warpgate.crosshairs.show(
+        const crosshairs = await xhairs.show(
             targetConfig,
             {
                 show: updateTemplateLocation

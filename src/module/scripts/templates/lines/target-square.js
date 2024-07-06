@@ -1,4 +1,6 @@
 import { ifDebug, localize } from '../../utils';
+import { xhairs } from '../../utils/crosshairs';
+import { wait } from '../../utils/wait';
 import { LineFromTargetBase } from './base';
 
 export class LineFromSquare extends LineFromTargetBase {
@@ -18,11 +20,11 @@ export class LineFromSquare extends LineFromTargetBase {
 
         const show = async (crosshairs) => {
             while (crosshairs.inFlight) {
-                await warpgate.wait(100);
+                await wait(100);
                 super.setCenter = crosshairs.center;
             }
         }
-        const source = await warpgate.crosshairs.show(sourceConfig, { show });
+        const source = await xhairs.show(sourceConfig, { show });
         if (source.cancelled) {
             return false;
         }

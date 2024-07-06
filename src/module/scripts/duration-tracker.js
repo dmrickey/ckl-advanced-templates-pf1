@@ -1,5 +1,6 @@
 import { CONSTS, MODULE_NAME } from "../consts";
 import { isFirstGM } from "./utils";
+import { queueUpdate } from './utils/queue-update.mjs';
 
 class DurationTracker {
     static isExpired = (templatePlaceable) => {
@@ -38,7 +39,7 @@ class DurationTracker {
                 return;
             }
 
-            warpgate.plugin.queueUpdate(() => DurationTracker.removeExpiredTemplates());
+            queueUpdate(() => DurationTracker.removeExpiredTemplates());
         });
 
         Hooks.on('updateCombat', async (combat, changed) => {
@@ -50,7 +51,7 @@ class DurationTracker {
                 return;
             }
 
-            warpgate.plugin.queueUpdate(() => DurationTracker.removeExpiredTemplates());
+            queueUpdate(() => DurationTracker.removeExpiredTemplates());
         });
 
         Hooks.on('updateWorldTime', async (_worldTime, delta) => {
@@ -59,7 +60,7 @@ class DurationTracker {
             }
 
             if (delta) {
-                warpgate.plugin.queueUpdate(() => DurationTracker.removeExpiredTemplates());
+                queueUpdate(() => DurationTracker.removeExpiredTemplates());
             }
         });
     }
