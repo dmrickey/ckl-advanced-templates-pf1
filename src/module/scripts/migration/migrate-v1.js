@@ -5,7 +5,7 @@ export const migrateGameItem = async () => {
     log('migrating game items');
 
     for (const item of game.items) {
-        if (item.data.flags[MODULE_NAME] && item.data.data.actions?.length) {
+        if (item.data.flags[MODULE_NAME] && item.system.actions?.length) {
             const action = item.actions.entries().next().value[1];
 
             await action.update({
@@ -29,7 +29,7 @@ export const migratePacks = async () => {
     for (const pack of game.packs.filter(x => x.documentName === "Item" && !x.locked)) {
         const docs = await pack.getDocuments();
         for (const doc of docs) {
-            if (doc.data.flags[MODULE_NAME] && doc.data.data.actions?.length) {
+            if (doc.data.flags[MODULE_NAME] && doc.system.actions?.length) {
                 const action = doc.actions.entries().next().value[1];
 
                 await action.update({
@@ -53,7 +53,7 @@ export const migrateWorldActors = async () => {
     for (const actor of game.actors) {
         if (actor.data.items?.size) {
             for (const item of actor.data.items) {
-                if (item.data.flags[MODULE_NAME] && item.data.data.actions?.length) {
+                if (item.data.flags[MODULE_NAME] && item.system.actions?.length) {
                     const action = item.actions.entries().next().value[1];
 
                     await action.update({
@@ -77,7 +77,7 @@ export const migrateSyntheticActors = async () => {
 
     const synthetics = [...game.scenes].flatMap(s => s.tokens.filter(t => !t.isLinked));
     for (const synthetic of synthetics.filter(s => s.data.actorData?.items?.length)) {
-        for (const item of synthetic.actor?.data?.items?.filter(i => i.data.flags?.[MODULE_NAME] && i.data.data.actions?.length) ?? []) {
+        for (const item of synthetic.actor?.data?.items?.filter(i => i.data.flags?.[MODULE_NAME] && i.system.actions?.length) ?? []) {
             const action = item.actions.entries().next().value[1];
 
             await action.update({

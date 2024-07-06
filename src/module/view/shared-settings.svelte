@@ -246,9 +246,9 @@
         {#each deletionOptions as option}
             <label class="checkbox">
                 <input
-                    type="radio"
                     bind:group={updates.data.flags[MODULE_NAME][CONSTS.flags.deletion]}
                     name={`flags.${MODULE_NAME}.${CONSTS.flags.deletion}`}
+                    type="radio"
                     value={option.value}
                 />
                 {option.label}
@@ -260,11 +260,12 @@
     <label for="durationInput"></label>
     <div id="deletionInput" class="form-fields">
         <input
-            type="text"
+            bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.deletionUnit]}
+            class="formula"
             disabled={!durationInputEnabled}
             id="deletionDurationUnits"
-            bind:value={updates.data.flags[MODULE_NAME][CONSTS.flags.deletionUnit]}
             name={`flags.${MODULE_NAME}.${CONSTS.flags.deletionUnit}`}
+            type="text"
         />
         <select
             disabled={!durationInputEnabled}
