@@ -1263,7 +1263,7 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         const results = new Set();
 
         // Special handling for gridless
-        if (canvas.grid.type === CONST.GRID_TYPES.GRIDLESS && ["circle", "cone", "rect"].includes(shape)) {
+        if (canvas.grid.type === CONST.GRID_TYPES.GRIDLESS) {
             if (shape === "ray") {
                 const shapePoints = this._computeShape().points;
                 const a = {
