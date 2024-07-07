@@ -87,7 +87,7 @@ export class RectCentered extends AbilityTemplateAdvanced {
                 this.document.y = templateY;
                 this.refresh();
 
-                super.targetIfEnabled();
+                await super.targetIfEnabled();
             }
 
             canvas.app.view.onwheel = null;

@@ -93,7 +93,7 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
                 this.document.y = y;
                 this.refresh();
 
-                super.targetIfEnabled();
+                await super.targetIfEnabled();
             }
 
             canvas.app.view.onwheel = null;

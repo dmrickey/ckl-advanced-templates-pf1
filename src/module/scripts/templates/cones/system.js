@@ -42,7 +42,7 @@ export class ConeSystem extends AbilityTemplateAdvanced {
                 this.document.y = crosshairs.y;
                 this.refresh();
 
-                super.targetIfEnabled();
+                await super.targetIfEnabled();
             }
 
             canvas.app.view.onwheel = null;

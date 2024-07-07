@@ -123,7 +123,7 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
                 this.document.y = y;
                 this.refresh();
 
-                super.targetIfEnabled();
+                await super.targetIfEnabled();
             }
         };
 

@@ -28,7 +28,7 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
                 this.document.direction = Math.normalizeDegrees(direction);
                 this.refresh();
 
-                super.targetIfEnabled();
+                await super.targetIfEnabled();
             }
 
             canvas.app.view.onwheel = null;

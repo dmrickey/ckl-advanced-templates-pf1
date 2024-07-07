@@ -83,7 +83,6 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                     templateData.t = 'ray';
                     templateData.width = distance;
                     abilityCls = game.modules.get(MODULE_NAME).api.ability.lines.LineSystem;
-                    // debugger;
                 }
                 break;
         }
@@ -186,9 +185,9 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         }
     }
 
-    targetIfEnabled() {
+    async targetIfEnabled() {
         if (Settings.target) {
-            const targets = this.getTokensWithin();
+            const targets = await this.getTokensWithin();
             const ids = targets.map((t) => t.id);
             game.user.updateTokenTargets(ids);
         }

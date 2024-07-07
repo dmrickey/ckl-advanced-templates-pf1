@@ -7,7 +7,7 @@ export class CircleSelf extends AbilityTemplateAdvanced {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
 
         await new Promise(r => setTimeout(r, 100));
-        super.targetIfEnabled();
+        await super.targetIfEnabled();
 
         return true;
     }
