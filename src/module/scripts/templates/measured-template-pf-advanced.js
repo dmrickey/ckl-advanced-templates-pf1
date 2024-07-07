@@ -1315,7 +1315,7 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
                 const withinCone = (target, minAngle, maxAngle) => {
                     const ray = new Ray(tCenter, target);
                     const rayAngle = Math.normalizeDegrees(Math.toDegrees(ray.angle));
-                    const rayWithinAngle = withinAngle(minAngle, maxAngle, rayAngle);
+                    const rayWithinAngle = this.withinAngle(minAngle, maxAngle, rayAngle);
                     // Calculate ray length in relation to circle radius
                     const raySceneLength = (ray.distance / gridSizePx) * gridSizeUnits;
                     // Include token if its within template distance and within the cone's angle
