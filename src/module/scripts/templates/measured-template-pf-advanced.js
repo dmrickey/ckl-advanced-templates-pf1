@@ -402,8 +402,10 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         this.template.alpha = alpha;
         if (this.ruler) this.ruler.alpha = alpha;
         const highlightLayer = canvas.grid.getHighlightLayer(this.highlightId);
-        highlightLayer.visible = this.visible;
-        highlightLayer.alpha = alpha;
+        if (highlightLayer) {
+            highlightLayer.visible = this.visible;
+            highlightLayer.alpha = alpha;
+        }
         this.alpha = this._getTargetAlpha();
 
         // Ruler Visibility
@@ -489,6 +491,7 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
      * @protected
      */
     _refreshTemplate() {
+        if (!this.template) return;
         const template = this.template.clear();
         if (!this.isVisible || this.hideHighlight) {
             return;
@@ -1208,9 +1211,9 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
      * Determine tokens residing within the template bounds, based on either grid higlight logic or token center.
      *
      * @public
-     * @returns {Token[]} Tokens sufficiently within the template.
+     * @returns {Promise<Token[]>} Tokens sufficiently within the template.
      */
-    getTokensWithin() {
+    async getTokensWithin() {
         const shape = this.document.t;
         const dimensions = this.scene.dimensions;
         const gridSizePx = dimensions.size;
@@ -1224,66 +1227,87 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
                 y: this.y + this.height / 2,
             };
         };
-        const tCenter = getCenter();
 
-        let maxDistance;
-        switch (this.document.t) {
-            case 'rect':
-                maxDistance = this.baseDistance / gridSizeUnits * gridSizePx + gridSizePx;
-                break;
-            case 'ray':
-                maxDistance = this.document.distance / gridSizeUnits * gridSizePx + gridSizePx;
-                break;
-            default:
-                maxDistance = Math.max(this.height, this.width);
-                break;
+        // Ensure shape and related data exists (e.g. this.ray) for getHighlightedSquares to work correctly.
+        // this.width, this.height, etc. are wrong without this
+        if (!this.shape) {
+            this._applyRenderFlags({ refreshShape: true });
+            // HACK: Wait for next tick, the template won't be finalized by Foundry until then.
+            // Likely breaks with Foundry v12 with newer PIXI version
+            await new Promise((resolve) => canvas.app.ticker.addOnce(() => resolve()), undefined, PIXI.UPDATE_PRIORITY.LOW);
         }
 
+        const tCenter = getCenter();
+
+        const { distance, angle, direction } = this.document;
+
+        // Max distance from template center, +1 cell for proper detection, and +1 pixel for uneven grids and rounding protection
+        const maxDistance = Math.max(this.height, this.width) + gridSizePx + 1;
+        // Get tokens within max potential distance from the template
         const relevantTokens = new Set(
-            canvas.tokens.placeables.filter((t) => new Ray(t.center, tCenter).distance <= maxDistance + t.sizeErrorMargin)
+            canvas.tokens.placeables.filter((t) => new Ray(t.center, tCenter).distance - t.sizeErrorMargin <= maxDistance)
         );
 
-        const result = new Set();
-        // Special handling for gridless
-        if (canvas.grid.type === CONST.GRID_TYPES.GRIDLESS && ["circle", "cone", "rect"].includes(shape)) {
-            // TODO: Test against vision points and ensure ~third of them are inside the template instead.
-            // BUG: Behaves incorrectly with large tokens
+        const results = new Set();
+
+        const isLargeToken = (t) => t.document.width > 1 || t.document.height > 1;
+
+        const withinCircle = (target) => {
+            const ray = new Ray(tCenter, target);
+            // Calculate ray length in relation to circle radius
+            const raySceneLength = (ray.distance / gridSizePx) * gridSizeUnits;
+            // Include this token if its center is within template radius
+            return raySceneLength <= distance + 1;
+        };
+
+        const withinCone = (target, minAngle, maxAngle) => {
+            const ray = new Ray(tCenter, target);
+            const rayAngle = Math.normalizeDegrees(Math.toDegrees(ray.angle));
+            const rayWithinAngle = withinAngle(minAngle, maxAngle, rayAngle);
+            // Calculate ray length in relation to circle radius
+            const raySceneLength = (ray.distance / gridSizePx) * gridSizeUnits;
+            // Include token if its within template distance and within the cone's angle
+            return rayWithinAngle && raySceneLength <= distance + 1;
+        };
+
+        // Rectangle has same handling everywhere
+        if (shape === "rect") {
+            const rect = {
+                x: this.x,
+                y: this.y,
+                width: this.shape.width,
+                height: this.shape.height,
+            };
+
             for (const t of relevantTokens) {
+                if (isLargeToken(t)) {
+                    const cells = t.getOccupiedCells({ center: true });
+                    if (cells.some((c) => this.withinRect(c, rect))) results.add(t);
+                } else {
+                    if (this.withinRect(t.center, rect)) results.add(t);
+                }
+            }
+        }
+        // Special handling for gridless
+        else if (canvas.grid.type === CONST.GRID_TYPES.GRIDLESS && ["circle", "cone"].includes(shape)) {
+            // Pre-calc cone data
+            let minAngle, maxAngle;
+            if (shape === "cone") {
+                minAngle = Math.normalizeDegrees(direction - angle / 2);
+                maxAngle = Math.normalizeDegrees(direction + angle / 2);
+            }
+
+            // TODO: Test against vision points and ensure ~third of them are inside the template instead.
+            for (const t of relevantTokens) {
+                const cells = isLargeToken(t) ? t.getOccupiedCells({ center: true }) : [t.center];
+
                 switch (shape) {
                     case "circle": {
-                        const ray = new Ray(tCenter, t.center);
-                        // Calculate ray length in relation to circle radius
-                        const raySceneLength = (ray.distance / gridSizePx) * gridSizeUnits;
-                        // Include this token if its center is within template radius
-                        if (raySceneLength <= this.document.distance) result.add(t);
+                        if (cells.some((c) => withinCircle(c))) results.add(t);
                         break;
                     }
                     case "cone": {
-                        const templateDirection = this.document.direction;
-                        const templateAngle = this.document.angle;
-                        const minAngle = Math.normalizeDegrees(templateDirection - templateAngle / 2);
-                        const maxAngle = Math.normalizeDegrees(templateDirection + templateAngle / 2);
-
-                        const ray = new Ray(tCenter, t.center);
-                        const rayAngle = Math.normalizeDegrees(Math.toDegrees(ray.angle));
-
-                        const rayWithinAngle = this.withinAngle(minAngle, maxAngle, rayAngle);
-                        // Calculate ray length in relation to circle radius
-                        const raySceneLength = (ray.distance / gridSizePx) * gridSizeUnits;
-                        // Include token if its within template distance and within the cone's angle
-                        if (rayWithinAngle && raySceneLength <= this.document.distance) result.add(t);
-                        break;
-                    }
-                    case "rect": {
-                        const rect = {
-                            x: this.x,
-                            y: this.y,
-                            width: this.width,
-                            height: this.width,
-                        };
-                        if (this.withinRect(t.center, rect)) {
-                            result.add(t);
-                        }
+                        if (cells.some((c) => withinCone(c, minAngle, maxAngle))) results.add(t);
                         break;
                     }
                 }
@@ -1291,23 +1315,22 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         }
         // Non-gridless
         else {
-            const highlightSquares = this.getHighlightedSquares()
-                .map(({ x, y }) => ({ x, y, width: gridSizePx, height: gridSizePx }));
-            for (const highlightSquare of highlightSquares) {
-                for (const token of relevantTokens) {
-                    const tokenSquares = GridSquare.fromToken(token).containedSquares;
-                    for (const tokenSquare of tokenSquares) {
-                        if (this.withinRect(tokenSquare.center, highlightSquare)) {
-                            result.add(token);
-                            relevantTokens.delete(token);
-                            break;
-                        }
+            const mapCoordsToCell = ({ x, y }) => ({ x, y, width: gridSizePx, height: gridSizePx });
+
+            const highlightSquares = this._getGridHighlightPositions().map(mapCoordsToCell);
+            for (const cell of highlightSquares) {
+                for (const t of relevantTokens) {
+                    const cells = isLargeToken(t) ? t.getOccupiedCells({ center: true }) : [t.center];
+
+                    if (cells.some((tc) => this.withinRect(tc, cell))) {
+                        results.add(t);
+                        relevantTokens.delete(t);
                     }
                 }
             }
         }
 
-        return Array.from(result);
+        return Array.from(results);
     }
 
     getHighlightLayer() {
