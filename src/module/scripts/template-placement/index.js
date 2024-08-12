@@ -1,11 +1,33 @@
 import { CONSTS, MODULE_NAME } from '../../consts';
-import { getToken, ifDebug } from '../utils';
+import { getToken, ifDebug, localize } from '../utils';
 import { Settings } from '../../settings';
 import { calculateExpiration } from './calculate-expiration';
+
+const skipKey = 'skip-range';
+const addSkipRangeToDialog = (dialog, [html], data) => {
+    if (dialog instanceof pf1.applications.AttackDialog
+        && data.item instanceof pf1.documents.item.ItemSpellPF
+    ) {
+        const flags = html.querySelector('div.form-group.stacked.flags');
+        if (flags) {
+            const label = document.createElement('label');
+            label.classList.add('checkbox');
+
+            const input = document.createElement('input');
+            input.setAttribute('type', 'checkbox');
+            input.setAttribute('name', skipKey);
+
+            label.textContent = ` ${localize(skipKey)} `;
+            label.insertBefore(input, label.firstChild);
+            flags.appendChild(label);
+        }
+    }
+}
 
 /**
  * Common logic and switch statement for placing all templates
  *
+ * @this {ActionUse}
  * @param {object} shared The shared context passed between different functions when executing an Attack
  *
  * @returns {object} The template creation data
@@ -27,10 +49,14 @@ async function promptMeasureTemplate() {
     const actor = this.item?.actor;
     const token = getToken(this.item) || {};
     const icon = this.shared.action.data.img === 'systems/pf1/icons/misc/magic-swirl.png' ? this.item.img : this.shared.action.data.img;
-    const { maxRange, minRange } = this.shared.action;
+    let { maxRange, minRange } = this.shared.action;
     const flags = this.shared.action.data.flags?.[MODULE_NAME] || {};
     let distance = _getSize(this.shared) || 5;
 
+    if (this.formData[skipKey]) {
+        minRange = undefined;
+        maxRange = undefined;
+    }
     const expirationTime = calculateExpiration(this.getRollData(), flags);
 
     const templateData = {
@@ -83,7 +109,10 @@ async function promptMeasureTemplate() {
     return result;
 }
 
-export default promptMeasureTemplate;
+export {
+    addSkipRangeToDialog,
+    promptMeasureTemplate,
+};
 
 const _getSize = (shared) => pf1.utils.convertDistance(RollPF.safeTotal(shared.action.data.measureTemplate.size, shared.rollData))[0];
 

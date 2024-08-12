@@ -96,6 +96,7 @@
         "range": "{range} {unit}",
         "errors": {
             "outOfRange": "Target is out of range."
-        }
+        },
+        "skip-range": "Skip Range Requirmenet"
     }
 }

@@ -6,7 +6,7 @@ import { MODULE_NAME } from './consts';
 import { registerSettings } from './settings.js';
 import { injectTemplateSelector, destroyTemplateSelector } from './scripts/template-selector-injector';
 import migrateIfNeeded from './scripts/migration';
-import promptMeasureTemplate from './scripts/template-placement/';
+import { addSkipRangeToDialog, promptMeasureTemplate } from './scripts/template-placement/';
 
 // Initialize module
 Hooks.once('init', async () => {
@@ -35,6 +35,7 @@ Hooks.once('pf1PostReady', () => {
 Hooks.on('pf1PostInit', () => {
     initTemplates();
 
+    Hooks.on('renderApplication', addSkipRangeToDialog);
     libWrapper.register(MODULE_NAME, 'pf1.actionUse.ActionUse.prototype.promptMeasureTemplate', promptMeasureTemplate, 'OVERRIDE');
 
     Hooks.on('canvasReady', () => {
