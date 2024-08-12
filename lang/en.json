@@ -91,12 +91,12 @@
         },
         "cancel": "Cancel",
         "coneStart": "Cone Start",
+        "ignore-range": "Ignore Range",
         "lineStart": "Line Start",
         "ok": "Ok",
         "range": "{range} {unit}",
         "errors": {
             "outOfRange": "Target is out of range."
-        },
-        "skip-range": "Skip Range Requirmenet"
+        }
     }
 }

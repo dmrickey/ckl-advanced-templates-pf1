@@ -3,7 +3,7 @@ import { getToken, ifDebug, localize } from '../utils';
 import { Settings } from '../../settings';
 import { calculateExpiration } from './calculate-expiration';
 
-const skipKey = 'skip-range';
+const ignoreRangeKey = 'ignore-range';
 const addSkipRangeToDialog = (dialog, [html], data) => {
     if (dialog instanceof pf1.applications.AttackDialog
         && data.item instanceof pf1.documents.item.ItemSpellPF
@@ -15,9 +15,9 @@ const addSkipRangeToDialog = (dialog, [html], data) => {
 
             const input = document.createElement('input');
             input.setAttribute('type', 'checkbox');
-            input.setAttribute('name', skipKey);
+            input.setAttribute('name', ignoreRangeKey);
 
-            label.textContent = ` ${localize(skipKey)} `;
+            label.textContent = ` ${localize(ignoreRangeKey)} `;
             label.insertBefore(input, label.firstChild);
             flags.appendChild(label);
         }
@@ -53,7 +53,7 @@ async function promptMeasureTemplate() {
     const flags = this.shared.action.data.flags?.[MODULE_NAME] || {};
     let distance = _getSize(this.shared) || 5;
 
-    if (this.formData[skipKey]) {
+    if (this.formData[ignoreRangeKey]) {
         minRange = undefined;
         maxRange = undefined;
     }
