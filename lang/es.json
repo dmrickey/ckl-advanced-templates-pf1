@@ -1,1 +1,26 @@
-{}
+{
+    "ckl-advanced-templates-pf1": {
+        "cone": "Cono",
+        "line": "Línea",
+        "rotation": "Rotación",
+        "hints": {
+            "chooseStart": "Click izquierdo para elegir el punto de partida.",
+            "mouseWheelRotate": "Click izquierdo para confirmar. Usa la rueda del ratón para rotar.",
+            "restart": "Click izquierdo para confirmar. Click derecho para volver a elegir un punto de partida."
+        },
+        "settings": {
+            "cone15Alternate": {
+                "name": "Permitir cono alternativo de 15 pies (4,5 m)",
+                "hint": "Si se activa, los jugadores pueden usar conos de 15 pies (4,5 m) que se originan desde una intersección de cuadrículas cuando el cono se orienta hacia la izquierda/la derecha/arriba/abajo en lugar de los esquemas estándar de cono de 15 pies (4,5 m) (tal como se describe en las reglas al colocar un cono normal pero no se muestra como una opción en los diagramas de 15 pies [4,5 m])."
+            },
+            "coneRotation": {
+                "name": "Permitir rotaciones de conos no estándar",
+                "hint": "Indica este número para permitir a tus jugadores rotar conos con la rueda del ratón. El número determina cada incremento de la rotación. Poner 0 significa que el cono siempre apuntará \"alejado del lanzador\". Para mejores resultados, pon 45 o más bajo, siendo divisor de 45 (ej: 45, 22.5, 9, 5, etc.). Esto resultará en algunos \"conos\" ratos pero les darás más libertad a los jugadores en cuanto a cómo quieren colocarlos."
+            },
+            "debug": {
+                "name": "Activar los registros de pruebas (Debug Logging)"
+            }
+        },
+        "advanced-templates": "Plantillas avanzadas (Advanced Templates)"
+    }
+}
