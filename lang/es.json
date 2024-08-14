@@ -1,0 +1,101 @@
+{
+    "ckl-advanced-templates-pf1": {
+        "cone": "Cono",
+        "line": "Línea",
+        "rotation": "Rotación",
+        "hints": {
+            "chooseStart": "Click izquierdo para elegir el punto de partida.",
+            "mouseWheelRotate": "Click izquierdo para confirmar. Usa la rueda del ratón para rotar.",
+            "restart": "Click izquierdo para confirmar. Click derecho para volver a elegir un punto de partida."
+        },
+        "settings": {
+            "cone15Alternate": {
+                "name": "Permitir cono alternativo de 15 pies (4,5 m)",
+                "hint": "Si se activa, los jugadores pueden usar conos de 15 pies (4,5 m) que se originan desde una intersección de cuadrículas cuando el cono se orienta hacia la izquierda/la derecha/arriba/abajo en lugar de los esquemas estándar de cono de 15 pies (4,5 m) (tal como se describe en las reglas al colocar un cono normal pero no se muestra como una opción en los diagramas de 15 pies [4,5 m])."
+            },
+            "coneRotation": {
+                "name": "Permitir rotaciones de conos no estándar",
+                "hint": "Indica este número para permitir a tus jugadores rotar conos con la rueda del ratón. El número determina cada incremento de la rotación. Poner 0 significa que el cono siempre apuntará \"alejado del lanzador\". Para mejores resultados, pon 45 o más bajo, siendo divisor de 45 (ej: 45, 22.5, 9, 5, etc.). Esto resultará en algunos \"conos\" ratos pero les darás más libertad a los jugadores en cuanto a cómo quieren colocarlos."
+            },
+            "debug": {
+                "name": "Activar los registros de pruebas (Debug Logging)",
+                "hint": "Si se activa, varios registros son mostrados en la consola para ayudar a la búsqueda y solución de errores (debugging). Solo es útil si algo no está funcionando como se espera."
+            },
+            "defaultLineWidth": {
+                "name": "Ancho de la línea por defecto",
+                "hint": "El ancho por defecto para las plantillas de líneas. Esta configuración es mayormente estética pero si estás usando Automated Animations, sugiero dejarlo en 5 para que las animaciones de las líneas no sean aplastadas en una plantilla estrecha."
+            },
+            "disableHints": {
+                "name": "Desactivar ayudas para la colocación de plantillas",
+                "hint": "Si se desactiva, no se mostrarán las ayudas para rotar, volver a seleccionar el punto de partida y la posición final de la plantilla."
+            },
+            "reExpand": {
+                "name": "Volver a expandir las fichas colapsadas",
+                "hint": "Si se activa, cualquier ficha que hubiese sido colapsada para permitir el posicionamiento de las plantillas volverá a ser expandida una vez la plantilla sea colocada."
+            },
+            "target": {
+                "name": "Señalar como objetivos a las fichas (tokens) dentro de la plantilla",
+                "hint": "Si se activa, tus objetivos seleccionados se actualizarán cuando coloques la plantilla."
+            }
+        },
+        "advanced-templates": "Plantillas avanzadas (Advanced Templates)",
+        "templates": {
+            "circle": {
+                "placement": {
+                    "grid.label": "Intersección de cuadrículas",
+                    "self.label": "Centrada en la ficha (token)",
+                    "type": {
+                        "label": "Tipo de efecto",
+                        "burst": "Explosión",
+                        "spread": "Expansión",
+                        "emanation": "Emanación"
+                    },
+                    "splash.label": "Arma de dispersión",
+                    "attachToToken": "Unido a la ficha (token)"
+                }
+            },
+            "cone": {
+                "placement": {
+                    "self.label": "Originar desde el lanzador",
+                    "selectTargetSquare.label": "Originar desde la selección"
+                }
+            },
+            "line": {
+                "default": "Ancho por defecto",
+                "overrideWidth": "Sobrescribir ancho",
+                "widthLabel": "Configuración del ancho",
+                "widthOverride": "Ancho sobrescrito"
+            },
+            "rect": {
+                "placement": {
+                    "centered.label": "Centrada en el cursor"
+                }
+            },
+            "deletion": {
+                "label": "Cuándo borrar",
+                "timespan": "Duración",
+                "doNotDelete": "No borrar",
+                "endOfTurn": "Al final del turno"
+            },
+            "chooseOptions": "Elegir opciones",
+            "colorAlpha.label": "Alpha (transparencia) del color",
+            "hideOutline.label": "Esconder contorno",
+            "ignoreRange": "Ignorar restricción de rango",
+            "placement.selection.label": "Método para marcar objetivos",
+            "textureGroupLabel": "Configuración de textura",
+            "textureAlpha.label": "Alpha (transparencia) de la textura",
+            "textureScale.label": "Escala de la textura",
+            "modalTitle": "Plantilla de {itemName}",
+            "colorGroupLabel": "Ajustes del relleno",
+            "placement.useSystem.label": "Utilizar valores predeterminados del sistema"
+        },
+        "cancel": "Cancelar",
+        "coneStart": "Inicio del cono",
+        "lineStart": "Inicio de la línea",
+        "ok": "Confirmar",
+        "range": "{range} {unit}",
+        "errors": {
+            "outOfRange": "El objetivo está fuera del rango."
+        }
+    }
+}
