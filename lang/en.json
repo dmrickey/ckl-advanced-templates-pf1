@@ -1,5 +1,6 @@
 {
     "ckl-advanced-templates-pf1": {
+        "advanced-templates": "Advanced Templates",
         "cone": "Cone",
         "line": "Line",
         "rotation": "Rotation",
@@ -91,7 +92,6 @@
         },
         "cancel": "Cancel",
         "coneStart": "Cone Start",
-        "ignore-range": "Ignore Range",
         "lineStart": "Line Start",
         "ok": "Ok",
         "range": "{range} {unit}",

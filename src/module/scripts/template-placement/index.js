@@ -6,10 +6,22 @@ import { calculateExpiration } from './calculate-expiration';
 const ignoreRangeKey = 'ignore-range';
 const addSkipRangeToDialog = (dialog, [html], data) => {
     if (dialog instanceof pf1.applications.AttackDialog
-        && data.item instanceof pf1.documents.item.ItemSpellPF
+        && !!data.action.data.measureTemplate?.type
     ) {
-        const flags = html.querySelector('div.form-group.stacked.flags');
-        if (flags) {
+        const form = html.querySelector('form');
+
+        const container = document.createElement('div');
+        container.classList.add('form-group', 'stacked', 'flags', 'advanced-templates');
+
+        {
+            // container label
+            const label = document.createElement('label');
+            label.innerText = localize('advanced-templates');
+            container.appendChild(label);
+        }
+
+        {
+            // ignore range checkbox
             const label = document.createElement('label');
             label.classList.add('checkbox');
 
@@ -17,10 +29,13 @@ const addSkipRangeToDialog = (dialog, [html], data) => {
             input.setAttribute('type', 'checkbox');
             input.setAttribute('name', ignoreRangeKey);
 
-            label.textContent = ` ${localize(ignoreRangeKey)} `;
+            label.textContent = ` ${localize('templates.ignoreRange')} `;
             label.insertBefore(input, label.firstChild);
-            flags.appendChild(label);
+            container.appendChild(label);
         }
+
+        form.lastElementChild.before(container);
+        dialog.setPosition();
     }
 }
 
@@ -53,10 +68,6 @@ async function promptMeasureTemplate() {
     const flags = this.shared.action.data.flags?.[MODULE_NAME] || {};
     let distance = _getSize(this.shared) || 5;
 
-    if (this.formData[ignoreRangeKey]) {
-        minRange = undefined;
-        maxRange = undefined;
-    }
     const expirationTime = calculateExpiration(this.getRollData(), flags);
 
     const templateData = {
@@ -68,6 +79,7 @@ async function promptMeasureTemplate() {
                 ...flags,
                 [CONSTS.flags.circle.movesWithToken]: flags[CONSTS.flags.placementType] == CONSTS.placement.circle.self && !!flags[CONSTS.flags.circle.movesWithToken],
                 [CONSTS.flags.expirationTime]: expirationTime,
+                [CONSTS.flags.ignoreRange]: flags[CONSTS.flags.ignoreRange] || !!this.formData[ignoreRangeKey],
                 baseDistance: distance,
                 icon,
                 itemId: this.item?.id,
