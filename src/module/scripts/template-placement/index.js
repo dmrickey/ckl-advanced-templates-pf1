@@ -4,11 +4,14 @@ import { Settings } from '../../settings';
 import { calculateExpiration } from './calculate-expiration';
 
 const ignoreRangeKey = 'ignore-range';
-const addSkipRangeToDialog = (dialog, [html], data) => {
-    if (dialog instanceof pf1.applications.AttackDialog
+const addSkipRangeToDialog = (application, [html], data) => {
+    if (application instanceof pf1.applications.AttackDialog
         && !!data.action.data.measureTemplate?.type
     ) {
-        const form = html.querySelector('form');
+        const form = html.closest('form') || html.querySelector('form');
+        if (!form) {
+            return;
+        }
 
         const container = document.createElement('div');
         container.classList.add('form-group', 'stacked', 'flags', 'advanced-templates');
@@ -25,9 +28,18 @@ const addSkipRangeToDialog = (dialog, [html], data) => {
             const label = document.createElement('label');
             label.classList.add('checkbox');
 
+            /** @type {HTMLInputElement} */
             const input = document.createElement('input');
             input.setAttribute('type', 'checkbox');
             input.setAttribute('name', ignoreRangeKey);
+            input.checked = !!trackedApps.get(application.appId);
+            input.addEventListener('change', function () {
+                if (this.checked) {
+                    track(application.appId);
+                } else {
+                    untrack(application.appId);
+                }
+            });
 
             label.textContent = ` ${localize('templates.ignoreRange')} `;
             label.insertBefore(input, label.firstChild);
@@ -35,9 +47,20 @@ const addSkipRangeToDialog = (dialog, [html], data) => {
         }
 
         form.lastElementChild.before(container);
-        dialog.setPosition();
+        application.setPosition();
     }
 }
+
+const trackedApps = new Map();
+const track = (id) => {
+    trackedApps.set(id, true);
+
+    // remove any tracked ids that are no longer present
+    trackedApps.keys()
+        .filter((key) => !ui.windows[key])
+        .forEach(untrack);
+}
+const untrack = (id) => trackedApps.delete(id);
 
 /**
  * Common logic and switch statement for placing all templates
