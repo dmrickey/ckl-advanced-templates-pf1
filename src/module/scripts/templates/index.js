@@ -12,6 +12,7 @@ import { LineFromSelf } from "./lines/from-self";
 import { LineSystem } from "./lines/system";
 import { LineFromSquare } from "./lines/target-square";
 import { RectCentered } from "./rects/centered";
+import { xhairs } from '../utils/crosshairs';
 
 export const initTemplates = () => {
     CONFIG.MeasuredTemplate.objectClass = MeasuredTemplatePFAdvanced;
@@ -21,6 +22,7 @@ export const initTemplates = () => {
         game.modules.get(MODULE_NAME).api = {
             // base
             AbilityTemplateAdvanced,
+            xhairs,
             MeasuredTemplatePFAdvanced,
 
             ability: {

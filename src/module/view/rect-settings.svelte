@@ -9,7 +9,7 @@
 
     // initialize rect options
     updates.data.flags[MODULE_NAME][CONSTS.flags.placementType] ||=
-        action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] || CONSTS.placement.rect.centered;
+        action.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] || CONSTS.placement.rect.centered;
 
     ifDebug(() => console.log("Opening rect settings for:", updates));
 </script>

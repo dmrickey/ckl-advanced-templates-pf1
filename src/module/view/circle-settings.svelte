@@ -40,13 +40,13 @@
 
     // initialize circle options
     updates.data.flags[MODULE_NAME][CONSTS.flags.placementType] ||=
-        action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] || CONSTS.placement.circle.grid;
+        action.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] || CONSTS.placement.circle.grid;
     updates.data.flags[MODULE_NAME][CONSTS.flags.circle.areaType] ||=
-        action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.circle.areaType] || CONSTS.areaType.burst;
+        action.flags?.[MODULE_NAME]?.[CONSTS.flags.circle.areaType] || CONSTS.areaType.burst;
     updates.data.flags[MODULE_NAME][CONSTS.flags.ignoreRange] ||=
-        action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.ignoreRange] || false;
+        action.flags?.[MODULE_NAME]?.[CONSTS.flags.ignoreRange] || false;
     updates.data.flags[MODULE_NAME][CONSTS.flags.circle.movesWithToken] ||=
-        action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.circle.movesWithToken] || false;
+        action.flags?.[MODULE_NAME]?.[CONSTS.flags.circle.movesWithToken] || false;
 
     ifDebug(() => console.log("Opening circle settings for:", updates));
 </script>

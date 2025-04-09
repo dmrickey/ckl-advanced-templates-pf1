@@ -1,12 +1,12 @@
 import { deleteTemplatesForToken, moveTemplatesToToken } from './scripts/sync-templates-to-token.js';
 import { DurationTracker } from './scripts/duration-tracker.js';
 import { handleSingleOwner } from './scripts/utils/active-gm.js';
-import { initTemplates } from './scripts/templates';
-import { MODULE_NAME } from './consts';
+import { initTemplates } from './scripts/templates/index.js';
+import { MODULE_NAME } from './consts.js';
 import { registerSettings } from './settings.js';
-import { injectTemplateSelector, destroyTemplateSelector } from './scripts/template-selector-injector';
-import migrateIfNeeded from './scripts/migration';
-import { addSkipRangeToDialog, promptMeasureTemplate } from './scripts/template-placement/';
+import { injectTemplateSelector, destroyTemplateSelector } from './scripts/template-selector-injector/index.js';
+import migrateIfNeeded from './scripts/migration/index.js';
+import { addSkipRangeToDialog, promptMeasureTemplate } from './scripts/template-placement/index.js';
 
 // Initialize module
 Hooks.once('init', async () => {

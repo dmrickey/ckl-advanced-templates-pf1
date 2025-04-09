@@ -13,7 +13,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             return null;
         }
 
-        const placementType = action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType];
+        const placementType = action.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType];
 
         const tokenId = templateData.flags?.[MODULE_NAME]?.tokenId;
         const token = canvas.tokens.placeables.find((x) => x.id === tokenId);

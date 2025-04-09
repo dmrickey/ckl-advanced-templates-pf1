@@ -6,7 +6,7 @@ import { calculateExpiration } from './calculate-expiration';
 const ignoreRangeKey = 'ignore-range';
 const addSkipRangeToDialog = (application, [html], data) => {
     if (application instanceof pf1.applications.AttackDialog
-        && !!data.action.data.measureTemplate?.type
+        && !!data.action.measureTemplate?.type
     ) {
         const form = html.closest('form') || html.querySelector('form');
         if (!form) {
@@ -82,13 +82,13 @@ async function promptMeasureTemplate() {
         };
     }
 
-    const type = this.shared.action.data.measureTemplate.type;
+    const type = this.shared.action.measureTemplate.type;
 
     const actor = this.item?.actor;
     const token = getToken(this.item) || {};
-    const icon = this.shared.action.data.img === 'systems/pf1/icons/misc/magic-swirl.png' ? this.item.img : this.shared.action.data.img;
+    const icon = this.shared.action.img === 'systems/pf1/icons/misc/magic-swirl.png' ? this.item.img : this.shared.action.img;
     let { maxRange, minRange } = this.shared.action;
-    const flags = this.shared.action.data.flags?.[MODULE_NAME] || {};
+    const flags = this.shared.action.flags?.[MODULE_NAME] || {};
     let distance = _getSize(this.shared) || 5;
 
     const expirationTime = calculateExpiration(this.getRollData(), flags);
@@ -112,8 +112,8 @@ async function promptMeasureTemplate() {
             },
         },
         user: game.userId,
-        fillColor: this.shared.action.data.measureTemplate.color || game.user.color,
-        texture: this.shared.action.data.measureTemplate.texture || null,
+        fillColor: this.shared.action.measureTemplate.color || game.user.color,
+        texture: this.shared.action.measureTemplate.texture || null,
     };
 
     if (['ray', 'line'].includes(type)) {
@@ -149,7 +149,7 @@ export {
     promptMeasureTemplate,
 };
 
-const _getSize = (shared) => pf1.utils.convertDistance(RollPF.safeTotal(shared.action.data.measureTemplate.size, shared.rollData))[0];
+const _getSize = (shared) => pf1.utils.convertDistance(RollPF.safeTotal(shared.action.measureTemplate.size, shared.rollData))[0];
 
 const hasTemplatePermission = () => game.permissions.TEMPLATE_CREATE.includes(game.user.role);
 
