@@ -74,7 +74,7 @@ export default ({ mode }) => {
                 // Rewrite incoming `module-id.js` request from Foundry to the dev server `index.js`.
                 [`/${s_PACKAGE_ID}/dist/${moduleJSON.id}.js`]: {
                     target: `http://localhost:30001/${s_PACKAGE_ID}/dist`,
-                    rewrite: () => '/index.js',
+                    rewrite: () => '/module/main.js',
                 },
 
                 // Enable socket.io from main Foundry server.
@@ -91,7 +91,7 @@ export default ({ mode }) => {
             target: ['es2022'],
             terserOptions: s_COMPRESS ? { ...terserConfig(), ecma: 2022 } : void 0,
             lib: {
-                entry: './module/ckl-advanced-templates-pf1.js',
+                entry: 'module/main.js',
                 formats: ['es'],
                 fileName: moduleJSON.id
             },
