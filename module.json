@@ -20,10 +20,10 @@
     },
     "scripts": [],
     "esmodules": [
-        "ckl-advanced-templates-pf1.js"
+        "dist/ckl-advanced-templates-pf1.js"
     ],
     "styles": [
-        "ckl-advanced-templates-pf1.css"
+        "dist/ckl-advanced-templates-pf1.css"
     ],
     "flags": {
         "hotReload": {
