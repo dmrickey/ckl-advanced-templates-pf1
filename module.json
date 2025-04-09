@@ -15,8 +15,8 @@
         }
     ],
     "compatibility": {
-        "minimum": "11",
-        "verified": "11"
+        "minimum": "12",
+        "verified": "12"
     },
     "scripts": [],
     "esmodules": [
@@ -43,8 +43,8 @@
                 "type": "system",
                 "manifest": "https://gitlab.com/foundryvtt_pathfinder1e/foundryvtt-pathfinder1/-/releases/permalink/latest/downloads/system.json",
                 "compatibility": {
-                    "minimum": "9",
-                    "verified": "9.5"
+                    "minimum": "11",
+                    "verified": "11.3"
                 }
             }
         ],
