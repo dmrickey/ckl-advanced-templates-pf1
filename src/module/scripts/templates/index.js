@@ -1,18 +1,17 @@
-import { MeasuredTemplatePFAdvanced } from "./measured-template-pf-advanced";
-import { AbilityTemplateAdvanced } from "./ability-template";
 import { MODULE_NAME } from "../../consts";
+import { AbilityTemplateAdvanced } from "./ability-template";
 import { CircleAnywhere } from "./circles/anywhere";
 import { CircleGridIntersection } from "./circles/grid";
 import { CircleSelf } from "./circles/self";
 import { CircleSplash } from "./circles/splash";
+import { ConeFromSelf } from "./cones/self";
 import { ConeSystem } from "./cones/system";
 import { ConeFromTargetSquare } from "./cones/target-square";
-import { ConeFromSelf } from "./cones/self";
 import { LineFromSelf } from "./lines/from-self";
 import { LineSystem } from "./lines/system";
 import { LineFromSquare } from "./lines/target-square";
+import { MeasuredTemplatePFAdvanced } from "./measured-template-pf-advanced";
 import { RectCentered } from "./rects/centered";
-import { xhairs } from '../utils/crosshairs';
 
 export const initTemplates = () => {
     CONFIG.MeasuredTemplate.objectClass = MeasuredTemplatePFAdvanced;
@@ -22,7 +21,6 @@ export const initTemplates = () => {
         game.modules.get(MODULE_NAME).api = {
             // base
             AbilityTemplateAdvanced,
-            xhairs,
             MeasuredTemplatePFAdvanced,
 
             ability: {

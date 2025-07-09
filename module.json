@@ -43,8 +43,7 @@
                 "type": "system",
                 "manifest": "https://gitlab.com/foundryvtt_pathfinder1e/foundryvtt-pathfinder1/-/releases/permalink/latest/downloads/system.json",
                 "compatibility": {
-                    "minimum": "11",
-                    "verified": "11.3"
+                    "verified": "11.8"
                 }
             }
         ],
@@ -55,6 +54,14 @@
                 "manifest": "https://github.com/ruipin/fvtt-lib-wrapper/releases/latest/download/module.json",
                 "compatibility": {
                     "verified": "1.12.11.0"
+                }
+            },
+            {
+                "id": "sequencer",
+                "type": "module",
+                "manifest": "https://github.com/fantasycalendar/FoundryVTT-Sequencer/releases/latest/download/module.json",
+                "compatibility": {
+                    "verified": "3.6.7"
                 }
             }
         ]
@@ -79,7 +86,6 @@
     "system": [
         "pf1"
     ],
-    "minimumSystemVersion": "9.5",
     "library": false,
     "protected": false,
     "coreTranslation": false
