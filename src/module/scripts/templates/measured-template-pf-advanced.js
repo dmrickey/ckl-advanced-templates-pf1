@@ -387,13 +387,12 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
                     break;
                 case 'rect':
                     {
-                        // textureSize is basically the hypotenuse, multiple by sin(45) to get the width/height of the rect (square)
-                        textureSize *= Math.sin(Math.toRadians(45));
-                        xScale = textureSize / this.texture.width;
-                        yScale = textureSize / this.texture.height;
+                        // textureSize is basically the hypotenuse, multiple by cos/sin to get the width/height of the rect
+                        xScale = textureSize * Math.cos(Math.toRadians(direction)) / this.texture.width;
+                        yScale = yScale = textureSize * Math.sin(Math.toRadians(direction)) / this.texture.height;
 
+                        // don't change angle of texture as the shape of the rect changes width/height
                         direction = 0;
-                        textureSize /= 2;
                         template.rotation = this.actualRotation;
                     }
                     break;
