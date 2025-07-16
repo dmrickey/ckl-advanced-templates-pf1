@@ -1,6 +1,5 @@
 import HintHandler from '../../../view/hint-handler';
 import { ifDebug, localize } from '../../utils';
-import { xhairs } from '../../utils/crosshairs';
 import { AbilityTemplateFollowMouseAngleCone } from './follow-mouse-angle-base';
 
 export class ConeFromTargetSquare extends AbilityTemplateFollowMouseAngleCone {
@@ -8,16 +7,25 @@ export class ConeFromTargetSquare extends AbilityTemplateFollowMouseAngleCone {
     async initializeVariables() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializeVariables.name}`));
 
-        const sourceConfig = {
-            drawIcon: true,
-            drawOutline: false,
-            interval: this._gridInterval(),
-            label: localize('coneStart'),
-            icon: this.iconImg,
-        };
-
         HintHandler.show({ title: localize('cone'), hint: localize('hints.chooseStart') });
-        const source = await xhairs.show(sourceConfig);
+
+        // const sourceConfig = {
+        //     drawIcon: true,
+        //     drawOutline: false,
+        //     interval: this._gridInterval(),
+        //     label: localize('coneStart'),
+        //     icon: this.iconImg,
+        // };
+        // const source = await xhairs.show(sourceConfig);
+        const config = {
+            borderAlpha: 0,
+            icon: { texture: this.iconImg },
+            label: { text: localize('coneStart') },
+            snap: { position: this._gridInterval() },
+        }
+        const crosshairs = await Sequencer.Crosshair.show(config);
+        console.log(crosshairs);
+
         if (source.cancelled) {
             return false;
         }

@@ -1,6 +1,5 @@
 import { GridSquare } from '../../models/grid-square';
 import { ifDebug, localize } from '../../utils';
-import { xhairs } from '../../utils/crosshairs';
 import { wait } from '../../utils/wait';
 import { LineFromTargetBase } from './base';
 
@@ -28,41 +27,55 @@ export class LineFromSelf extends LineFromTargetBase {
         const selectSquareFromCrosshairsRotation = async (crosshairs) => {
             let currentSpotIndex = 0;
 
-            while (crosshairs.inFlight) {
-                let tempPoint = { x: 0, y: 0 };
-                await wait(100);
+            let tempPoint = { x: 0, y: 0 };
+            await wait(100);
 
-                const ray = new Ray(tokenSquare.center, crosshairs);
-                if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
-                    const followAngle = radToNormalizedAngle(ray.angle);
-                    const pointIndex = Math.ceil(followAngle / 360 * totalSpots) - 1 % totalSpots;
-                    if (pointIndex === currentSpotIndex) {
-                        continue;
-                    }
-                    currentSpotIndex = pointIndex;
-                    point = availablePoints[pointIndex];
+            const ray = new Ray(tokenSquare.center, crosshairs);
+            if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
+                const followAngle = radToNormalizedAngle(ray.angle);
+                const pointIndex = Math.ceil(followAngle / 360 * totalSpots) - 1 % totalSpots;
+                if (pointIndex === currentSpotIndex) {
+                    return;
                 }
-                else {
-                    point = tokenSquare.edgePoint(ray);
-                }
+                currentSpotIndex = pointIndex;
+                point = availablePoints[pointIndex];
+            }
+            else {
+                point = tokenSquare.edgePoint(ray);
+            }
 
-                if (point.x === tempPoint.x && point.y === tempPoint.y) {
-                    continue;
-                }
-                tempPoint = point;
+            if (point.x === tempPoint.x && point.y === tempPoint.y) {
+                return;
+            }
+            tempPoint = point;
 
-                super.setCenter = point;
-                this.refresh();
-            };
+            super.setCenter = point;
+            this.refresh();
         }
 
-        const sourcePointConfig = {
-            drawIcon: false,
-            drawOutline: false,
-            interval: 0,
-            icon: this.iconImg,
-        };
-        const sourceSquare = await xhairs.show(sourcePointConfig, { show: selectSquareFromCrosshairsRotation });
+        // const sourcePointConfig = {
+        //     drawIcon: false,
+        //     drawOutline: false,
+        //     interval: 0,
+        //     icon: this.iconImg,
+        // };
+        // const sourceSquare = await xhairs.show(sourcePointConfig, { show: selectSquareFromCrosshairsRotation });
+        const config = {
+            borderAlpha: 0,
+            icon: { borderVisible: false },
+            snap: { snap: canvas.grid.size },
+        }
+        const sourceSquare = await Sequencer.Crosshair.show(
+            config,
+            {
+                [Sequencer.Crosshair.CALLBACKS.MOUSE_MOVE]: async (crosshair) => {
+                    console.log(crosshair)
+                    await selectSquareFromCrosshairsRotation(crosshair);
+                }
+            },
+        );
+
+
         if (sourceSquare.cancelled) {
             return false;
         }

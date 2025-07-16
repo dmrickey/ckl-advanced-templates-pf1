@@ -1,7 +1,6 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
 import { ifDebug } from '../../utils';
 import { wait } from '../../utils/wait';
-import { xhairs } from '../../utils/crosshairs';
 
 export class ConeSystem extends AbilityTemplateAdvanced {
     /** @override */
@@ -9,11 +8,6 @@ export class ConeSystem extends AbilityTemplateAdvanced {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
 
         super.clearTargetIfEnabled();
-
-        const targetConfig = {
-            drawIcon: false,
-            drawOutline: false,
-        };
 
         this.document.angle = 90;
         const updatePosition = async (crosshairs) => {
@@ -29,31 +23,47 @@ export class ConeSystem extends AbilityTemplateAdvanced {
                 newDirection = this.document.direction + 45 * Math.sign(event.deltaY);
             };
 
-            while (crosshairs.inFlight) {
-                await wait(100);
+            await wait(100);
 
-                const { x, y } = crosshairs;
-                if (this.document.direction === newDirection && x === this.document.x && y === this.document.y) {
-                    continue;
-                }
-
-                this.document.direction = newDirection;
-                this.document.x = crosshairs.x;
-                this.document.y = crosshairs.y;
-                this.refresh();
-
-                await super.targetIfEnabled();
+            const { x, y } = crosshairs;
+            if (this.document.direction === newDirection && x === this.document.x && y === this.document.y) {
+                return;
             }
+
+            this.document.direction = newDirection;
+            this.document.x = crosshairs.x;
+            this.document.y = crosshairs.y;
+            this.refresh();
+
+            await super.targetIfEnabled();
 
             canvas.app.view.onwheel = null;
         };
 
-        const coneCrosshairs = await xhairs.show(
-            targetConfig,
+        // const targetConfig = {
+        //     drawIcon: false,
+        //     drawOutline: false,
+        // };
+        // const coneCrosshairs = await xhairs.show(
+        //     targetConfig,
+        //     {
+        //         show: updatePosition
+        //     }
+        // );
+        const config = {
+            borderAlpha: 0,
+            icon: { borderVisible: false },
+        }
+        const crosshairs = await Sequencer.Crosshair.show(
+            config,
             {
-                show: updatePosition
-            }
+                [Sequencer.Crosshair.CALLBACKS.MOUSE_MOVE]: async (crosshair) => {
+                    console.log(crosshair)
+                    await updatePosition(crosshair);
+                }
+            },
         );
+        console.log(crosshairs);
 
         if (coneCrosshairs.cancelled) {
             super.clearTargetIfEnabled();

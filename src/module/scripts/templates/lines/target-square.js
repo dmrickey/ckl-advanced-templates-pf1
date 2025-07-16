@@ -1,5 +1,4 @@
 import { ifDebug, localize } from '../../utils';
-import { xhairs } from '../../utils/crosshairs';
 import { wait } from '../../utils/wait';
 import { LineFromTargetBase } from './base';
 
@@ -11,20 +10,36 @@ export class LineFromSquare extends LineFromTargetBase {
         this._setPreviewVisibility(false);
         super.clearTempate();
 
-        const sourceConfig = {
-            drawIcon: false,
-            drawOutline: false,
-            interval: this._gridInterval(),
-            label: localize('lineStart'),
-        };
-
         const show = async (crosshairs) => {
-            while (crosshairs.inFlight) {
-                await wait(100);
-                super.setCenter = crosshairs.center;
-            }
+            await wait(100);
+            super.setCenter = crosshairs.center;
         }
-        const source = await xhairs.show(sourceConfig, { show });
+
+        // const sourceConfig = {
+        //     drawIcon: false,
+        //     drawOutline: false,
+        //     interval: this._gridInterval(),
+        //     label: localize('lineStart'),
+        // };
+        // const source = await xhairs.show(sourceConfig, { show });
+
+        const config = {
+            borderAlpha: 0,
+            icon: { borderVisible: false },
+            snap: { position: this._gridInterval() },
+            label: { text: localize('lineStart') },
+        }
+        const crosshairs = await Sequencer.Crosshair.show(
+            config,
+            {
+                [Sequencer.Crosshair.CALLBACKS.MOUSE_MOVE]: async (crosshair) => {
+                    console.log(crosshair)
+                    await show(crosshair);
+                }
+            },
+        );
+        console.log(crosshairs);
+
         if (source.cancelled) {
             return false;
         }

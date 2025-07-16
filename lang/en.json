@@ -43,7 +43,7 @@
             "circle": {
                 "placement": {
                     "grid.label": "Grid Intersection",
-                    "self.label": "Centered on Token",
+                    "self.label": "Centered on Caster",
                     "splash.label": "Splash Weapon",
                     "type": {
                         "label": "Effect type",
@@ -51,7 +51,7 @@
                         "spread": "Spread",
                         "emanation": "Emanation"
                     },
-                    "attachToToken": "Attach to Token"
+                    "attachToToken": "Attach to Caster"
                 }
             },
             "cone": {

@@ -2,7 +2,6 @@ import { AbilityTemplateAdvanced } from "../ability-template";
 import { Settings } from '../../../settings';
 import { ifDebug } from '../../utils';
 import { wait } from '../../utils/wait';
-import { xhairs } from '../../utils/crosshairs';
 
 export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced {
     _tokenSquare;
@@ -13,11 +12,6 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
 
         super.clearTargetIfEnabled();
-
-        const targetConfig = {
-            drawIcon: false,
-            drawOutline: false,
-        };
 
         let currentOffsetAngle = 0;
         let currentSpotIndex = 0;
@@ -37,74 +31,90 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
                 };
             }
 
-            while (crosshairs.inFlight) {
-                await wait(100);
+            await wait(100);
 
-                let direction, x, y;
-                if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
-                    const totalSpots = this._tokenSquare.allSpots.length;
-                    const radToNormalizedAngle = (rad) => {
-                        let angle = (rad * 180 / Math.PI) % 360;
-                        // offset the angle for even-sided tokens, because it's centered in the grid it's just wonky without the offset
-                        const offset = this.#is15
-                            ? Settings.cone15Alternate
-                                ? 0.5
-                                : 0
-                            : 1;
-                        if (this._tokenSquare.heightSquares % 2 === offset && this._tokenSquare.widthSquares % 2 === offset) {
-                            angle -= (360 / totalSpots) / 2;
-                        }
-                        const normalizedAngle = Math.round(angle / (360 / totalSpots)) * (360 / totalSpots);
-                        return normalizedAngle < 0
-                            ? normalizedAngle + 360
-                            : normalizedAngle;
-                    };
-
-                    const ray = new Ray(this._tokenSquare.center, crosshairs);
-                    const angle = radToNormalizedAngle(ray.angle);
-                    const spotIndex = Math.ceil(angle / 360 * totalSpots) % totalSpots;
-                    if (spotIndex === currentSpotIndex && offsetAngle === currentOffsetAngle) {
-                        continue;
+            let direction, x, y;
+            if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
+                const totalSpots = this._tokenSquare.allSpots.length;
+                const radToNormalizedAngle = (rad) => {
+                    let angle = (rad * 180 / Math.PI) % 360;
+                    // offset the angle for even-sided tokens, because it's centered in the grid it's just wonky without the offset
+                    const offset = this.#is15
+                        ? Settings.cone15Alternate
+                            ? 0.5
+                            : 0
+                        : 1;
+                    if (this._tokenSquare.heightSquares % 2 === offset && this._tokenSquare.widthSquares % 2 === offset) {
+                        angle -= (360 / totalSpots) / 2;
                     }
+                    const normalizedAngle = Math.round(angle / (360 / totalSpots)) * (360 / totalSpots);
+                    return normalizedAngle < 0
+                        ? normalizedAngle + 360
+                        : normalizedAngle;
+                };
 
-                    currentOffsetAngle = offsetAngle;
-                    currentSpotIndex = spotIndex;
-
-                    const spot = this._tokenSquare.allSpots[currentSpotIndex];
-                    direction = spot.direction;
-                    x = spot.x;
-                    y = spot.y;
-                }
-                else {
-                    const radToNormalizedAngle = (rad) => {
-                        const angle = (rad * 180 / Math.PI) % 360;
-                        return angle < 0
-                            ? angle + 360
-                            : angle;
-                    };
-                    const ray = new Ray(this._tokenSquare.center, crosshairs);
-                    direction = radToNormalizedAngle(ray.angle);
-                    x = Math.cos(ray.angle) * this._tokenSquare.w / 2 + this._tokenSquare.center.x;
-                    y = Math.sin(ray.angle) * this._tokenSquare.h / 2 + this._tokenSquare.center.y;
+                const ray = new Ray(this._tokenSquare.center, crosshairs);
+                const angle = radToNormalizedAngle(ray.angle);
+                const spotIndex = Math.ceil(angle / 360 * totalSpots) % totalSpots;
+                if (spotIndex === currentSpotIndex && offsetAngle === currentOffsetAngle) {
+                    return;
                 }
 
-                this.document.direction = direction + offsetAngle;
-                this.document.x = x;
-                this.document.y = y;
-                this.refresh();
+                currentOffsetAngle = offsetAngle;
+                currentSpotIndex = spotIndex;
 
-                await super.targetIfEnabled();
+                const spot = this._tokenSquare.allSpots[currentSpotIndex];
+                direction = spot.direction;
+                x = spot.x;
+                y = spot.y;
             }
+            else {
+                const radToNormalizedAngle = (rad) => {
+                    const angle = (rad * 180 / Math.PI) % 360;
+                    return angle < 0
+                        ? angle + 360
+                        : angle;
+                };
+                const ray = new Ray(this._tokenSquare.center, crosshairs);
+                direction = radToNormalizedAngle(ray.angle);
+                x = Math.cos(ray.angle) * this._tokenSquare.w / 2 + this._tokenSquare.center.x;
+                y = Math.sin(ray.angle) * this._tokenSquare.h / 2 + this._tokenSquare.center.y;
+            }
+
+            this.document.direction = direction + offsetAngle;
+            this.document.x = x;
+            this.document.y = y;
+            this.refresh();
+
+            await super.targetIfEnabled();
 
             canvas.app.view.onwheel = null;
         };
 
-        const rotateCrosshairs = await xhairs.show(
-            targetConfig,
+        // const targetConfig = {
+        //     drawIcon: false,
+        //     drawOutline: false,
+        // };
+        // const rotateCrosshairs = await xhairs.show(
+        //     targetConfig,
+        //     {
+        //         show: updateTemplateRotation
+        //     }
+        // );
+        const config = {
+            borderAlpha: 0,
+            icon: { borderVisible: false },
+        }
+        const rotateCrosshairs = await Sequencer.Crosshair.show(
+            config,
             {
-                show: updateTemplateRotation
-            }
+                [Sequencer.Crosshair.CALLBACKS.MOUSE_MOVE]: async (crosshair) => {
+                    console.log(crosshair)
+                    await updateTemplateRotation(crosshair);
+                }
+            },
         );
+        console.log(crosshairs);
 
         if (rotateCrosshairs.cancelled) {
             super.clearTargetIfEnabled();

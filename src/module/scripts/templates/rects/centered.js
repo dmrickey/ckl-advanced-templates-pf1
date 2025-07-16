@@ -3,7 +3,6 @@ import { ifDebug, localize, localizeFull } from '../../utils';
 import { MODULE_NAME } from "../../../consts";
 import { GridSquare } from "../../models/grid-square";
 import { wait } from '../../utils/wait';
-import { xhairs } from '../../utils/crosshairs';
 
 export class RectCentered extends AbilityTemplateAdvanced {
     get distance() { return this.document.distance; }
@@ -42,71 +41,84 @@ export class RectCentered extends AbilityTemplateAdvanced {
             //     };
             // }
 
-            while (crosshairs.inFlight) {
-                await wait(100);
+            await wait(100);
 
-                this.document.flags[MODULE_NAME].icon = existingIcon;
+            this.document.flags[MODULE_NAME].icon = existingIcon;
 
-                const centerX = crosshairs.x;
-                const centerY = crosshairs.y;
-                const templateX = centerX - this.offset;
-                const templateY = centerY - this.offset;
-                if (this.document.x === templateX && this.document.y === templateY) {
-                    continue;
-                }
-
-                if ((this.hasMaxRange || this.hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
-                    const rays = tokenSquare.gridPoints.map((spot) => ({
-                        ray: new Ray(spot, crosshairs),
-                    }));
-                    const distances = rays.map((ray) => canvas.grid.measureDistances([ray], { gridSpaces: true })[0]);
-                    let range = Math.min(...distances);
-                    range = !!(range % 1)
-                        ? range.toFixed(1)
-                        : range;
-                    const isInToken = tokenContains(centerX, centerY);
-                    if (isInToken) {
-                        range = 0;
-                    }
-
-                    isInRange = !(this.hasMinRange && range < this.minRange
-                        || this.hasMaxRange && range > this.maxRange);
-                    this._setPreviewVisibility(isInRange);
-                    this._setErrorIconVisibility(isInRange);
-
-                    const unit = game.settings.get('pf1', 'units') === 'imperial'
-                        ? localizeFull('PF1.DistFtShort')
-                        : localizeFull('PF1.DistMShort');
-                    crosshairs.label = localize('range', { range, unit });
-                    if (!isInRange) {
-                        crosshairs.label += '\n' + localize('errors.outOfRange');
-                    }
-                }
-
-                this.document.x = templateX;
-                this.document.y = templateY;
-                this.refresh();
-
-                await super.targetIfEnabled();
+            const centerX = crosshairs.x;
+            const centerY = crosshairs.y;
+            const templateX = centerX - this.offset;
+            const templateY = centerY - this.offset;
+            if (this.document.x === templateX && this.document.y === templateY) {
+                return;
             }
+
+            if ((this.hasMaxRange || this.hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
+                const rays = tokenSquare.gridPoints.map((spot) => ({
+                    ray: new Ray(spot, crosshairs),
+                }));
+                const distances = rays.map((ray) => canvas.grid.measureDistances([ray], { gridSpaces: true })[0]);
+                let range = Math.min(...distances);
+                range = !!(range % 1)
+                    ? range.toFixed(1)
+                    : range;
+                const isInToken = tokenContains(centerX, centerY);
+                if (isInToken) {
+                    range = 0;
+                }
+
+                isInRange = !(this.hasMinRange && range < this.minRange
+                    || this.hasMaxRange && range > this.maxRange);
+                this._setPreviewVisibility(isInRange);
+                this._setErrorIconVisibility(isInRange);
+
+                const unit = game.settings.get('pf1', 'units') === 'imperial'
+                    ? localizeFull('PF1.DistFtShort')
+                    : localizeFull('PF1.DistMShort');
+                crosshairs.label = localize('range', { range, unit });
+                if (!isInRange) {
+                    crosshairs.label += '\n' + localize('errors.outOfRange');
+                }
+            }
+
+            this.document.x = templateX;
+            this.document.y = templateY;
+            this.refresh();
+
+            await super.targetIfEnabled();
 
             canvas.app.view.onwheel = null;
         };
 
-        const targetConfig = {
-            drawIcon: false,
-            drawOutline: false,
-            interval: this._gridInterval(),
-        };
-        const crosshairs = await xhairs.show(
-            targetConfig,
+        // const targetConfig = {
+        //     drawIcon: false,
+        //     drawOutline: false,
+        //     interval: this._gridInterval(),
+        // };
+        // const crosshairs = await xhairs.show(
+        //     targetConfig,
+        //     {
+        //         show: updateTemplateLocation
+        //     }
+        // );
+        const config = {
+            borderAlpha: 0,
+            icon: { borderVisible: false },
+            snap: { position: this._gridInterval() },
+        }
+        const crosshairs = await Sequencer.Crosshair.show(
+            config,
             {
-                show: updateTemplateLocation
-            }
+                [Sequencer.Crosshair.CALLBACKS.MOUSE_MOVE]: async (crosshair) => {
+                    console.log(crosshair)
+                    await updateTemplateLocation(crosshair);
+                }
+            },
         );
+        console.log(crosshairs);
 
-        if (crosshairs.cancelled || !isInRange) {
-            if (!isInRange && !crosshairs.cancelled) {
+        if (!crosshairs || !isInRange) {
+            if (!isInRange && !!crosshairs) {
                 const message = localize('errors.outOfRange');
                 ui.notifications.error(message);
             }

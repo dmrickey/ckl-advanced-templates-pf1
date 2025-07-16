@@ -2,7 +2,6 @@ import { AbilityTemplateAdvanced } from "../ability-template";
 import { ifDebug, localize } from '../../utils';
 import HintHandler from "../../../view/hint-handler";
 import { wait } from '../../utils/wait';
-import { xhairs } from '../../utils/crosshairs';
 
 export class LineFromTargetBase extends AbilityTemplateAdvanced {
     /** @override */
@@ -19,31 +18,43 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
         super.setCenter = gridPoint;
 
         const updateTemplateRotation = async (crosshairs) => {
-            while (crosshairs.inFlight) {
-                await wait(100);
+            await wait(100);
 
-                const ray = new Ray(gridPoint, crosshairs);
-                const direction = Math.toDegrees(ray.angle);
+            const ray = new Ray(gridPoint, crosshairs);
+            const direction = Math.toDegrees(ray.angle);
 
-                this.document.direction = Math.normalizeDegrees(direction);
-                this.refresh();
+            this.document.direction = Math.normalizeDegrees(direction);
+            this.refresh();
 
-                await super.targetIfEnabled();
-            }
+            await super.targetIfEnabled();
 
             canvas.app.view.onwheel = null;
         };
 
         HintHandler.show({ title: localize('line'), hint: localize('hints.restart') });
-        const followCrosshairs = await xhairs.show(
+        // const followCrosshairs = await xhairs.show(
+        //     {
+        //         drawIcon: false,
+        //         drawOutline: false,
+        //         snap: interval: 0,
+        //     },
+        //     {
+        //         show: updateTemplateRotation
+        //     }
+        // );
+        const config = {
+            borderAlpha: 0,
+            icon: { borderVisible: false },
+            snap: { resolution: canvas.grid.size },
+        }
+        const followCrosshairs = await Sequencer.Crosshair.show(
+            config,
             {
-                drawIcon: false,
-                drawOutline: false,
-                interval: 0,
+                [Sequencer.Crosshair.CALLBACKS.MOUSE_MOVE]: async (crosshair) => {
+                    console.log(crosshair)
+                    await updateTemplateRotation(crosshair);
+                }
             },
-            {
-                show: updateTemplateRotation
-            }
         );
 
         if (followCrosshairs.cancelled) {

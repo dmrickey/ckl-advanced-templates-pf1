@@ -1,29 +1,32 @@
 import { CONSTS, MODULE_NAME } from "../consts";
 import { ifDebug } from "./utils";
 
-const deleteTemplatesForToken = async (token) => {
-    const templateIds = _getTemplateIdsForToken(token);
+const deleteTemplatesForToken = async (tokenId) => {
+    const templateIds = _getTemplateIdsForToken(tokenId);
     if (templateIds.length) {
-        ifDebug(() => console.log(`Deleting templates for token (${token.id})`, templateIds));
+        ifDebug(() => console.log(`Deleting templates for token (${tokenId})`, templateIds));
         await canvas.scene.deleteEmbeddedDocuments("MeasuredTemplate", templateIds);
     }
 };
 
-const moveTemplatesToToken = async (token) => {
-    const templateIds = _getTemplateIdsForToken(token);
+const moveTemplatesToToken = async ({ id, x, y }) => {
+    const templateIds = _getTemplateIdsForToken(id);
     if (templateIds.length) {
-        ifDebug(() => console.log(`Moving templates for token (${token.id})`, templateIds));
-        const updates = templateIds.map((id) => ({ _id: id, ...token.object.center }));
+        ifDebug(() => console.log(`Moving templates for token (${id})`, templateIds));
+        const updates = templateIds.map((templateId) => ({ _id: templateId, x, y }));
         await canvas.scene.updateEmbeddedDocuments("MeasuredTemplate", updates);
     }
 };
 
-const _getTemplateIdsForToken = (token) => canvas.templates.placeables
+const getTemplatesAttachedToToken = (tokenId) => canvas.templates.placeables
     .filter((t) => !!t.document.flags?.[MODULE_NAME]?.[CONSTS.flags.circle.movesWithToken])
-    .filter((t) => t.document.flags?.[MODULE_NAME]?.tokenId === token.id)
+    .filter((t) => t.document.flags?.[MODULE_NAME]?.tokenId === tokenId);
+
+const _getTemplateIdsForToken = (tokenId) => getTemplatesAttachedToToken(tokenId)
     .map((t) => t.id);
 
 export {
     deleteTemplatesForToken,
+    getTemplatesAttachedToToken,
     moveTemplatesToToken,
 };

@@ -2,7 +2,6 @@ import { AbilityTemplateAdvanced } from "../ability-template";
 import { ifDebug, localize } from '../../utils';
 import HintHandler from "../../../view/hint-handler";
 import { wait } from '../../utils/wait';
-import { xhairs } from '../../utils/crosshairs';
 
 export class LineSystem extends AbilityTemplateAdvanced {
     /** @override */
@@ -10,11 +9,6 @@ export class LineSystem extends AbilityTemplateAdvanced {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
 
         super.clearTargetIfEnabled();
-
-        const targetConfig = {
-            drawIcon: false,
-            drawOutline: false,
-        };
 
         this.document.angle = 90;
 
@@ -36,30 +30,46 @@ export class LineSystem extends AbilityTemplateAdvanced {
                 newDirection = this.document.direction + snap * Math.sign(event.deltaY);
             };
 
-            while (crosshairs.inFlight) {
-                await wait(100);
+            await wait(100);
 
-                const { x, y } = crosshairs;
-                if (this.document.direction === newDirection && x === this.document.x && y === this.document.y) {
-                    continue;
-                }
-
-                this.document.direction = newDirection;
-                this.document.x = crosshairs.x;
-                this.document.y = crosshairs.y;
-                this.refresh();
-
-                await super.targetIfEnabled();
+            const { x, y } = crosshairs;
+            if (this.document.direction === newDirection && x === this.document.x && y === this.document.y) {
+                return;
             }
+
+            this.document.direction = newDirection;
+            this.document.x = crosshairs.x;
+            this.document.y = crosshairs.y;
+            this.refresh();
+
+            await super.targetIfEnabled();
 
             canvas.app.view.onwheel = null;
         };
 
-        const coneCrosshairs = await xhairs.show(
-            targetConfig,
+        // const targetConfig = {
+        //     drawIcon: false,
+        //     drawOutline: false,
+        // };
+        // const coneCrosshairs = await xhairs.show(
+        //     targetConfig,
+        //     {
+        //         show: updatePosition
+        //     }
+        // );
+        const config = {
+            borderAlpha: 0,
+            icon: { borderVisible: false },
+            snap: { position: this._gridInterval(), resolution: canvas.grid.size },
+        }
+        const crosshairs = await Sequencer.Crosshair.show(
+            config,
             {
-                show: updatePosition
-            }
+                [Sequencer.Crosshair.CALLBACKS.MOUSE_MOVE]: async (crosshair) => {
+                    console.log(crosshair)
+                    await updatePosition(crosshair);
+                }
+            },
         );
 
         if (coneCrosshairs.cancelled) {

@@ -135,11 +135,11 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         this.document.flags[MODULE_NAME].rotation = value;
     }
 
+    // * @returns { -1 | 0 | 1 }
     /**
      * @virtual
-     * @returns { -1 | 0 | 1 }
      */
-    _gridInterval() { return canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? 1 : 0; }
+    _gridInterval() { return CONST.GRID_SNAPPING_MODES.VERTEX; } // todo find out if I need to refactor this to provide the whole snap in case this doesn't turn snapping off automatically for gridless scenes
 
     /**
      * The control icon label
@@ -409,6 +409,18 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
                     break;
             }
 
+            if (this.tempPosition) {
+                xOffset += this.tempPosition.x;
+                yOffset += this.tempPosition.y;
+            }
+
+            // if (this.tempXOffset) {
+            //     xOffset += this.tempXOffset;
+            // }
+            // if (this.tempYOffset) {
+            //     yOffset += this.tempYOffset;
+            // }
+
             template.beginTextureFill({
                 texture: this.texture,
                 matrix: new PIXI.Matrix()
@@ -556,32 +568,66 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
      * @protected
      */
     _getGridHighlightPositions() {
-        // TODO verify this
-        const grid = canvas.grid.grid;
-        const d = canvas.dimensions;
-        const { x, y, distance } = this.document;
+        // // TODO verify this
+        // const grid = canvas.grid.grid;
+        // const d = canvas.dimensions;
+        // const { x, y, distance } = this.document;
 
-        // Get number of rows and columns
-        const [maxRow, maxCol] = grid.getGridPositionFromPixels(d.width, d.height);
-        let nRows = Math.ceil(((distance * 1.5) / d.distance) / (d.size / grid.h));
-        let nCols = Math.ceil(((distance * 1.5) / d.distance) / (d.size / grid.w));
-        [nRows, nCols] = [Math.min(nRows, maxRow), Math.min(nCols, maxCol)];
+        // // Get number of rows and columns
+        // const [maxRow, maxCol] = grid.getGridPositionFromPixels(d.width, d.height);
+        // let nRows = Math.ceil(((distance * 1.5) / d.distance) / (d.size / grid.h));
+        // let nCols = Math.ceil(((distance * 1.5) / d.distance) / (d.size / grid.w));
+        // [nRows, nCols] = [Math.min(nRows, maxRow), Math.min(nCols, maxCol)];
 
-        // Get the offset of the template origin relative to the top-left grid space
-        const [tx, ty] = grid.getTopLeft(x, y);
-        const [row0, col0] = grid.getGridPositionFromPixels(tx, ty);
-        const [hx, hy] = [Math.ceil(grid.w / 2), Math.ceil(grid.h / 2)];
-        const isCenter = (x - tx === hx) && (y - ty === hy);
+        // // Get the offset of the template origin relative to the top-left grid space
+        // const [tx, ty] = grid.getTopLeft(x, y);
+        // const [row0, col0] = grid.getGridPositionFromPixels(tx, ty);
+        // const [hx, hy] = [Math.ceil(grid.w / 2), Math.ceil(grid.h / 2)];
+        // const isCenter = (x - tx === hx) && (y - ty === hy);
 
-        // Identify grid coordinates covered by the template Graphics
+        // // Identify grid coordinates covered by the template Graphics
+        // const positions = [];
+        // for (let r = -nRows; r < nRows; r++) {
+        //     for (let c = -nCols; c < nCols; c++) {
+        //         const [gx, gy] = grid.getPixelsFromGridPosition(row0 + r, col0 + c);
+        //         const [testX, testY] = [(gx + hx) - x, (gy + hy) - y];
+        //         const contains = ((r === 0) && (c === 0) && isCenter) || grid._testShape(testX, testY, this.shape);
+        //         if (!contains) continue;
+        //         positions.push({ x: gx, y: gy });
+        //     }
+        // }
+        // return positions;
+        const grid = canvas.grid;
+        const { x: ox, y: oy } = this.document;
+        const shape = this.shape;
+        const bounds = shape.getBounds();
+        bounds.x += ox;
+        bounds.y += oy;
+        bounds.fit(canvas.dimensions.rect);
+        bounds.pad(1);
+
+        // Identify grid space that have their center points covered by the template shape
         const positions = [];
-        for (let r = -nRows; r < nRows; r++) {
-            for (let c = -nCols; c < nCols; c++) {
-                const [gx, gy] = grid.getPixelsFromGridPosition(row0 + r, col0 + c);
-                const [testX, testY] = [(gx + hx) - x, (gy + hy) - y];
-                const contains = ((r === 0) && (c === 0) && isCenter) || grid._testShape(testX, testY, this.shape);
-                if (!contains) continue;
-                positions.push({ x: gx, y: gy });
+        const [i0, j0, i1, j1] = grid.getOffsetRange(bounds);
+        for (let i = i0; i < i1; i++) {
+            for (let j = j0; j < j1; j++) {
+                const offset = { i, j };
+                const { x: cx, y: cy } = grid.getCenterPoint(offset);
+
+                // If the origin of the template is a grid space center, this grid space is highlighted
+                let covered = (Math.max(Math.abs(cx - ox), Math.abs(cy - oy)) < 1);
+                if (!covered) {
+                    for (let dx = -0.5; dx <= 0.5; dx += 0.5) {
+                        for (let dy = -0.5; dy <= 0.5; dy += 0.5) {
+                            if (shape.contains(cx - ox + dx, cy - oy + dy)) {
+                                covered = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!covered) continue;
+                positions.push(grid.getTopLeftPoint(offset));
             }
         }
         return positions;
@@ -613,213 +659,213 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         return super._getGridHighlightPositions();
     }
 
-    // getHighlightedSquares() {
-    //     if (this.hideHighlight) {
-    //         return [];
-    //     }
+    getHighlightedSquares() {
+        if (this.hideHighlight) {
+            return [];
+        }
 
-    //     if (!this.id || !this.shape) return [];
+        if (!this.id || !this.shape) return [];
 
-    //     if (this.shouldOverrideTokenEmanation) {
-    //         const { token, sizeSquares } = this.tokenSizeSquares;
-    //         if (token && sizeSquares >= 2) {
-    //             return this.#getEmanationHighlightSquares();
-    //         }
-    //     }
+        if (this.shouldOverrideTokenEmanation) {
+            const { token, sizeSquares } = this.tokenSizeSquares;
+            if (token && sizeSquares >= 2) {
+                return this.#getEmanationHighlightSquares();
+            }
+        }
 
-    //     const templateType = this.document.t;
-    //     if (!game.settings.get("pf1", "measureStyle") || !["circle", "cone", "ray", "rect", "line"].includes(templateType)) return [];
+        const templateType = this.document.t;
+        if (!game.settings.get("pf1", "measureStyle") || !["circle", "cone", "ray", "rect", "line"].includes(templateType)) return [];
 
-    //     const grid = canvas.grid;
-    //     // Size of each cell in pixels
-    //     const gridSizePxBase = canvas.dimensions.size;
-    //     // Offset for uneven grids
-    //     const gridSizePxOffset = gridSizePxBase % 2;
-    //     // Final grid size
-    //     const gridSizePx = gridSizePxBase + gridSizePxOffset;
-    //     const gridSizeUnits = canvas.dimensions.distance; // feet, meters, etc.
+        const grid = canvas.grid;
+        // Size of each cell in pixels
+        const gridSizePxBase = canvas.dimensions.size;
+        // Offset for uneven grids
+        const gridSizePxOffset = gridSizePxBase % 2;
+        // Final grid size
+        const gridSizePx = gridSizePxBase + gridSizePxOffset;
+        const gridSizeUnits = canvas.dimensions.distance; // feet, meters, etc.
 
-    //     const templateDirection = this.document.direction;
-    //     const templateAngle = this.document.angle;
+        const templateDirection = this.document.direction;
+        const templateAngle = this.document.angle;
 
-    //     // Parse rays as per Bresenham's algorithm
-    //     if (templateType === "ray" || templateType === 'line') {
-    //         const result = [];
+        // Parse rays as per Bresenham's algorithm
+        if (templateType === "ray" || templateType === 'line') {
+            const result = [];
 
-    //         const line = (x0, y0, x1, y1) => {
-    //             x0 = Math.floor(x0 / gridSizePx);
-    //             x1 = Math.floor(x1 / gridSizePx);
-    //             y0 = Math.floor(y0 / gridSizePx);
-    //             y1 = Math.floor(y1 / gridSizePx);
+            const line = (x0, y0, x1, y1) => {
+                x0 = Math.floor(x0 / gridSizePx);
+                x1 = Math.floor(x1 / gridSizePx);
+                y0 = Math.floor(y0 / gridSizePx);
+                y1 = Math.floor(y1 / gridSizePx);
 
-    //             const dx = Math.abs(x1 - x0);
-    //             const dy = Math.abs(y1 - y0);
-    //             const sx = x0 < x1 ? 1 : -1;
-    //             const sy = y0 < y1 ? 1 : -1;
-    //             let err = dx - dy;
+                const dx = Math.abs(x1 - x0);
+                const dy = Math.abs(y1 - y0);
+                const sx = x0 < x1 ? 1 : -1;
+                const sy = y0 < y1 ? 1 : -1;
+                let err = dx - dy;
 
-    //             while (!(x0 === x1 && y0 === y1)) {
-    //                 result.push({ x: x0 * gridSizePx, y: y0 * gridSizePx });
-    //                 const e2 = err << 1;
-    //                 if (e2 > -dy) {
-    //                     err -= dy;
-    //                     x0 += sx;
-    //                 }
-    //                 if (e2 < dx) {
-    //                     err += dx;
-    //                     y0 += sy;
-    //                 }
-    //             }
-    //         };
+                while (!(x0 === x1 && y0 === y1)) {
+                    result.push({ x: x0 * gridSizePx, y: y0 * gridSizePx });
+                    const e2 = err << 1;
+                    if (e2 > -dy) {
+                        err -= dy;
+                        x0 += sx;
+                    }
+                    if (e2 < dx) {
+                        err += dx;
+                        y0 += sy;
+                    }
+                }
+            };
 
-    //         // Get resulting squares
-    //         let xOffset = 0;
-    //         let yOffset = 0;
-    //         if (90 <= templateDirection && templateDirection <= 270) {
-    //             xOffset = -1;
-    //         }
-    //         if (180 <= templateDirection && templateDirection <= 360) {
-    //             yOffset = -1;
-    //         }
+            // Get resulting squares
+            let xOffset = 0;
+            let yOffset = 0;
+            if (90 <= templateDirection && templateDirection <= 270) {
+                xOffset = -1;
+            }
+            if (180 <= templateDirection && templateDirection <= 360) {
+                yOffset = -1;
+            }
 
-    //         const width = this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.line.widthOverride] && this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.line.width] || Settings.defaultLineWidth;
-    //         const qty = Math.ceil(width / 5);
+            const width = this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.line.widthOverride] && this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.line.width] || Settings.defaultLineWidth;
+            const qty = Math.ceil(width / 5);
 
-    //         const rad = Math.toRadians(templateDirection);
-    //         const rad90 = Math.toRadians(90);
-    //         let points = [];
-    //         const isOdd = qty % 2;
-    //         if (qty <= 1) {
-    //             points.push({ x: this.document.x, y: this.document.y });
-    //         } else if (isOdd) {
-    //             points = [...new Array(Math.floor(qty / 2))].flatMap((_, i) => [{
-    //                 x: this.document.x + gridSizePx * (i + 1) * Math.cos(rad + rad90),
-    //                 y: this.document.y + gridSizePx * (i + 1) * Math.sin(rad + rad90),
-    //             }, {
-    //                 x: this.document.x + gridSizePx * (i + 1) * Math.cos(rad - rad90),
-    //                 y: this.document.y + gridSizePx * (i + 1) * Math.sin(rad - rad90),
-    //             }]);
-    //             points.push({ x: this.document.x, y: this.document.y });
-    //         } else {
-    //             points = [...new Array(qty / 2)].flatMap((_, i) => [{
-    //                 x: this.document.x + (gridSizePx * (i + 1) - gridSizePx / 2) * Math.cos(rad + rad90),
-    //                 y: this.document.y + (gridSizePx * (i + 1) - gridSizePx / 2) * Math.sin(rad + rad90),
-    //             }, {
-    //                 x: this.document.x + (gridSizePx * (i + 1) - gridSizePx / 2) * Math.cos(rad - rad90),
-    //                 y: this.document.y + (gridSizePx * (i + 1) - gridSizePx / 2) * Math.sin(rad - rad90),
-    //             }]);
-    //             points.push({ x: this.document.x, y: this.document.y });
-    //         }
+            const rad = Math.toRadians(templateDirection);
+            const rad90 = Math.toRadians(90);
+            let points = [];
+            const isOdd = qty % 2;
+            if (qty <= 1) {
+                points.push({ x: this.document.x, y: this.document.y });
+            } else if (isOdd) {
+                points = [...new Array(Math.floor(qty / 2))].flatMap((_, i) => [{
+                    x: this.document.x + gridSizePx * (i + 1) * Math.cos(rad + rad90),
+                    y: this.document.y + gridSizePx * (i + 1) * Math.sin(rad + rad90),
+                }, {
+                    x: this.document.x + gridSizePx * (i + 1) * Math.cos(rad - rad90),
+                    y: this.document.y + gridSizePx * (i + 1) * Math.sin(rad - rad90),
+                }]);
+                points.push({ x: this.document.x, y: this.document.y });
+            } else {
+                points = [...new Array(qty / 2)].flatMap((_, i) => [{
+                    x: this.document.x + (gridSizePx * (i + 1) - gridSizePx / 2) * Math.cos(rad + rad90),
+                    y: this.document.y + (gridSizePx * (i + 1) - gridSizePx / 2) * Math.sin(rad + rad90),
+                }, {
+                    x: this.document.x + (gridSizePx * (i + 1) - gridSizePx / 2) * Math.cos(rad - rad90),
+                    y: this.document.y + (gridSizePx * (i + 1) - gridSizePx / 2) * Math.sin(rad - rad90),
+                }]);
+                points.push({ x: this.document.x, y: this.document.y });
+            }
 
-    //         points.forEach((point) => {
-    //             // Extend ray by half a square for better highlight calculation
-    //             const ray = Ray.fromAngle(point.x, point.y, this.ray.angle, this.ray.distance + gridSizePx / 2);
-    //             line(ray.A.x + xOffset, ray.A.y + yOffset, ray.B.x, ray.B.y);
-    //         })
+            points.forEach((point) => {
+                // Extend ray by half a square for better highlight calculation
+                const ray = Ray.fromAngle(point.x, point.y, this.ray.angle, this.ray.distance + gridSizePx / 2);
+                line(ray.A.x + xOffset, ray.A.y + yOffset, ray.B.x, ray.B.y);
+            })
 
-    //         result.sort((a, b) => a.x === b.x ? a.y - b.y : a.x - b.x);
-    //         const xs = new Set(result.map((p) => p.x));
-    //         xs.forEach((x) => {
-    //             const ys = new Set(result.filter((p) => p.x === x).map((p) => p.y));
+            result.sort((a, b) => a.x === b.x ? a.y - b.y : a.x - b.x);
+            const xs = new Set(result.map((p) => p.x));
+            xs.forEach((x) => {
+                const ys = new Set(result.filter((p) => p.x === x).map((p) => p.y));
 
-    //             const yMax = Math.max(...ys);
-    //             const yMin = Math.min(...ys);
-    //             const expected = (yMax - yMin) / gridSizePx + 1;
-    //             if (expected <= 2) {
-    //                 return;
-    //             }
+                const yMax = Math.max(...ys);
+                const yMin = Math.min(...ys);
+                const expected = (yMax - yMin) / gridSizePx + 1;
+                if (expected <= 2) {
+                    return;
+                }
 
-    //             // skip first and last because they already exist
-    //             for (let i = 1; i < expected - 1; i++) {
-    //                 const y = yMin + i * gridSizePx;
-    //                 if (ys.has(y)) {
-    //                     continue;
-    //                 }
-    //                 result.push({ x, y });
-    //             }
-    //         });
+                // skip first and last because they already exist
+                for (let i = 1; i < expected - 1; i++) {
+                    const y = yMin + i * gridSizePx;
+                    if (ys.has(y)) {
+                        continue;
+                    }
+                    result.push({ x, y });
+                }
+            });
 
-    //         return result;
-    //     }
-    //     else if (templateType === "circle" || templateType === "cone") {
-    //         // Get number of rows and columns
-    //         const nr = Math.ceil((this.document.distance * 1.5) / gridSizeUnits / (gridSizePx / grid.h));
-    //         const nc = Math.ceil((this.document.distance * 1.5) / gridSizeUnits / (gridSizePx / grid.w));
+            return result;
+        }
+        else if (templateType === "circle" || templateType === "cone") {
+            // Get number of rows and columns
+            const nr = Math.ceil((this.document.distance * 1.5) / gridSizeUnits / (gridSizePx / grid.h));
+            const nc = Math.ceil((this.document.distance * 1.5) / gridSizeUnits / (gridSizePx / grid.w));
 
-    //         // Get the center of the grid position occupied by the template
-    //         const { x, y } = this.document;
+            // Get the center of the grid position occupied by the template
+            const { x, y } = this.document;
 
-    //         const [cx, cy] = grid.getCenter(x, y);
-    //         const [col0, row0] = grid.grid.getGridPositionFromPixels(cx, cy);
-    //         const minAngle = Math.normalizeDegrees(templateDirection - templateAngle / 2);
-    //         const maxAngle = Math.normalizeDegrees(templateDirection + templateAngle / 2);
+            const [cx, cy] = grid.getCenter(x, y);
+            const [col0, row0] = grid.grid.getGridPositionFromPixels(cx, cy);
+            const minAngle = Math.normalizeDegrees(templateDirection - templateAngle / 2);
+            const maxAngle = Math.normalizeDegrees(templateDirection + templateAngle / 2);
 
-    //         // Origin offset multiplier
-    //         const offsetMult = { x: 0, y: 0 };
-    //         // Offset measurement for cones
-    //         // Offset is to ensure that cones only start measuring from cell borders, as in https://www.d20pfsrd.com/magic/#Aiming_a_Spell
-    //         if (templateType === "cone") {
-    //             // Degrees anticlockwise from pointing right. In 45-degree increments from 0 to 360
-    //             const dir = (templateDirection >= 0 ? 360 - templateDirection : -templateDirection) % 360;
-    //             // If we're not on a border for X, offset by 0.5 or -0.5 to the border of the cell in the direction we're looking on X axis
-    //             // /2 turns from 1/0/-1 to 0.5/0/-0.5
-    //             offsetMult.x = x % gridSizePxBase != 0 ? Math.sign(Math.round(Math.cos(this.degToRad(dir)))) / 2 : 0;
-    //             // Same for Y, but cos Y goes down on screens, we invert
-    //             offsetMult.y = y % gridSizePxBase != 0 ? -Math.sign(Math.round(Math.sin(this.degToRad(dir)))) / 2 : 0;
-    //         }
+            // Origin offset multiplier
+            const offsetMult = { x: 0, y: 0 };
+            // Offset measurement for cones
+            // Offset is to ensure that cones only start measuring from cell borders, as in https://www.d20pfsrd.com/magic/#Aiming_a_Spell
+            if (templateType === "cone") {
+                // Degrees anticlockwise from pointing right. In 45-degree increments from 0 to 360
+                const dir = (templateDirection >= 0 ? 360 - templateDirection : -templateDirection) % 360;
+                // If we're not on a border for X, offset by 0.5 or -0.5 to the border of the cell in the direction we're looking on X axis
+                // /2 turns from 1/0/-1 to 0.5/0/-0.5
+                offsetMult.x = x % gridSizePxBase != 0 ? Math.sign(Math.round(Math.cos(this.degToRad(dir)))) / 2 : 0;
+                // Same for Y, but cos Y goes down on screens, we invert
+                offsetMult.y = y % gridSizePxBase != 0 ? -Math.sign(Math.round(Math.sin(this.degToRad(dir)))) / 2 : 0;
+            }
 
-    //         const result = [];
-    //         for (let a = -nc; a < nc; a++) {
-    //             for (let b = -nr; b < nr; b++) {
-    //                 // Position of cell's top-left corner, in pixels
-    //                 const [gx, gy] = canvas.grid.grid.getPixelsFromGridPosition(col0 + a, row0 + b);
-    //                 // Position of cell's center, in pixels
-    //                 const [cellCenterX, cellCenterY] = [gx + gridSizePx * 0.5, gy + gridSizePx * 0.5];
+            const result = [];
+            for (let a = -nc; a < nc; a++) {
+                for (let b = -nr; b < nr; b++) {
+                    // Position of cell's top-left corner, in pixels
+                    const [gx, gy] = canvas.grid.grid.getPixelsFromGridPosition(col0 + a, row0 + b);
+                    // Position of cell's center, in pixels
+                    const [cellCenterX, cellCenterY] = [gx + gridSizePx * 0.5, gy + gridSizePx * 0.5];
 
-    //                 // Determine point of origin
-    //                 const origin = {
-    //                     x: x + offsetMult.x * gridSizePxBase,
-    //                     y: y + offsetMult.y * gridSizePxBase,
-    //                 };
+                    // Determine point of origin
+                    const origin = {
+                        x: x + offsetMult.x * gridSizePxBase,
+                        y: y + offsetMult.y * gridSizePxBase,
+                    };
 
-    //                 // Determine point we're measuring the distance to - always in the center of a grid square
-    //                 const destination = { x: cellCenterX, y: cellCenterY };
+                    // Determine point we're measuring the distance to - always in the center of a grid square
+                    const destination = { x: cellCenterX, y: cellCenterY };
 
-    //                 if (templateType === "cone") {
-    //                     const ray = new Ray(origin, destination);
-    //                     const rayAngle = Math.normalizeDegrees(ray.angle / (Math.PI / 180));
-    //                     if (ray.distance > 0 && !this.withinAngle(minAngle, maxAngle, rayAngle)) {
-    //                         continue;
-    //                     }
-    //                 }
+                    if (templateType === "cone") {
+                        const ray = new Ray(origin, destination);
+                        const rayAngle = Math.normalizeDegrees(ray.angle / (Math.PI / 180));
+                        if (ray.distance > 0 && !this.withinAngle(minAngle, maxAngle, rayAngle)) {
+                            continue;
+                        }
+                    }
 
-    //                 const distance = pf1.utils.measureDistance(origin, destination);
-    //                 if (distance <= this.document.distance) {
-    //                     result.push({ x: gx, y: gy });
-    //                 }
-    //             }
-    //         }
+                    const distance = pf1.utils.measureDistance(origin, destination);
+                    if (distance <= this.document.distance) {
+                        result.push({ x: gx, y: gy });
+                    }
+                }
+            }
 
-    //         return result;
-    //     }
-    //     else if (templateType === "rect") {
-    //         const { baseDistance } = this;
-    //         const { x, y } = this.document;
-    //         const nr = Math.ceil(baseDistance / gridSizeUnits);
-    //         const nc = Math.ceil(baseDistance / gridSizeUnits);
-    //         const result = [];
-    //         for (let a = 0; a < nc; a++) {
-    //             for (let b = 0; b < nr; b++) {
-    //                 // Position of cell's top-left corner, in pixels
-    //                 const [gx, gy] = [x + a * gridSizePx, y + b * gridSizePx];
-    //                 result.push({ x: gx, y: gy });
-    //             }
-    //         }
-    //         return result;
-    //     }
+            return result;
+        }
+        else if (templateType === "rect") {
+            const { baseDistance } = this;
+            const { x, y } = this.document;
+            const nr = Math.ceil(baseDistance / gridSizeUnits);
+            const nc = Math.ceil(baseDistance / gridSizeUnits);
+            const result = [];
+            for (let a = 0; a < nc; a++) {
+                for (let b = 0; b < nr; b++) {
+                    // Position of cell's top-left corner, in pixels
+                    const [gx, gy] = [x + a * gridSizePx, y + b * gridSizePx];
+                    result.push({ x: gx, y: gy });
+                }
+            }
+            return result;
+        }
 
-    //     return [];
-    // }
+        return [];
+    }
 
     /** BEGIN MY CODE */
     clearTempate() {

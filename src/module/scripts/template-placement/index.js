@@ -100,7 +100,7 @@ async function promptMeasureTemplate() {
         flags: {
             [MODULE_NAME]: {
                 ...flags,
-                [CONSTS.flags.circle.movesWithToken]: flags[CONSTS.flags.placementType] == CONSTS.placement.circle.self && !!flags[CONSTS.flags.circle.movesWithToken],
+                [CONSTS.flags.circle.movesWithToken]: flags[CONSTS.flags.placementType] === CONSTS.placement.circle.self && !!flags[CONSTS.flags.circle.movesWithToken],
                 [CONSTS.flags.expirationTime]: expirationTime,
                 [CONSTS.flags.ignoreRange]: flags[CONSTS.flags.ignoreRange] || !!this.formData[ignoreRangeKey],
                 baseDistance: distance,

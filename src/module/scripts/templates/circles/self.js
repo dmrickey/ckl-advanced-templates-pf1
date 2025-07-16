@@ -16,8 +16,7 @@ export class CircleSelf extends AbilityTemplateAdvanced {
     async initializeVariables() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializeVariables.name}`));
 
-        const token = this.token || { center: { x: 0, y: 0 } };
-        const { x, y } = token.center;
+        const { x, y } = this.token?.getCenterPoint() ?? { center: { x: 0, y: 0 } };
         this.document.x = x;
         this.document.y = y;
         return true;
