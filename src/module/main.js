@@ -80,10 +80,8 @@ Hooks.on('updateToken', async (token, update, _options, userId) => {
     const moveTemplate = setInterval(() => {
         templates.forEach((template) => {
             const temp = token.object.getCenterPoint();
-            if (temp.x !== position.x || temp.y !== position.y) {
-                template.x = temp.x;
-                template.y = temp.y;
-            }
+            template.x = temp.x;
+            template.y = temp.y;
         });
     }, 10);
     CanvasAnimation.getAnimation(token.object?.animationName)?.promise.then(async () => {

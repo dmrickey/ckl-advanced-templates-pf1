@@ -123,28 +123,4 @@
 - Whether or not it runs on Forge (it probably does, I think its limitations are only related to file paths, but I have no way of testing this)
 
 ## pf1 v11 update
-- Circle
-  - "System Default"
-    - measure.mjs:173 Uncaught TypeError: this.shape.getBounds is not a function
-  [Detected 2 packages: system:pf1(11.5), ckl-advanced-templates-pf1(This is auto replaced)]
-      at CircleSelf._getGridHighlightPositions (measure.mjs:173:26)
-      at CircleSelf._getGridHighlightPositions (measured-template-pf-advanced.js:613:22)
-      at CircleSelf.highlightGrid (measured-template-pf-advanced.js:544:36)
-      at CircleSelf._applyRenderFlags (measured-template-pf-advanced.js:267:37)
-  - placing template (intersection, but probably others)
-    - clicking and dragging while placing a template - Template disappears, errors start in the console until another click happens
-    - DisplayObject.ts:837 Uncaught (in promise) TypeError: Cannot read properties of null (reading 'scale')
-[Detected 1 package: ckl-advanced-templates-pf1(This is auto replaced)]
-    at get scale (DisplayObject.ts:837:31)
-    at get height (Container.ts:820:21)
-    at CircleGridIntersection.getTokensWithin (measured-template-pf-advanced.js:933:45)
-    at CircleGridIntersection.targetIfEnabled (ability-template.js:190:40)
-    at updateTemplateLocation (grid.js:124:25)
-    at async Object.mouseMove (grid.js:148:21)
-  - randomly occurs when placing
-    - DisplayObject.ts:821 Uncaught (in promise) TypeError: Cannot read properties of null (reading 'position')
-[Detected 1 package: ckl-advanced-templates-pf1(This is auto replaced)]
-    at get position (DisplayObject.ts:821:31)
-    at get x (DisplayObject.ts:775:21)
-    at updateTemplateLocation (grid.js:85:21)
-    at async Object.mouseMove (grid.js:148:21)
+- make sure to measure diagonals correctly (search project for `measurePath`)

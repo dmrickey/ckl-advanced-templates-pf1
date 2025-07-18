@@ -18,7 +18,6 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
         super.setCenter = gridPoint;
 
         const updateTemplateRotation = async (crosshairs) => {
-            await wait(100);
 
             const ray = new Ray(gridPoint, crosshairs);
             const direction = Math.toDegrees(ray.angle);
@@ -57,7 +56,7 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
             },
         );
 
-        if (followCrosshairs.cancelled) {
+        if (!followCrosshairs) {
             super.clearTargetIfEnabled();
             super.clearTempate();
             return await this.commitPreview();

@@ -22,7 +22,7 @@ export class GridSquare {
     get w() { return this.#w; }
 
     get center() {
-        const gridSize = canvas.grid.h;
+        const gridSize = canvas.sizeY;
         const x = this.#x + this.#widthSquares * gridSize / 2;
         const y = this.#y + this.#heightSquares * gridSize / 2;
         return { x, y };
@@ -39,7 +39,7 @@ export class GridSquare {
         const heightSpots = this.#heightSquares;
         const widthSpots = this.#widthSquares;
 
-        const gridSize = canvas.grid.h;
+        const gridSize = canvas.grid.sizeY;
 
         const rightSpots = [...new Array(widthSpots)].map((_, i) => ({
             direction: 0,
@@ -110,7 +110,7 @@ export class GridSquare {
         const heightSpots = this.#heightSquares;
         const widthSpots = this.#widthSquares;
 
-        const gridSize = canvas.grid.h;
+        const gridSize = canvas.grid.sizeY;
 
         const squares = [];
         for (let x = 0; x < widthSpots; x++) {
@@ -154,7 +154,7 @@ export class GridSquare {
         const heightSpots = Math.max(0, this.#heightSquares - 1);
         const widthSpots = Math.max(0, this.#widthSquares - 1);
 
-        const gridSize = canvas.grid.h;
+        const gridSize = canvas.grid.sizeY;
 
         const rightPoints = [...new Array(widthSpots)].map((_, i) => ({
             direction: 0,
@@ -216,7 +216,7 @@ export class GridSquare {
         this.#heightSquares = heightSquares;
         this.#widthSquares = widthSquares;
 
-        const gridSize = canvas.grid.h;
+        const gridSize = canvas.grid.sizeY;
         this.#h = gridSize * heightSquares;
         this.#w = gridSize * widthSquares;
     }
@@ -228,7 +228,7 @@ export class GridSquare {
     }
 
     static fromCenter({ x, y }, heightSquares = 1, widthSquares = 1) {
-        const gridSize = canvas.grid.h;
+        const gridSize = canvas.grid.sizeY;
         const x1 = x - gridSize * heightSquares / 2;
         const y1 = y - gridSize * widthSquares / 2;
         return new GridSquare(x1, y1, heightSquares, widthSquares);
@@ -241,7 +241,7 @@ export class GridSquare {
     edgePoint(ray) {
         const { angle } = ray;
         const { x, y } = this.center;
-        const radius = this.#heightSquares * canvas.grid.h / 2;
+        const radius = this.#heightSquares * canvas.grid.sizeY / 2;
 
         const x1 = x + radius * Math.cos(angle);
         const y1 = y + radius * Math.sin(angle);

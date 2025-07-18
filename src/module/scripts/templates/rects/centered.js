@@ -41,8 +41,6 @@ export class RectCentered extends AbilityTemplateAdvanced {
             //     };
             // }
 
-            await wait(100);
-
             this.document.flags[MODULE_NAME].icon = existingIcon;
 
             const centerX = crosshairs.x;
@@ -54,10 +52,9 @@ export class RectCentered extends AbilityTemplateAdvanced {
             }
 
             if ((this.hasMaxRange || this.hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
-                const rays = tokenSquare.gridPoints.map((spot) => ({
-                    ray: new Ray(spot, crosshairs),
-                }));
-                const distances = rays.map((ray) => canvas.grid.measureDistances([ray], { gridSpaces: true })[0]);
+                const distances = tokenSquare.allSpots
+                    .map((spot) => [spot, { x, y }])
+                    .map((coords) => canvas.grid.measurePath(coords).distance);
                 let range = Math.min(...distances);
                 range = !!(range % 1)
                     ? range.toFixed(1)
@@ -75,9 +72,9 @@ export class RectCentered extends AbilityTemplateAdvanced {
                 const unit = game.settings.get('pf1', 'units') === 'imperial'
                     ? localizeFull('PF1.DistFtShort')
                     : localizeFull('PF1.DistMShort');
-                crosshairs.label = localize('range', { range, unit });
+                crosshairs.crosshair.label.text = localize('range', { range, unit });
                 if (!isInRange) {
-                    crosshairs.label += '\n' + localize('errors.outOfRange');
+                    crosshairs.crosshair.label.text += '\n' + localize('errors.outOfRange');
                 }
             }
 
@@ -105,6 +102,9 @@ export class RectCentered extends AbilityTemplateAdvanced {
             borderAlpha: 0,
             icon: { borderVisible: false },
             snap: { position: this._gridInterval() },
+            label: {
+                dy: 50,
+            }
         }
         const crosshairs = await Sequencer.Crosshair.show(
             config,
@@ -131,12 +131,7 @@ export class RectCentered extends AbilityTemplateAdvanced {
 
     /** @override */
     _gridInterval() {
-        const interval = super._gridInterval();
-        if (interval === 0) {
-            return interval;
-        }
-
-        return super.baseDistance % 2 ? -1 : 1;
+        return super.baseDistance % 2 ? CONST.GRID_SNAPPING_MODES.CENTER : CONST.GRID_SNAPPING_MODES.VERTEX;
     }
 
     /** @override */

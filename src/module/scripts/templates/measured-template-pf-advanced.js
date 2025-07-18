@@ -67,7 +67,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
     get tokenGridCorners() {
         const { sizeSquares } = this.tokenSizeSquares;
         const { x, y } = this.document;
-        const gridSize = canvas.grid.h;
+        const gridSize = canvas.grid.sizeY;
 
         const bottom = y + gridSize * sizeSquares / 2;
         const left = x - gridSize * sizeSquares / 2;
@@ -135,7 +135,6 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         this.document.flags[MODULE_NAME].rotation = value;
     }
 
-    // * @returns { -1 | 0 | 1 }
     /**
      * @virtual
      */
@@ -569,20 +568,20 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
      */
     _getGridHighlightPositions() {
         // // TODO verify this
-        // const grid = canvas.grid.grid;
+        // const grid = canvas.grid;
         // const d = canvas.dimensions;
         // const { x, y, distance } = this.document;
 
         // // Get number of rows and columns
         // const [maxRow, maxCol] = grid.getGridPositionFromPixels(d.width, d.height);
-        // let nRows = Math.ceil(((distance * 1.5) / d.distance) / (d.size / grid.h));
-        // let nCols = Math.ceil(((distance * 1.5) / d.distance) / (d.size / grid.w));
+        // let nRows = Math.ceil(((distance * 1.5) / d.distance) / (d.size / grid.sizeY));
+        // let nCols = Math.ceil(((distance * 1.5) / d.distance) / (d.size / grid.sizeX));
         // [nRows, nCols] = [Math.min(nRows, maxRow), Math.min(nCols, maxCol)];
 
         // // Get the offset of the template origin relative to the top-left grid space
         // const [tx, ty] = grid.getTopLeft(x, y);
         // const [row0, col0] = grid.getGridPositionFromPixels(tx, ty);
-        // const [hx, hy] = [Math.ceil(grid.w / 2), Math.ceil(grid.h / 2)];
+        // const [hx, hy] = [Math.ceil(grid.sizeX / 2), Math.ceil(grid.sizeY / 2)];
         // const isCenter = (x - tx === hx) && (y - ty === hy);
 
         // // Identify grid coordinates covered by the template Graphics
@@ -789,14 +788,16 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         }
         else if (templateType === "circle" || templateType === "cone") {
             // Get number of rows and columns
-            const nr = Math.ceil((this.document.distance * 1.5) / gridSizeUnits / (gridSizePx / grid.h));
-            const nc = Math.ceil((this.document.distance * 1.5) / gridSizeUnits / (gridSizePx / grid.w));
+            const nr = Math.ceil((this.document.distance * 1.5) / gridSizeUnits / (gridSizePx / grid.sizeY));
+            const nc = Math.ceil((this.document.distance * 1.5) / gridSizeUnits / (gridSizePx / grid.sizeX));
 
             // Get the center of the grid position occupied by the template
             const { x, y } = this.document;
 
-            const [cx, cy] = grid.getCenter(x, y);
-            const [col0, row0] = grid.grid.getGridPositionFromPixels(cx, cy);
+            // const [cx, cy] = grid.getCenter(x, y);
+            const { x: cx, y: cy } = grid.getCenterPoint({ x, y });
+            // const [col0, row0] = grid.getGridPositionFromPixels(cx, cy);
+            const { i: col0, j: row0 } = grid.getOffset({ x: cx, y: cy });
             const minAngle = Math.normalizeDegrees(templateDirection - templateAngle / 2);
             const maxAngle = Math.normalizeDegrees(templateDirection + templateAngle / 2);
 
@@ -818,7 +819,8 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
             for (let a = -nc; a < nc; a++) {
                 for (let b = -nr; b < nr; b++) {
                     // Position of cell's top-left corner, in pixels
-                    const [gx, gy] = canvas.grid.grid.getPixelsFromGridPosition(col0 + a, row0 + b);
+                    const { x: gx, y: gy } = canvas.grid.getTopLeftPoint({ x: col0 + a, y: row0 + b });
+                    // const [gx, gy] = canvas.grid.getPixelsFromGridPosition(col0 + a, row0 + b);
                     // Position of cell's center, in pixels
                     const [cellCenterX, cellCenterY] = [gx + gridSizePx * 0.5, gy + gridSizePx * 0.5];
 
@@ -839,7 +841,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
                         }
                     }
 
-                    const distance = pf1.utils.measureDistance(origin, destination);
+                    const distance = canvas.grid.measurePath(origin, destination);
                     if (distance <= this.document.distance) {
                         result.push({ x: gx, y: gy });
                     }
@@ -880,16 +882,18 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         const d = canvas.dimensions;
 
         // Get number of rows and columns
-        const nr = Math.ceil((this.document.distance * 1.5) / d.distance / (d.size / grid.h));
-        const nc = Math.ceil((this.document.distance * 1.5) / d.distance / (d.size / grid.w));
+        const nr = Math.ceil((this.document.distance * 1.5) / d.distance / (d.size / grid.sizeY));
+        const nc = Math.ceil((this.document.distance * 1.5) / d.distance / (d.size / grid.sizeX));
 
         // Get the center of the grid position occupied by the template
         const result = [];
         const origins = this.tokenGridCorners;
 
         origins.forEach(({ x, y }) => {
-            const [cx, cy] = grid.getCenter(x, y);
-            const [col0, row0] = grid.grid.getGridPositionFromPixels(cx, cy);
+            // const [cx, cy] = grid.getCenter(x, y);
+            // const [col0, row0] = grid.getGridPositionFromPixels(cx, cy);
+            const { x: cx, y: cy } = grid.getCenterPoint({ x, y });
+            const { i: col0, j: row0 } = grid.getOffset({ x: cx, y: cy });
 
             const measureDistance = function (p0, p1) {
                 const gs = canvas.dimensions.size;
@@ -911,7 +915,8 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
             for (let a = -nc; a < nc; a++) {
                 for (let b = -nr; b < nr; b++) {
                     // Position of cell's top-left corner, in pixels
-                    const [gx, gy] = canvas.grid.grid.getPixelsFromGridPosition(col0 + a, row0 + b);
+                    const { x: gx, y: gy } = canvas.grid.getTopLeftPoint({ x: col0 + a, y: row0 + b });
+                    // const [gx, gy] = canvas.grid.getPixelsFromGridPosition(col0 + a, row0 + b);
                     // Position of cell's center, in pixels
                     const [cellCenterX, cellCenterY] = [gx + d.size * 0.5, gy + d.size * 0.5];
 
@@ -975,8 +980,10 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
             case 'ray':
                 maxDistance = this.document.distance / gridSizeUnits * gridSizePx + gridSizePx;
                 break;
+            case 'circle':
+                maxDistance = this.shape.radius / gridSizeUnits * gridSizePx + gridSizePx;
             default:
-                maxDistance = Math.max(this.height, this.width);
+                maxDistance = this.shape.radius + gridSizePx;
                 break;
         }
 

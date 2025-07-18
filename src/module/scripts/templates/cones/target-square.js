@@ -26,13 +26,13 @@ export class ConeFromTargetSquare extends AbilityTemplateFollowMouseAngleCone {
         const crosshairs = await Sequencer.Crosshair.show(config);
         console.log(crosshairs);
 
-        if (source.cancelled) {
+        if (!crosshairs) {
             return false;
         }
         const size = canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? 1 : 0;
 
         HintHandler.show({ title: localize('cone'), hint: localize('hints.restart') });
-        return await super.initializeConeData({ x: source.x, y: source.y }, size, size);
+        return await super.initializeConeData({ x: crosshairs.x, y: crosshairs.y }, size, size);
     }
 
     /**

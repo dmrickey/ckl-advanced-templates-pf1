@@ -9,6 +9,6 @@ export class CircleSplash extends CircleGridIntersection {
             && bounds.top <= point.y
             && point.y <= bounds.bottom;
         const found = !!canvas.tokens.placeables.map(x => x.bounds).find(b => boundsContains(b, canvas.mousePosition));
-        crosshairs.interval = canvas.scene.grid.type !== CONST.GRID_TYPES.SQUARE ? 0 : found ? -1 : 1;
+        crosshairs.interval = found ? CONST.GRID_SNAPPING_MODES.CENTER : CONST.GRID_SNAPPING_MODES.VERTEX;
     }
 }

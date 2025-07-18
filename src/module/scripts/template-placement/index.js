@@ -94,7 +94,7 @@ async function promptMeasureTemplate() {
     const expirationTime = calculateExpiration(this.getRollData(), flags);
 
     const templateData = {
-        _id: randomID(16),
+        _id: foundry.utils.randomID(16),
         distance,
         t: type,
         flags: {

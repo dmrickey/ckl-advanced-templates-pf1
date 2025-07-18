@@ -23,8 +23,6 @@ export class ConeSystem extends AbilityTemplateAdvanced {
                 newDirection = this.document.direction + 45 * Math.sign(event.deltaY);
             };
 
-            await wait(100);
-
             const { x, y } = crosshairs;
             if (this.document.direction === newDirection && x === this.document.x && y === this.document.y) {
                 return;
@@ -65,7 +63,7 @@ export class ConeSystem extends AbilityTemplateAdvanced {
         );
         console.log(crosshairs);
 
-        if (coneCrosshairs.cancelled) {
+        if (!coneCrosshairs) {
             super.clearTargetIfEnabled();
             return false;
         }

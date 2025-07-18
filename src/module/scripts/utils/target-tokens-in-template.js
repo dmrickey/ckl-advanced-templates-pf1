@@ -1,7 +1,7 @@
 // todo either delete this or use it (and update it, because it uses data.data)
 const targetTokens = (template) => {
     const getCenterOfSquares = (t) => {
-        const gridSize = canvas.grid.h;
+        const gridSize = canvas.grid.sizeY;
         const x1 = t.x + gridSize / 2;
         const y1 = t.y + gridSize / 2;
         const tokenSquaresWidth = t.data.width;

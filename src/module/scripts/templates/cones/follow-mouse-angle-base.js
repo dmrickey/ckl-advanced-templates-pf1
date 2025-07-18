@@ -31,8 +31,6 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
                 };
             }
 
-            await wait(100);
-
             let direction, x, y;
             if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
                 const totalSpots = this._tokenSquare.allSpots.length;
@@ -114,9 +112,9 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
                 }
             },
         );
-        console.log(crosshairs);
+        console.log(rotateCrosshairs);
 
-        if (rotateCrosshairs.cancelled) {
+        if (!rotateCrosshairs) {
             super.clearTargetIfEnabled();
 
             if (this.canRestart) {
@@ -132,7 +130,7 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
     }
 
     /** @override */
-    _gridInterval() { return canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? -1 : 0; }
+    _gridInterval() { return CONST.GRID_SNAPPING_MODES.CENTER; }
 
     /**
      * @virtual
@@ -152,7 +150,7 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
     }
 
     #sourceSquare(center, widthSquares, heightSquares) {
-        let gridSize = canvas.grid.h;
+        let gridSize = canvas.grid.sizeY;
         const h = gridSize * heightSquares;
         const w = gridSize * widthSquares;
 

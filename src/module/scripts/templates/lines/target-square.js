@@ -11,7 +11,6 @@ export class LineFromSquare extends LineFromTargetBase {
         super.clearTempate();
 
         const show = async (crosshairs) => {
-            await wait(100);
             super.setCenter = crosshairs.center;
         }
 
@@ -40,7 +39,7 @@ export class LineFromSquare extends LineFromTargetBase {
         );
         console.log(crosshairs);
 
-        if (source.cancelled) {
+        if (!crosshairs) {
             return false;
         }
 

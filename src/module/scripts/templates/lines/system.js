@@ -30,8 +30,6 @@ export class LineSystem extends AbilityTemplateAdvanced {
                 newDirection = this.document.direction + snap * Math.sign(event.deltaY);
             };
 
-            await wait(100);
-
             const { x, y } = crosshairs;
             if (this.document.direction === newDirection && x === this.document.x && y === this.document.y) {
                 return;
@@ -71,8 +69,9 @@ export class LineSystem extends AbilityTemplateAdvanced {
                 }
             },
         );
+        console.log(crosshairs);
 
-        if (coneCrosshairs.cancelled) {
+        if (!crosshairs) {
             super.clearTargetIfEnabled();
             return false;
         }

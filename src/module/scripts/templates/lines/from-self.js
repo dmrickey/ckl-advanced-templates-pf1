@@ -28,7 +28,6 @@ export class LineFromSelf extends LineFromTargetBase {
             let currentSpotIndex = 0;
 
             let tempPoint = { x: 0, y: 0 };
-            await wait(100);
 
             const ray = new Ray(tokenSquare.center, crosshairs);
             if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
@@ -63,7 +62,7 @@ export class LineFromSelf extends LineFromTargetBase {
         const config = {
             borderAlpha: 0,
             icon: { borderVisible: false },
-            snap: { snap: canvas.grid.size },
+            snap: { resolution: canvas.grid.size },
         }
         const sourceSquare = await Sequencer.Crosshair.show(
             config,
@@ -76,7 +75,7 @@ export class LineFromSelf extends LineFromTargetBase {
         );
 
 
-        if (sourceSquare.cancelled) {
+        if (!sourceSquare) {
             return false;
         }
 

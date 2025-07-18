@@ -9,7 +9,7 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
         const heightSquares = Math.max(Math.round(token.document.height), 1);
         const widthSquares = Math.max(Math.round(token.document.width), 1);
 
-        const gridSize = canvas.grid.h;
+        const gridSize = canvas.grid.sizeY;
         const { x, y, h, w } = token;
 
         const bottom = y + h;
@@ -78,8 +78,6 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
             new PIXI.Rectangle(tokenSquare.x, tokenSquare.y, tokenSquare.w, tokenSquare.h).contains(x, y);
 
         const updateTemplateLocation = async (crosshairs) => {
-            await wait(20);
-
             this.document.flags[MODULE_NAME].icon = existingIcon;
 
             const { x, y } = crosshairs;
@@ -90,10 +88,9 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
             this._crosshairsOverride(crosshairs);
 
             if ((this.hasMaxRange || this.hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
-                const rays = tokenSquare.allSpots.map((spot) => ({
-                    ray: new Ray(spot, { x, y }),
-                }));
-                const distances = rays.map((ray) => canvas.grid.measureDistances([ray], { gridSpaces: true })[0]);
+                const distances = tokenSquare.allSpots
+                    .map((spot) => [spot, { x, y }])
+                    .map((coords) => canvas.grid.measurePath(coords).distance);
                 let range = Math.min(...distances);
                 range = !!(range % 1)
                     ? range.toFixed(1)
@@ -111,9 +108,9 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
                 const unit = game.settings.get('pf1', 'units') === 'imperial'
                     ? localizeFull('PF1.Distance.ftShort')
                     : localizeFull('PF1.Distance.mShort');
-                crosshairs.label = localize('range', { range, unit });
+                crosshairs.crosshair.label.text = localize('range', { range, unit });
                 if (!isInRange) {
-                    crosshairs.label += '\n' + localize('errors.outOfRange');
+                    crosshairs.crosshair.label.text += '\n' + localize('errors.outOfRange');
                 }
             }
 
@@ -139,6 +136,9 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
             borderAlpha: 0,
             icon: { borderVisible: false },
             snap: { position: this._gridInterval() },
+            label: {
+                dy: 50,
+            }
         }
         const crosshairs = await Sequencer.Crosshair.show(
             config,
