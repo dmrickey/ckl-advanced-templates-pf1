@@ -1,6 +1,5 @@
 import { GridSquare } from '../../models/grid-square';
 import { ifDebug, localize } from '../../utils';
-import { wait } from '../../utils/wait';
 import { LineFromTargetBase } from './base';
 
 export class LineFromSelf extends LineFromTargetBase {

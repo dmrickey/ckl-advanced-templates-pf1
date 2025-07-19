@@ -123,4 +123,4 @@
 - Whether or not it runs on Forge (it probably does, I think its limitations are only related to file paths, but I have no way of testing this)
 
 ## pf1 v11 update
-- make sure to measure diagonals correctly (search project for `measurePath`)
+- mouse wheel rotation isn't working (system line, probably a cone option as well)

@@ -1,9 +1,19 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
 import { ifDebug, localize } from '../../utils';
 import HintHandler from "../../../view/hint-handler";
-import { wait } from '../../utils/wait';
 
 export class LineFromTargetBase extends AbilityTemplateAdvanced {
+    /** @override */
+    set setCenter({ x, y }) {
+        const { direction } = this.document;
+        const xoffset = direction <= 90 || direction >= 270 ? 1 : -1;
+        const yoffset = direction <= 180 ? 1 : -1;
+
+        this.document.x = x + xoffset;
+        this.document.y = y + yoffset;
+        this.refresh();
+    }
+
     /** @override */
     async commitPreview() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
@@ -15,7 +25,7 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
         if (!gridPoint) {
             return false;
         }
-        super.setCenter = gridPoint;
+        this.setCenter = gridPoint;
 
         const updateTemplateRotation = async (crosshairs) => {
 
@@ -23,6 +33,8 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
             const direction = Math.toDegrees(ray.angle);
 
             this.document.direction = Math.normalizeDegrees(direction);
+            this.setCenter = gridPoint;
+
             this.refresh();
 
             await super.targetIfEnabled();
@@ -31,16 +43,6 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
         };
 
         HintHandler.show({ title: localize('line'), hint: localize('hints.restart') });
-        // const followCrosshairs = await xhairs.show(
-        //     {
-        //         drawIcon: false,
-        //         drawOutline: false,
-        //         snap: interval: 0,
-        //     },
-        //     {
-        //         show: updateTemplateRotation
-        //     }
-        // );
         const config = {
             borderAlpha: 0,
             icon: { borderVisible: false },
@@ -50,7 +52,6 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
             config,
             {
                 [Sequencer.Crosshair.CALLBACKS.MOUSE_MOVE]: async (crosshair) => {
-                    console.log(crosshair)
                     await updateTemplateRotation(crosshair);
                 }
             },
@@ -69,7 +70,7 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
     async initializeVariables() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializeVariables.name}`));
         const center = this.token?.center ?? { x: 0, y: 0 };
-        super.setCenter = center;
+        this.setCenter = center;
         return true;
     }
 

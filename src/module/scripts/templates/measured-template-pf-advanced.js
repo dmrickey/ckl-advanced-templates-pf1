@@ -841,7 +841,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
                         }
                     }
 
-                    const distance = canvas.grid.measurePath(origin, destination);
+                    const distance = canvas.grid.measurePath([origin, destination]);
                     if (distance <= this.document.distance) {
                         result.push({ x: gx, y: gy });
                     }

@@ -1,5 +1,4 @@
 import { ifDebug, localize } from '../../utils';
-import { wait } from '../../utils/wait';
 import { LineFromTargetBase } from './base';
 
 export class LineFromSquare extends LineFromTargetBase {
@@ -14,14 +13,6 @@ export class LineFromSquare extends LineFromTargetBase {
             super.setCenter = crosshairs.center;
         }
 
-        // const sourceConfig = {
-        //     drawIcon: false,
-        //     drawOutline: false,
-        //     interval: this._gridInterval(),
-        //     label: localize('lineStart'),
-        // };
-        // const source = await xhairs.show(sourceConfig, { show });
-
         const config = {
             borderAlpha: 0,
             icon: { borderVisible: false },
@@ -32,7 +23,6 @@ export class LineFromSquare extends LineFromTargetBase {
             config,
             {
                 [Sequencer.Crosshair.CALLBACKS.MOUSE_MOVE]: async (crosshair) => {
-                    console.log(crosshair)
                     await show(crosshair);
                 }
             },

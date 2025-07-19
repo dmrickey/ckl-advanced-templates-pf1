@@ -1,7 +1,6 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
 import { ifDebug, localize } from '../../utils';
 import HintHandler from "../../../view/hint-handler";
-import { wait } from '../../utils/wait';
 
 export class LineSystem extends AbilityTemplateAdvanced {
     /** @override */
@@ -45,16 +44,6 @@ export class LineSystem extends AbilityTemplateAdvanced {
             canvas.app.view.onwheel = null;
         };
 
-        // const targetConfig = {
-        //     drawIcon: false,
-        //     drawOutline: false,
-        // };
-        // const coneCrosshairs = await xhairs.show(
-        //     targetConfig,
-        //     {
-        //         show: updatePosition
-        //     }
-        // );
         const config = {
             borderAlpha: 0,
             icon: { borderVisible: false },
@@ -64,7 +53,6 @@ export class LineSystem extends AbilityTemplateAdvanced {
             config,
             {
                 [Sequencer.Crosshair.CALLBACKS.MOUSE_MOVE]: async (crosshair) => {
-                    console.log(crosshair)
                     await updatePosition(crosshair);
                 }
             },

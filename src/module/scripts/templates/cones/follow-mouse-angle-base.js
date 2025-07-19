@@ -1,7 +1,6 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
 import { Settings } from '../../../settings';
 import { ifDebug } from '../../utils';
-import { wait } from '../../utils/wait';
 
 export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced {
     _tokenSquare;

@@ -22,7 +22,7 @@ export class GridSquare {
     get w() { return this.#w; }
 
     get center() {
-        const gridSize = canvas.sizeY;
+        const gridSize = canvas.grid.sizeY;
         const x = this.#x + this.#widthSquares * gridSize / 2;
         const y = this.#y + this.#heightSquares * gridSize / 2;
         return { x, y };
