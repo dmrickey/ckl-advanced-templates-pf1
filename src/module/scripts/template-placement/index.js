@@ -130,7 +130,7 @@ async function promptMeasureTemplate() {
 
     const result = await template.drawPreview();
 
-    if (!result.result) {
+    if (!result) {
         await Promise.all(windows.map((x) => x.maximize()));
         return result;
     }
