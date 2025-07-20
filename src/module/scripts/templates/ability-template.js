@@ -143,7 +143,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                     return this.document.delete();
                 },
             }
-            : { result: false };
+            : null;
     }
 
     refresh() {
