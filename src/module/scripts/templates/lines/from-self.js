@@ -51,13 +51,6 @@ export class LineFromSelf extends LineFromTargetBase {
             this.refresh();
         }
 
-        // const sourcePointConfig = {
-        //     drawIcon: false,
-        //     drawOutline: false,
-        //     interval: 0,
-        //     icon: this.iconImg,
-        // };
-        // const sourceSquare = await xhairs.show(sourcePointConfig, { show: selectSquareFromCrosshairsRotation });
         const config = {
             borderAlpha: 0,
             icon: { borderVisible: false },
@@ -67,7 +60,6 @@ export class LineFromSelf extends LineFromTargetBase {
             config,
             {
                 [Sequencer.Crosshair.CALLBACKS.MOUSE_MOVE]: async (crosshair) => {
-                    console.log(crosshair)
                     await selectSquareFromCrosshairsRotation(crosshair);
                 }
             },

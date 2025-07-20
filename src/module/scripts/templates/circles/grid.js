@@ -1,7 +1,6 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
 import { MODULE_NAME } from '../../../consts';
 import { ifDebug, localize, localizeFull } from '../../utils';
-import { wait } from '../../utils/wait';
 
 export class CircleGridIntersection extends AbilityTemplateAdvanced {
 
@@ -121,17 +120,6 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
             await super.targetIfEnabled();
         };
 
-        // const targetConfig = {
-        //     drawIcon: false,
-        //     drawOutline: false,
-        //     interval: this._gridInterval(),
-        // };
-        // const crosshairs = await xhairs.show(
-        //     targetConfig,
-        //     {
-        //         show: updateTemplateLocation
-        //     }
-        // );
         const config = {
             borderAlpha: 0,
             icon: { borderVisible: false },
@@ -144,9 +132,8 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
             config,
             {
                 [Sequencer.Crosshair.CALLBACKS.MOUSE_MOVE]: async (crosshair) => {
-                    console.log(crosshair)
                     await updateTemplateLocation(crosshair);
-                }
+                },
             },
         );
         console.log(crosshairs);
