@@ -35,6 +35,6 @@ export class LineFromSquare extends LineFromTargetBase {
 
         this._setPreviewVisibility(true);
 
-        return source;
+        return crosshairs;
     }
 }
