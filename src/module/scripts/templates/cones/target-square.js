@@ -9,14 +9,6 @@ export class ConeFromTargetSquare extends AbilityTemplateFollowMouseAngleCone {
 
         HintHandler.show({ title: localize('cone'), hint: localize('hints.chooseStart') });
 
-        // const sourceConfig = {
-        //     drawIcon: true,
-        //     drawOutline: false,
-        //     interval: this._gridInterval(),
-        //     label: localize('coneStart'),
-        //     icon: this.iconImg,
-        // };
-        // const source = await xhairs.show(sourceConfig);
         const config = {
             borderAlpha: 0,
             icon: { texture: this.iconImg },
@@ -24,7 +16,6 @@ export class ConeFromTargetSquare extends AbilityTemplateFollowMouseAngleCone {
             snap: { position: this._gridInterval() },
         }
         const crosshairs = await Sequencer.Crosshair.show(config);
-        console.log(crosshairs);
 
         if (!crosshairs) {
             return false;

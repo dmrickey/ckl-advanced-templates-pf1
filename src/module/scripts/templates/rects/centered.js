@@ -2,7 +2,6 @@ import { AbilityTemplateAdvanced } from "../ability-template";
 import { ifDebug, localize, localizeFull } from '../../utils';
 import { MODULE_NAME } from "../../../consts";
 import { GridSquare } from "../../models/grid-square";
-import { wait } from '../../utils/wait';
 
 export class RectCentered extends AbilityTemplateAdvanced {
     get distance() { return this.document.distance; }
@@ -23,8 +22,6 @@ export class RectCentered extends AbilityTemplateAdvanced {
 
         const tokenSquare = GridSquare.fromToken(this.token);
 
-        const tokenContains = (x, y) => new PIXI.Rectangle(tokenSquare.x, tokenSquare.y, tokenSquare.w, tokenSquare.h).contains(x, y);
-
         const updateTemplateLocation = async (crosshairs) => {
 
             // leaving this here but I can't get the highlight to rotate properly
@@ -43,23 +40,22 @@ export class RectCentered extends AbilityTemplateAdvanced {
 
             this.document.flags[MODULE_NAME].icon = existingIcon;
 
-            const centerX = crosshairs.x;
-            const centerY = crosshairs.y;
-            const templateX = centerX - this.offset;
-            const templateY = centerY - this.offset;
+            const { x, y } = crosshairs;
+            const templateX = x - this.offset;
+            const templateY = y - this.offset;
             if (this.document.x === templateX && this.document.y === templateY) {
                 return;
             }
 
             if ((this.hasMaxRange || this.hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
-                const distances = tokenSquare.allSpots
+                const distances = tokenSquare.gridPoints
                     .map((spot) => [spot, { x, y }])
                     .map((coords) => canvas.grid.measurePath(coords).distance);
                 let range = Math.min(...distances);
                 range = !!(range % 1)
                     ? range.toFixed(1)
                     : range;
-                const isInToken = tokenContains(centerX, centerY);
+                const isInToken = tokenSquare.contains(x, y);
                 if (isInToken) {
                     range = 0;
                 }
@@ -70,8 +66,8 @@ export class RectCentered extends AbilityTemplateAdvanced {
                 this._setErrorIconVisibility(isInRange);
 
                 const unit = game.settings.get('pf1', 'units') === 'imperial'
-                    ? localizeFull('PF1.DistFtShort')
-                    : localizeFull('PF1.DistMShort');
+                    ? localizeFull('PF1.Distance.ftShort')
+                    : localizeFull('PF1.Distance.mShort');
                 crosshairs.crosshair.label.text = localize('range', { range, unit });
                 if (!isInRange) {
                     crosshairs.crosshair.label.text += '\n' + localize('errors.outOfRange');
@@ -82,22 +78,19 @@ export class RectCentered extends AbilityTemplateAdvanced {
             this.document.y = templateY;
             this.refresh();
 
+            console.error({
+                'offset': this.offset,
+                'x': x,
+                'y': y,
+                'templateX': templateX,
+                'templateY': templateY,
+            });
+
             await super.targetIfEnabled();
 
             canvas.app.view.onwheel = null;
         };
 
-        // const targetConfig = {
-        //     drawIcon: false,
-        //     drawOutline: false,
-        //     interval: this._gridInterval(),
-        // };
-        // const crosshairs = await xhairs.show(
-        //     targetConfig,
-        //     {
-        //         show: updateTemplateLocation
-        //     }
-        // );
         const config = {
             borderAlpha: 0,
             icon: { borderVisible: false },
@@ -110,12 +103,10 @@ export class RectCentered extends AbilityTemplateAdvanced {
             config,
             {
                 [Sequencer.Crosshair.CALLBACKS.MOUSE_MOVE]: async (crosshair) => {
-                    console.log(crosshair)
                     await updateTemplateLocation(crosshair);
                 }
             },
         );
-        console.log(crosshairs);
 
         if (!crosshairs || !isInRange) {
             if (!isInRange && !!crosshairs) {
@@ -131,7 +122,9 @@ export class RectCentered extends AbilityTemplateAdvanced {
 
     /** @override */
     _gridInterval() {
-        return super.baseDistance % 2 ? CONST.GRID_SNAPPING_MODES.CENTER : CONST.GRID_SNAPPING_MODES.VERTEX;
+        return (super.baseDistance % 2 && !(canvas.grid.distance % 2))
+            ? CONST.GRID_SNAPPING_MODES.CENTER
+            : CONST.GRID_SNAPPING_MODES.VERTEX;
     }
 
     /** @override */

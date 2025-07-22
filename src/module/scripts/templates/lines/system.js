@@ -57,7 +57,6 @@ export class LineSystem extends AbilityTemplateAdvanced {
                 }
             },
         );
-        console.log(crosshairs);
 
         if (!crosshairs) {
             super.clearTargetIfEnabled();

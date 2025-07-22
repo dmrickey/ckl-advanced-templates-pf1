@@ -1,6 +1,5 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
 import { ifDebug } from '../../utils';
-import { wait } from '../../utils/wait';
 
 export class ConeSystem extends AbilityTemplateAdvanced {
     /** @override */
@@ -38,16 +37,6 @@ export class ConeSystem extends AbilityTemplateAdvanced {
             canvas.app.view.onwheel = null;
         };
 
-        // const targetConfig = {
-        //     drawIcon: false,
-        //     drawOutline: false,
-        // };
-        // const coneCrosshairs = await xhairs.show(
-        //     targetConfig,
-        //     {
-        //         show: updatePosition
-        //     }
-        // );
         const config = {
             borderAlpha: 0,
             icon: { borderVisible: false },
@@ -61,9 +50,8 @@ export class ConeSystem extends AbilityTemplateAdvanced {
                 }
             },
         );
-        console.log(crosshairs);
 
-        if (!coneCrosshairs) {
+        if (!crosshairs) {
             super.clearTargetIfEnabled();
             return false;
         }

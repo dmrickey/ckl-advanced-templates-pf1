@@ -7,7 +7,8 @@
         "hints": {
             "chooseStart": "Left click to choose starting point.",
             "mouseWheelRotate": "Left click to submit. Use mouse wheel to rotate.",
-            "restart": "Left click to submit. Right click to re-choose starting point."
+            "restart": "Left click to submit. Right click to re-choose starting point.",
+            "restart-no-target": "Left click to submit. Right click to re-choose starting point. Targeting tokens for a line within a gridless scene is very expensive so targets will not be shown until the line is finalized."
         },
         "settings": {
             "cone15Alternate": {

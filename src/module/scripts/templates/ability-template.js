@@ -153,7 +153,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
         super.refresh();
 
-        if (this.active) {
+        if (this.active && this.shape) {
             this.highlightGrid();
         }
 

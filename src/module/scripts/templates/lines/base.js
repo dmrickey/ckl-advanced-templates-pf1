@@ -1,6 +1,7 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
 import { ifDebug, localize } from '../../utils';
 import HintHandler from "../../../view/hint-handler";
+import { Settings } from '../../../settings';
 
 export class LineFromTargetBase extends AbilityTemplateAdvanced {
     /** @override */
@@ -37,12 +38,19 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
 
             this.refresh();
 
-            await super.targetIfEnabled();
+            if (canvas.grid.type !== CONST.GRID_TYPES.GRIDLESS) {
+                await super.targetIfEnabled();
+            }
 
             canvas.app.view.onwheel = null;
         };
 
-        HintHandler.show({ title: localize('line'), hint: localize('hints.restart') });
+        if (canvas.grid.type === CONST.GRID_TYPES.GRIDLESS && Settings.target) {
+            HintHandler.show({ title: localize('line'), hint: localize('hints.restart-no-target') });
+        }
+        else {
+            HintHandler.show({ title: localize('line'), hint: localize('hints.restart') });
+        }
         const config = {
             borderAlpha: 0,
             icon: { borderVisible: false },
@@ -61,6 +69,10 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
             super.clearTargetIfEnabled();
             super.clearTempate();
             return await this.commitPreview();
+        }
+
+        if (canvas.grid.type === CONST.GRID_TYPES.GRIDLESS && Settings.target) {
+            await super.targetIfEnabled();
         }
 
         return true;

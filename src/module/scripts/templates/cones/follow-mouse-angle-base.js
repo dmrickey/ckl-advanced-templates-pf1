@@ -88,16 +88,6 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
             canvas.app.view.onwheel = null;
         };
 
-        // const targetConfig = {
-        //     drawIcon: false,
-        //     drawOutline: false,
-        // };
-        // const rotateCrosshairs = await xhairs.show(
-        //     targetConfig,
-        //     {
-        //         show: updateTemplateRotation
-        //     }
-        // );
         const config = {
             borderAlpha: 0,
             icon: { borderVisible: false },

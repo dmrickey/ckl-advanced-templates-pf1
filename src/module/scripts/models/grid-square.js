@@ -102,6 +102,7 @@ export class GridSquare {
     }
 
     #containedSquares;
+    /** @returns {{ x: number, y: number, center: { x: number, y: number}}[]} */
     get containedSquares() { return this.#containedSquares ??= this.#initContainedSquares(); }
 
     #initContainedSquares() {
@@ -134,6 +135,7 @@ export class GridSquare {
     #gridPoints;
     /**
      * returns grid intersections on perimeter of the square
+     * @returns {{x: number, y: number, direction: number}[]}
      */
     get gridPoints() { return this.#gridPoints ??= this.#initGridPoints(); }
 
@@ -232,6 +234,10 @@ export class GridSquare {
         const x1 = x - gridSize * heightSquares / 2;
         const y1 = y - gridSize * widthSquares / 2;
         return new GridSquare(x1, y1, heightSquares, widthSquares);
+    }
+
+    contains(x, y) {
+        return new PIXI.Rectangle(this.x, this.y, this.w, this.h).contains(x, y);
     }
 
     /**

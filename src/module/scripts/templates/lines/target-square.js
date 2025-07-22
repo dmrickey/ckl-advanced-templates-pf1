@@ -27,7 +27,6 @@ export class LineFromSquare extends LineFromTargetBase {
                 }
             },
         );
-        console.log(crosshairs);
 
         if (!crosshairs) {
             return false;

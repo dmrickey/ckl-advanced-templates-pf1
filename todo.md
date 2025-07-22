@@ -124,3 +124,5 @@
 
 ## pf1 v11 update
 - mouse wheel rotation isn't working (system line, probably a cone option as well)
+- circle grid placement shows up in top left corner of screen until the mouse is moved
+- delete v12-measured.template.js copy

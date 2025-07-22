@@ -136,7 +136,6 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
                 },
             },
         );
-        console.log(crosshairs);
 
         if (!crosshairs || !isInRange) {
             if (!isInRange && !!crosshairs) {
