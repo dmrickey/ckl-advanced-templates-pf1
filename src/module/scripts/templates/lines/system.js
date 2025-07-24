@@ -29,7 +29,7 @@ export class LineSystem extends AbilityTemplateAdvanced {
                 newDirection = this.document.direction + snap * Math.sign(event.deltaY);
             };
 
-            const { x, y } = crosshairs;
+            const { x, y } = crosshairs.center;
             if (this.document.direction === newDirection && x === this.document.x && y === this.document.y) {
                 return;
             }

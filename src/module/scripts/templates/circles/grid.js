@@ -79,7 +79,7 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
         const updateTemplateLocation = async (crosshairs) => {
             this.document.flags[MODULE_NAME].icon = existingIcon;
 
-            const { x, y } = crosshairs;
+            const { x, y } = crosshairs.center;
             if (this.document.x === x && this.document.y === y) {
                 return;
             }

@@ -40,7 +40,7 @@ export class RectCentered extends AbilityTemplateAdvanced {
 
             this.document.flags[MODULE_NAME].icon = existingIcon;
 
-            const { x, y } = crosshairs;
+            const { x, y } = crosshairs.center;
             const templateX = x - this.offset;
             const templateY = y - this.offset;
             if (this.document.x === templateX && this.document.y === templateY) {
@@ -78,14 +78,6 @@ export class RectCentered extends AbilityTemplateAdvanced {
             this.document.y = templateY;
             this.refresh();
 
-            console.error({
-                'offset': this.offset,
-                'x': x,
-                'y': y,
-                'templateX': templateX,
-                'templateY': templateY,
-            });
-
             await super.targetIfEnabled();
 
             canvas.app.view.onwheel = null;
@@ -95,9 +87,7 @@ export class RectCentered extends AbilityTemplateAdvanced {
             borderAlpha: 0,
             icon: { borderVisible: false },
             snap: { position: this._gridInterval() },
-            label: {
-                dy: 50,
-            }
+            label: { dy: 50 }
         }
         const crosshairs = await Sequencer.Crosshair.show(
             config,

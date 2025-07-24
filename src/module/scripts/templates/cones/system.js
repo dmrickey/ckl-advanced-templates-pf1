@@ -22,7 +22,7 @@ export class ConeSystem extends AbilityTemplateAdvanced {
                 newDirection = this.document.direction + 45 * Math.sign(event.deltaY);
             };
 
-            const { x, y } = crosshairs;
+            const { x, y } = crosshairs.center;
             if (this.document.direction === newDirection && x === this.document.x && y === this.document.y) {
                 return;
             }

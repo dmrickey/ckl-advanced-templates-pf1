@@ -18,6 +18,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         const tokenId = templateData.flags?.[MODULE_NAME]?.tokenId;
         const token = canvas.tokens.placeables.find((x) => x.id === tokenId);
 
+        /** @type {typeof MeasuredTemplatePFAdvanced}  */
         let abilityCls;
         switch (type) {
             case 'circle':
@@ -67,9 +68,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                     case CONSTS.placement.line.self:
                     default:
                         abilityCls = !!token
-                            // ? game.modules.get(MODULE_NAME).api.ability.lines.LineFromSquareEdgeSelf
                             ? game.modules.get(MODULE_NAME).api.ability.lines.LineFromSelf
-                            // : game.modules.get(MODULE_NAME).api.ability.lines.LineFromSquareEdgeTarget;
                             : game.modules.get(MODULE_NAME).api.ability.lines.LineFromSquare;
                         break;
                 }
