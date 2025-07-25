@@ -131,3 +131,8 @@
 - make sure to test when canvas is disabled
 - out of range label does not have proper offset
 - Fix "system" configurations
+- system
+  - line rotates 5 degrees
+  - cone
+    - rotates 45 degrees
+    - when centered in a box, the template starts at an edge/vertex

@@ -12,24 +12,10 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
 
         super.clearTargetIfEnabled();
 
-        let currentOffsetAngle = 0;
         let currentSpotIndex = 0;
+        let onWheel = false;
+        let offsetAngle = 0;
         const updateTemplateRotation = async (crosshairs) => {
-            let offsetAngle = 0;
-
-            const alternateRotation = Settings.coneRotation;
-            if (alternateRotation) {
-                canvas.app.view.onwheel = (event) => {
-                    // Avoid rotation while zooming the browser window
-                    if (event.ctrlKey) {
-                        event.preventDefault();
-                    }
-                    event.stopPropagation();
-
-                    offsetAngle += alternateRotation * Math.sign(event.deltaY);
-                };
-            }
-
             let direction, x, y;
             if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
                 const totalSpots = this._tokenSquare.allSpots.length;
@@ -53,11 +39,10 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
                 const ray = new Ray(this._tokenSquare.center, crosshairs);
                 const angle = radToNormalizedAngle(ray.angle);
                 const spotIndex = Math.ceil(angle / 360 * totalSpots) % totalSpots;
-                if (spotIndex === currentSpotIndex && offsetAngle === currentOffsetAngle) {
+                if (spotIndex === currentSpotIndex) {
                     return;
                 }
 
-                currentOffsetAngle = offsetAngle;
                 currentSpotIndex = spotIndex;
 
                 const spot = this._tokenSquare.allSpots[currentSpotIndex];
@@ -78,14 +63,28 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
                 y = Math.sin(ray.angle) * this._tokenSquare.h / 2 + this._tokenSquare.center.y;
             }
 
+            const alternateRotation = Settings.coneRotation;
+            if (alternateRotation && !onWheel) {
+                onwheel = true;
+                canvas.app.view.onwheel = (event) => {
+                    // Avoid rotation while zooming the browser window
+                    if (event.ctrlKey) {
+                        event.preventDefault();
+                    }
+                    event.stopPropagation();
+
+                    offsetAngle += alternateRotation * Math.sign(event.deltaY);
+                    this.document.direction = direction + offsetAngle;
+                    this.refresh();
+                };
+            }
+
             this.document.direction = direction + offsetAngle;
             this.document.x = x;
             this.document.y = y;
             this.refresh();
 
             await super.targetIfEnabled();
-
-            canvas.app.view.onwheel = null;
         };
 
         const config = {
@@ -101,7 +100,7 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
                 }
             },
         );
-        console.log(rotateCrosshairs);
+        canvas.app.view.onwheel = null;
 
         if (!rotateCrosshairs) {
             super.clearTargetIfEnabled();
