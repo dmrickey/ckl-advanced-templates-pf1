@@ -123,7 +123,8 @@ async function promptMeasureTemplate() {
     const windows = Object.values(ui.windows).filter((x) => !!x.minimize && !x._minimized && !isSimpleCalender(x));
     await Promise.all(windows.map((x) => x.minimize()));
 
-    const template = await game.modules.get(MODULE_NAME).api.AbilityTemplateAdvanced.fromData(templateData, this.shared.action);
+    const api = game.modules.get(MODULE_NAME).api;
+    const template = await api.AbilityTemplateAdvanced.fromData(templateData, { action: this.shared.action });
     if (!template) {
         return { result: false };
     }

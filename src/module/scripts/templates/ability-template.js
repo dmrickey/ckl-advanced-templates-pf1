@@ -4,7 +4,7 @@ import HintHandler from '../../view/hint-handler';
 import { MeasuredTemplatePFAdvanced } from './measured-template-pf-advanced';
 
 export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
-    static async fromData(templateData, action) {
+    static async fromData(templateData, { action } = {}) {
         const { t: type, distance } = templateData;
         if (!type
             || !distance
@@ -90,6 +90,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         const cls = CONFIG.MeasuredTemplate.documentClass;
         const template = new cls(templateData, { parent: canvas.scene });
         const thisTemplate = new abilityCls(template);
+        thisTemplate.action = action;
         if (await thisTemplate.initializeVariables()) {
             return thisTemplate;
         }
@@ -99,7 +100,6 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
     async drawPreview() {
         const initialLayer = canvas.activeLayer;
-
         await this.draw();
         this.active = true;
         this.layer.activate();
@@ -191,4 +191,46 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             game.user.updateTokenTargets(ids);
         }
     }
+
+    // #region Event Handling
+    // Event handlers
+    #events;
+
+    // Initial layer
+    #initialLayer;
+
+    /**
+     * Activate listeners for the template preview
+     *
+     * @param {CanvasLayer} initialLayer  The initially active CanvasLayer to re-activate after the workflow is complete
+     * @returns {Promise<object>} Returns result object
+     */
+    activatePreviewListeners(initialLayer) {
+        this.#initialLayer = initialLayer;
+        this.pfStyle = game.settings.get("pf1", "measureStyle") === true;
+
+        return new Promise((resolve, reject) => {
+            // Prepare events
+            this.#events = {
+                confirm: this._onConfirm.bind(this),
+                cancel: this._onCancel.bind(this),
+                move: this._onMove.bind(this),
+                rotate: this._onRotate.bind(this),
+                resolve,
+                reject,
+            };
+
+            // Prevent interactions with control icon
+            // This also allows left and right click to work correctly
+            if (this.controlIcon) this.controlIcon.removeAllListeners();
+
+            // Activate listeners
+            canvas.stage.on("pointermove", this.#events.move);
+            canvas.stage.on("click", this.#events.confirm);
+            canvas.app.view.addEventListener("contextmenu", this.#events.cancel);
+            canvas.app.view.addEventListener("wheel", this.#events.rotate);
+        });
+    }
+
+    // #endregion
 }
