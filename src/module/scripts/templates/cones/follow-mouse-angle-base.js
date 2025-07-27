@@ -89,6 +89,7 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
 
         const config = {
             borderAlpha: 0,
+            fillAlpha: 0,
             icon: { borderVisible: false },
         }
         const rotateCrosshairs = await Sequencer.Crosshair.show(

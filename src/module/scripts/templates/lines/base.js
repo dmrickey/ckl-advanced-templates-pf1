@@ -41,8 +41,6 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
             if (canvas.grid.type !== CONST.GRID_TYPES.GRIDLESS) {
                 await super.targetIfEnabled();
             }
-
-            canvas.app.view.onwheel = null;
         };
 
         if (canvas.grid.type === CONST.GRID_TYPES.GRIDLESS && Settings.target) {
@@ -53,6 +51,7 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
         }
         const config = {
             borderAlpha: 0,
+            fillAlpha: 0,
             icon: { borderVisible: false },
             snap: { resolution: canvas.grid.size },
         }

@@ -1,6 +1,6 @@
-import { AbilityTemplateAdvanced } from "../ability-template";
-import { ifDebug, localize } from '../../utils';
 import HintHandler from "../../../view/hint-handler";
+import { ifDebug, localize } from '../../utils';
+import { AbilityTemplateAdvanced } from "../ability-template";
 
 export class LineSystem extends AbilityTemplateAdvanced {
     /** @override */
@@ -9,45 +9,46 @@ export class LineSystem extends AbilityTemplateAdvanced {
 
         super.clearTargetIfEnabled();
 
+        let onWheel = false;
         this.document.angle = 90;
 
         const delta = canvas.grid.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
 
         HintHandler.show({ title: localize('rotation'), hint: localize('hints.mouseWheelRotate') });
         const updatePosition = async (crosshairs) => {
-
-            let newDirection = 0;
-            canvas.app.view.onwheel = (event) => {
-                // Avoid rotation while zooming the browser window
-                if (event.ctrlKey) {
-                    event.preventDefault();
-                }
-                event.stopPropagation();
-
-                const snap = event.shiftKey ? delta : 5;
-
-                newDirection = this.document.direction + snap * Math.sign(event.deltaY);
-            };
-
-            const { x, y } = crosshairs.center;
-            if (this.document.direction === newDirection && x === this.document.x && y === this.document.y) {
+            const x = crosshairs.x + 1;
+            const y = crosshairs.y + 1;
+            if (x === this.document.x && y === this.document.y) {
                 return;
             }
 
-            this.document.direction = newDirection;
-            this.document.x = crosshairs.x;
-            this.document.y = crosshairs.y;
+            if (!onWheel) {
+                onwheel = true;
+                canvas.app.view.onwheel = (event) => {
+                    // Avoid rotation while zooming the browser window
+                    if (event.ctrlKey) {
+                        event.preventDefault();
+                    }
+                    event.stopPropagation();
+
+                    const snap = event.shiftKey ? delta : 5;
+                    this.document.direction = this.document.direction + snap * Math.sign(event.deltaY);
+                    this.refresh();
+                };
+            }
+
+            this.document.x = x;
+            this.document.y = y;
             this.refresh();
 
             await super.targetIfEnabled();
-
-            canvas.app.view.onwheel = null;
         };
 
         const config = {
             borderAlpha: 0,
             icon: { borderVisible: false },
-            snap: { position: this._gridInterval(), resolution: canvas.grid.size },
+            snap: { position: CONST.GRID_SNAPPING_MODES.VERTEX | CONST.GRID_SNAPPING_MODES.CENTER | CONST.GRID_SNAPPING_MODES.EDGE_MIDPOINT },
+            fillAlpha: 0,
         }
         const crosshairs = await Sequencer.Crosshair.show(
             config,
