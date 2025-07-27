@@ -123,8 +123,6 @@
 - Whether or not it runs on Forge (it probably does, I think its limitations are only related to file paths, but I have no way of testing this)
 
 ## pf1 v11 update
-- mouse wheel rotation isn't working (system line, probably a cone option as well)
-- circle grid placement shows up in top left corner of screen until the mouse is moved
 - delete v12-measured.template.js copy
 - rect targeting is off on gridless
 - make sure to test without tokens in the scene
@@ -136,3 +134,4 @@
   - cone
     - rotates 45 degrees
     - when centered in a box, the template starts at an edge/vertex
+- Make sure bombs work
