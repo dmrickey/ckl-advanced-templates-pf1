@@ -101,48 +101,10 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     async drawPreview() {
         const initialLayer = canvas.activeLayer;
         await this.draw();
-        this.active = true;
         this.layer.activate();
         this.layer.preview.addChild(this);
 
-        this.hitArea = new PIXI.Polygon([]);
-
-        const finalized = await this.commitPreview();
-
-        this.active = false;
-
-        this.destroy();
-        initialLayer.activate();
-
-        HintHandler.close();
-
-        return finalized
-            ? {
-                result: true,
-                place: async () => {
-                    // todo put this in a better place
-                    // all of the custom props I can set
-                    this.document.updateSource({
-                        angle: this.document.angle,
-                        borderColor: this.document.borderColor,
-                        direction: this.document.direction,
-                        distance: this.document.distance,
-                        fillColor: this.document.fillColor,
-                        flags: this.document.flags,
-                        texture: this.document.texture,
-                        width: this.document.width,
-                        x: this.document.x,
-                        y: this.document.y
-                    });
-                    const doc = (await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [this.document.toObject()]))[0];
-                    this.document = doc;
-                    return doc;
-                },
-                delete: () => {
-                    return this.document.delete();
-                },
-            }
-            : null;
+        return this.activatePreviewListeners(initialLayer);
     }
 
     refresh() {
@@ -152,7 +114,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
         super.refresh();
 
-        if (this.active && this.shape) {
+        if (this.shape) {
             this.highlightGrid();
         }
 
@@ -226,10 +188,191 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
             // Activate listeners
             canvas.stage.on("pointermove", this.#events.move);
-            canvas.stage.on("click", this.#events.confirm);
+            canvas.stage.on("pointerup", this.#events.confirm);
             canvas.app.view.addEventListener("contextmenu", this.#events.cancel);
             canvas.app.view.addEventListener("wheel", this.#events.rotate);
+
+            this.tempDrag = canvas.templates._onDragLeftStart;
+            canvas.templates._onDragLeftStart = () => { };
+            this.tempCancel = canvas.templates._onDragLeftCancel;
+            canvas.templates._onDragLeftCancel = () => { };
+            this.tempMove = canvas.templates._onDragLeftMove;
+            canvas.templates._onDragLeftMove = () => { };
+            this.tempDrop = canvas.templates._onDragLeftDrop;
+            canvas.templates._onDragLeftDrop = () => { };
+            this.tempLeft = canvas.templates._onClickLeft;
+            canvas.templates._onClickLeft = () => { };
+            this.tempLeft2 = canvas.templates._onClickLeft2;
+            canvas.templates._onClickLeft2 = () => { };
         });
+    }
+
+    #removeListeners() {
+        canvas.stage.off("pointermove", this.#events.move);
+        canvas.stage.off("pointerup", this.#events.confirm);
+        canvas.app.view.removeEventListener("contextmenu", this.#events.cancel);
+        canvas.app.view.removeEventListener("wheel", this.#events.rotate);
+        canvas.templates._onDragLeftStart = this.tempDrag;
+        canvas.templates._onDragLeftCancel = this.tempCancel;
+        canvas.templates._onDragLeftMove = this.tempMove;
+        canvas.templates._onDragLeftDrop = this.tempDrop;
+        canvas.templates._onClickLeft = this.tempLeft;
+        canvas.templates._onClickLeft2 = this.tempLeft2;
+    }
+
+    #lastMove = 0;
+    #isDrag = false;
+    #isPanning = false;
+
+    // Update placement (mouse-move)
+    _onMove(event) {
+        event.stopPropagation();
+
+        const leftDown = (event.buttons & 1) > 0;
+        const rightDown = (event.buttons & 2) > 0;
+        this.#isDrag = !!(leftDown && canvas.mouseInteractionManager.isDragging);
+        this.#isPanning = this.#isPanning || !!(rightDown && canvas.mouseInteractionManager.isDragging);
+
+        // Throttle
+        const now = performance.now();
+        if (now - this.#lastMove <= this.constructor.RENDER_THROTTLE) return;
+
+        const snapMode =
+            CONST.GRID_SNAPPING_MODES.CENTER | CONST.GRID_SNAPPING_MODES.EDGE_MIDPOINT | CONST.GRID_SNAPPING_MODES.CORNER;
+
+        const center = event.data.getLocalPosition(this.layer);
+        const pos = canvas.grid.getSnappedPoint(center, { mode: snapMode });
+
+        // TODO: Adjust template size if placing in middle of a square (especially if on a token)
+
+        this.document.updateSource({
+            x: pos.x,
+            y: pos.y,
+        });
+
+        this.refresh();
+
+        this.#lastMove = now;
+    }
+
+    /**
+     * Cancel the workflow (right-click)
+     *
+     * @param {Event} event
+     */
+    _onCancel(event) {
+        if (this.#isPanning) {
+            this.#isPanning = false;
+            return;
+        }
+        console.debug("PF1 | Cancelling template placement for", this.action?.item?.name ?? "unknown");
+
+        this._onFinish(event);
+        this.#events.reject();
+    }
+
+    // Confirm the workflow (left-click)
+    _onConfirm(event) {
+        if (event.button !== 0) return;
+
+        if (this.#isDrag) {
+            this.#isDrag = false;
+            return;
+        }
+        console.debug("PF1 | Placing template for", this.action?.item?.name ?? "unknown");
+
+        this._onFinish(event);
+
+        // Reject if template size is zero
+        if (!this.document.distance) return this.#events.reject();
+
+        // Create the template
+        // TODO: This should create the template directly and resolve with it.
+        const result = {
+            result: true,
+            place: async () => {
+                // this.document = await MeasuredTemplateDocument.create(this.document.toObject(false), { parent: canvas.scene });
+                // return this.document;
+
+                // todo put this in a better place
+                // all of the custom props I can set
+                this.document.updateSource({
+                    angle: this.document.angle,
+                    borderColor: this.document.borderColor,
+                    direction: this.document.direction,
+                    distance: this.document.distance,
+                    fillColor: this.document.fillColor,
+                    flags: this.document.flags,
+                    texture: this.document.texture,
+                    width: this.document.width,
+                    x: this.document.x,
+                    y: this.document.y
+                });
+                const doc = (await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [this.document.toObject()]))[0];
+                this.document = doc;
+                return doc;
+            },
+            delete: () => {
+                return this.document.delete();
+            },
+        };
+
+        this.#events.resolve(result);
+    }
+
+    /**
+     * Rotate the template by 3 degree increments (mouse-wheel)
+     *
+     * @param {Event} event
+     */
+    _onRotate(event) {
+        event.preventDefault(); // Prevent browser zoom
+        event.stopPropagation(); // Prevent other handlers
+
+        let { distance, direction } = this.document,
+            delta;
+
+        if (event.ctrlKey) {
+            delta = canvas.dimensions.distance * -Math.sign(event.deltaY);
+            distance += delta;
+            if (distance < 0) distance = 0;
+        } else {
+            let snap;
+            if (this.pfStyle && this.document.t === "cone") {
+                delta = game.canvas.grid.isHexagonal ? 60 : 90;
+                snap = event.shiftKey ? delta : game.canvas.grid.isHexagonal ? 30 : 45;
+            } else {
+                delta = canvas.grid.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
+                snap = event.shiftKey ? delta : 5;
+            }
+            if (this.document.t === "rect") {
+                snap = Math.sqrt(Math.pow(5, 2) + Math.pow(5, 2));
+                distance += snap * -Math.sign(event.deltaY);
+            } else {
+                direction += snap * Math.sign(event.deltaY);
+            }
+        }
+
+        this.document.updateSource({ distance, direction });
+
+        this.refresh();
+    }
+
+    /** @override */
+    _onClickRight(event) {
+        event.stopPropagation(); // Prevent right click counting as left click
+    }
+
+    /**
+     * @param {Event} event
+     */
+    _onFinish(event) {
+        // Call Foundry's preview cleanup
+        this.layer._onDragLeftCancel(event);
+
+        this.#removeListeners();
+
+        this.#initialLayer.activate();
     }
 
     // #endregion
