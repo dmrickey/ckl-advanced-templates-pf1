@@ -333,10 +333,10 @@
         padding: 0 0.5rem;
     }
 
-    .right-me {
-        align-self: flex-end !important;
-        text-align: end !important;
-    }
+    // .right-me {
+    //     align-self: flex-end !important;
+    //     text-align: end !important;
+    // }
 
     input:disabled:not([type="range"]),
     input:disabled:hover:not([type="range"]) {

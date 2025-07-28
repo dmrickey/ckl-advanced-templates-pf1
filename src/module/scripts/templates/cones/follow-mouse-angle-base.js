@@ -119,7 +119,7 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
     }
 
     /** @override */
-    _gridInterval() { return CONST.GRID_SNAPPING_MODES.CENTER; }
+    get _snapMode() { return CONST.GRID_SNAPPING_MODES.CENTER; }
 
     /**
      * @virtual

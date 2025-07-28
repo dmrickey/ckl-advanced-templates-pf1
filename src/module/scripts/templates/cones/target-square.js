@@ -13,7 +13,7 @@ export class ConeFromTargetSquare extends AbilityTemplateFollowMouseAngleCone {
             borderAlpha: 0,
             icon: { texture: this.iconImg },
             label: { text: localize('coneStart') },
-            snap: { position: this._gridInterval() },
+            snap: { position: this._snapMode },
         }
         const crosshairs = await Sequencer.Crosshair.show(config);
 

@@ -16,7 +16,7 @@ export class LineFromSquare extends LineFromTargetBase {
         const config = {
             borderAlpha: 0,
             icon: { borderVisible: false },
-            snap: { position: this._gridInterval() },
+            snap: { position: this._snapMode },
             label: { text: localize('lineStart') },
         }
         const crosshairs = await Sequencer.Crosshair.show(

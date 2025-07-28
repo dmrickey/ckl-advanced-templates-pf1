@@ -94,7 +94,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
     /**
      * @virtual
      */
-    _gridInterval() { return CONST.GRID_SNAPPING_MODES.VERTEX; } // todo find out if I need to refactor this to provide the whole snap in case this doesn't turn snapping off automatically for gridless scenes
+    get _snapMode() { return CONST.GRID_SNAPPING_MODES.CENTER | CONST.GRID_SNAPPING_MODES.EDGE_MIDPOINT | CONST.GRID_SNAPPING_MODES.CORNER; }
 
     /**
      * The control icon label

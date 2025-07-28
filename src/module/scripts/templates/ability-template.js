@@ -1,6 +1,6 @@
 import { CONSTS, MODULE_NAME } from '../../consts';
 import { Settings } from '../../settings';
-import HintHandler from '../../view/hint-handler';
+import { localize, localizeFull } from '../utils';
 import { MeasuredTemplatePFAdvanced } from './measured-template-pf-advanced';
 
 export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
@@ -32,7 +32,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                         abilityCls = game.modules.get(MODULE_NAME).api.ability.circles.CircleSplash;
                         break;
                     case CONSTS.placement.useSystem:
-                        abilityCls = game.modules.get(MODULE_NAME).api.ability.circles.CircleAnywhere;
+                        abilityCls = game.modules.get(MODULE_NAME).api.ability.circles.CircleSystem;
                         break;
                     case CONSTS.placement.circle.grid:
                     default:
@@ -224,8 +224,49 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     #isDrag = false;
     #isPanning = false;
 
-    // Update placement (mouse-move)
-    _onMove(event) {
+    async handleRangeAndTargeting() {
+        let isInRange = true;
+
+        if ((this.hasMaxRange || this.hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
+            const { x, y } = this.center;
+
+            const tokenSquare = await this.getSourceGridSquare();
+            const tokenContains = (x, y) =>
+                new PIXI.Rectangle(tokenSquare.x, tokenSquare.y, tokenSquare.w, tokenSquare.h).contains(x, y);
+
+            const distances = tokenSquare.allSpots
+                .map((spot) => [spot, { x, y }])
+                .map((coords) => canvas.grid.measurePath(coords).distance);
+            let range = Math.min(...distances);
+            range = !!(range % 1)
+                ? range.toFixed(1)
+                : range;
+            const isInToken = tokenContains(x, y);
+            if (isInToken) {
+                range = 0;
+            }
+
+            isInRange = !(this.hasMinRange && range < this.minRange
+                || this.hasMaxRange && range > this.maxRange);
+            this._setPreviewVisibility(isInRange);
+            this._setErrorIconVisibility(isInRange);
+
+            const unit = game.settings.get('pf1', 'units') === 'imperial'
+                ? localizeFull('PF1.Distance.ftShort')
+                : localizeFull('PF1.Distance.mShort');
+            this.#customLabel = localize('range', { range, unit });
+            if (!isInRange) {
+                this.#customLabel += '\n' + localize('errors.outOfRange');
+            }
+        }
+
+        // todo handled for gridless lines
+        isInRange ? await this.targetIfEnabled() : this.clearTargetIfEnabled();
+    }
+
+    /** @virtual */
+    /** Update placement (mouse-move) */
+    async _onMove(event) {
         event.stopPropagation();
 
         const leftDown = (event.buttons & 1) > 0;
@@ -237,18 +278,15 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         const now = performance.now();
         if (now - this.#lastMove <= this.constructor.RENDER_THROTTLE) return;
 
-        const snapMode =
-            CONST.GRID_SNAPPING_MODES.CENTER | CONST.GRID_SNAPPING_MODES.EDGE_MIDPOINT | CONST.GRID_SNAPPING_MODES.CORNER;
-
         const center = event.data.getLocalPosition(this.layer);
-        const pos = canvas.grid.getSnappedPoint(center, { mode: snapMode });
-
-        // TODO: Adjust template size if placing in middle of a square (especially if on a token)
+        const pos = canvas.grid.getSnappedPoint(center, { mode: this._snapMode });
 
         this.document.updateSource({
             x: pos.x,
             y: pos.y,
         });
+
+        this.handleRangeAndTargeting();
 
         this.refresh();
 
@@ -271,7 +309,9 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         this.#events.reject();
     }
 
-    // Confirm the workflow (left-click)
+    /**
+     * Confirm the workflow (left-click)
+     */
     _onConfirm(event) {
         if (event.button !== 0) return;
 
@@ -312,9 +352,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                 this.document = doc;
                 return doc;
             },
-            delete: () => {
-                return this.document.delete();
-            },
+            delete: () => this.document.delete(),
         };
 
         this.#events.resolve(result);
@@ -376,4 +414,29 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     }
 
     // #endregion
+    #customLabel = null;
+    #customPreciseText = null;
+
+    _refreshRulerText() {
+        super._refreshRulerText();
+        if (this.#customLabel) {
+            if (!this.#customPreciseText) {
+                const style = CONFIG.canvasTextStyle.clone();
+                style.align = 'center';
+                this.#customPreciseText = this.template.addChild(new PreciseText("", style));
+            }
+            if (this.#customPreciseText.text !== this.#customLabel) {
+                this.#customPreciseText.text = this.#customLabel;
+            }
+            this.#customPreciseText.anchor.set(0.5, 0);
+            this.#customPreciseText.position.set(0, 50);
+        } else {
+            if (this.#customPreciseText) {
+                this.#customPreciseText.text = "";
+                this.#customPreciseText.destroy();
+                this.#customPreciseText = null;
+            }
+            return super._refreshRulerText();
+        }
+    }
 }

@@ -61,6 +61,9 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
      */
     async getSourceGridSquare() { return this._calculateTokenSquare(this.token); }
 
+    /** @override */
+    get _snapMode() { return CONST.GRID_SNAPPING_MODES.VERTEX; }
+
     _crosshairsOverride(_crosshairs) { }
 
     /** @override */
@@ -123,10 +126,8 @@ export class CircleGridIntersection extends AbilityTemplateAdvanced {
         const config = {
             borderAlpha: 0,
             icon: { borderVisible: false },
-            snap: { position: this._gridInterval() },
-            label: {
-                dy: 50,
-            }
+            snap: { position: this._snapMode },
+            label: { dy: 50 }
         }
         const crosshairs = await Sequencer.Crosshair.show(
             config,

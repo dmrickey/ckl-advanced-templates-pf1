@@ -1,6 +1,6 @@
 import { MODULE_NAME } from "../../consts";
 import { AbilityTemplateAdvanced } from "./ability-template";
-import { CircleAnywhere } from "./circles/anywhere";
+import { CircleSystem } from "./circles/system";
 import { CircleGridIntersection } from "./circles/grid";
 import { CircleSelf } from "./circles/self";
 import { CircleSplash } from "./circles/splash";
@@ -25,10 +25,10 @@ export const initTemplates = () => {
 
             ability: {
                 circles: {
-                    CircleAnywhere,
                     CircleGridIntersection,
                     CircleSelf,
                     CircleSplash,
+                    CircleSystem,
                 },
                 cones: {
                     ConeFromSelf,

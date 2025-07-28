@@ -86,7 +86,7 @@ export class RectCentered extends AbilityTemplateAdvanced {
         const config = {
             borderAlpha: 0,
             icon: { borderVisible: false },
-            snap: { position: this._gridInterval() },
+            snap: { position: this._snapMode },
             label: { dy: 50 }
         }
         const crosshairs = await Sequencer.Crosshair.show(
@@ -111,7 +111,7 @@ export class RectCentered extends AbilityTemplateAdvanced {
     }
 
     /** @override */
-    _gridInterval() {
+    get _snapMode() {
         return (super.baseDistance % 2 && !(canvas.grid.distance % 2))
             ? CONST.GRID_SNAPPING_MODES.CENTER
             : CONST.GRID_SNAPPING_MODES.VERTEX;
