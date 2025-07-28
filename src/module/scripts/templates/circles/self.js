@@ -3,16 +3,6 @@ import { ifDebug } from '../../utils';
 
 export class CircleSelf extends AbilityTemplateAdvanced {
     /** @override */
-    async commitPreview() {
-        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
-
-        await new Promise(r => setTimeout(r, 100));
-        await super.targetIfEnabled();
-
-        return true;
-    }
-
-    /** @override */
     async initializeVariables() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializeVariables.name}`));
 
@@ -20,5 +10,10 @@ export class CircleSelf extends AbilityTemplateAdvanced {
         this.document.x = x;
         this.document.y = y;
         return true;
+    }
+
+    /** @override */
+    drawPreview() {
+        return this.templateResult;
     }
 }

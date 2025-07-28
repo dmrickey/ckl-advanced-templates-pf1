@@ -224,6 +224,7 @@ export class GridSquare {
     }
 
     static fromToken(token) {
+        token ||= { x: 0, y: 0, document: { width: 1, height: 1 } };
         const width = Math.max(Math.round(token.document.width), 1);
         const height = Math.max(Math.round(token.document.height), 1);
         return new GridSquare(token.x, token.y, width, height);
@@ -231,8 +232,8 @@ export class GridSquare {
 
     static fromCenter({ x, y }, heightSquares = 1, widthSquares = 1) {
         const gridSize = canvas.grid.sizeY;
-        const x1 = x - gridSize * heightSquares / 2;
-        const y1 = y - gridSize * widthSquares / 2;
+        const x1 = (x || 0) - gridSize * heightSquares / 2;
+        const y1 = (y || 0) - gridSize * widthSquares / 2;
         return new GridSquare(x1, y1, heightSquares, widthSquares);
     }
 

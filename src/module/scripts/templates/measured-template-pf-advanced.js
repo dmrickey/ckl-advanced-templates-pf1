@@ -41,6 +41,10 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
             && ['burst', 'emanation'].includes(this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.circle.areaType]);
     }
 
+    get movesWithToken() {
+        return !!this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.circle.movesWithToken];
+    }
+
     get hideHighlight() {
         return !!this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.hideHighlight]
             || !!this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.hidePreview];
@@ -55,10 +59,6 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         const { token } = this;
         const sizeSquares = token?.document.width || 1;
         return { token, sizeSquares };
-    }
-
-    get tokenGridCorners() {
-        return GridSquare.fromToken(this.token).gridPoints;
     }
 
     get token() {
@@ -648,11 +648,11 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
 
         // Get the center of the grid position occupied by the template
         const result = [];
-        const origins = this.tokenGridCorners;
+        const origins = this.movesWithToken
+            ? GridSquare.fromToken(this.token).gridPoints
+            : GridSquare.fromCenter(this.center, this.token.document.height || 1, this.token.document.width || 1).gridPoints;
 
         origins.forEach(({ x, y }) => {
-            // const [cx, cy] = grid.getCenter(x, y);
-            // const [col0, row0] = grid.getGridPositionFromPixels(cx, cy);
             const { x: cx, y: cy } = grid.getCenterPoint({ x, y });
             const { i: col0, j: row0 } = grid.getOffset({ x: cx, y: cy });
 

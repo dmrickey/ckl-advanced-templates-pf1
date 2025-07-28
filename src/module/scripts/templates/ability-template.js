@@ -1,5 +1,6 @@
 import { CONSTS, MODULE_NAME } from '../../consts';
 import { Settings } from '../../settings';
+import { GridSquare } from '../models/grid-square';
 import { localize, localizeFull } from '../utils';
 import { MeasuredTemplatePFAdvanced } from './measured-template-pf-advanced';
 
@@ -89,8 +90,9 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         // Return the template constructed from the item data
         const cls = CONFIG.MeasuredTemplate.documentClass;
         const template = new cls(templateData, { parent: canvas.scene });
-        const thisTemplate = new abilityCls(template);
+        const thisTemplate = /** @type {AbilityTemplateAdvanced} */ (/** @type {any} */ new abilityCls(template));
         thisTemplate.action = action;
+
         if (await thisTemplate.initializeVariables()) {
             return thisTemplate;
         }
@@ -120,13 +122,6 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
         return this;
     }
-
-    /**
-     * returns true if committed, false if cancelled
-     * @virtual
-     * @returns {Promise<Boolean>}
-     */
-    async commitPreview() { }
 
     /**
      * sets up data specififc to template placement (initial position, rotation, set up points array for cones around token, extra width info for emanations, etc)
@@ -227,21 +222,19 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     async handleRangeAndTargeting() {
         let isInRange = true;
 
-        if ((this.hasMaxRange || this.hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
+        if ((this.hasMaxRange || this.hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange && this.token) {
             const { x, y } = this.center;
 
-            const tokenSquare = await this.getSourceGridSquare();
-            const tokenContains = (x, y) =>
-                new PIXI.Rectangle(tokenSquare.x, tokenSquare.y, tokenSquare.w, tokenSquare.h).contains(x, y);
+            const tokenSquare = GridSquare.fromToken(this.token);
 
-            const distances = tokenSquare.allSpots
+            const distances = tokenSquare.gridPoints
                 .map((spot) => [spot, { x, y }])
                 .map((coords) => canvas.grid.measurePath(coords).distance);
             let range = Math.min(...distances);
             range = !!(range % 1)
                 ? range.toFixed(1)
                 : range;
-            const isInToken = tokenContains(x, y);
+            const isInToken = tokenSquare.contains(x, y);
             if (isInToken) {
                 range = 0;
             }
@@ -326,36 +319,34 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         // Reject if template size is zero
         if (!this.document.distance) return this.#events.reject();
 
-        // Create the template
-        // TODO: This should create the template directly and resolve with it.
-        const result = {
-            result: true,
-            place: async () => {
-                // this.document = await MeasuredTemplateDocument.create(this.document.toObject(false), { parent: canvas.scene });
-                // return this.document;
+        this.#events.resolve(this.templateResult);
+    }
 
-                // todo put this in a better place
-                // all of the custom props I can set
-                this.document.updateSource({
-                    angle: this.document.angle,
-                    borderColor: this.document.borderColor,
-                    direction: this.document.direction,
-                    distance: this.document.distance,
-                    fillColor: this.document.fillColor,
-                    flags: this.document.flags,
-                    texture: this.document.texture,
-                    width: this.document.width,
-                    x: this.document.x,
-                    y: this.document.y
-                });
-                const doc = (await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [this.document.toObject()]))[0];
-                this.document = doc;
-                return doc;
-            },
+    get templateResult() {
+        return {
+            result: true,
+            place: this._place.bind(this),
             delete: () => this.document.delete(),
         };
+    }
 
-        this.#events.resolve(result);
+    async _place() {
+        // all of the custom props I can set
+        this.document.updateSource({
+            angle: this.document.angle,
+            borderColor: this.document.borderColor,
+            direction: this.document.direction,
+            distance: this.document.distance,
+            fillColor: this.document.fillColor,
+            flags: this.document.flags,
+            texture: this.document.texture,
+            width: this.document.width,
+            x: this.document.x,
+            y: this.document.y
+        });
+        const doc = (await canvas.scene.createEmbeddedDocuments("MeasuredTemplate", [this.document.toObject()]))[0];
+        this.document = doc;
+        return doc;
     }
 
     /**
