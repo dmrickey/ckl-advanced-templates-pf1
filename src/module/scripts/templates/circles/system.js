@@ -1,3 +1,3 @@
-import { CircleGridIntersection } from "./grid";
+import { AbilityTemplateAdvanced } from '../ability-template';
 
-export class CircleSystem extends CircleGridIntersection { }
+export class CircleSystem extends AbilityTemplateAdvanced { }
