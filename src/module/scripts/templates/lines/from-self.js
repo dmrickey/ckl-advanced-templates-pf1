@@ -1,8 +1,34 @@
+import { ANGLE_POINTS, FOLLOW_FROM, PLACEMENT_TYPE } from '../../../consts';
 import { GridSquare } from '../../models/grid-square';
 import { ifDebug, localize } from '../../utils';
-import { LineFromTargetBase } from './base';
+import { AbilityTemplateAdvanced } from '../ability-template';
 
-export class LineFromSelf extends LineFromTargetBase {
+export class LineFromSelf extends AbilityTemplateAdvanced {
+
+    /** @override */
+    get _snapMode() { return this._isSelectingOrigin ? CONST.GRID_SNAPPING_MODES.VERTEX : 0; }
+
+    /** @override */
+    get placementType() {
+        return (this.token || !_isSelectingOrigin)
+            ? PLACEMENT_TYPE.SET_ANGLE
+            : PLACEMENT_TYPE.SET_XY;
+    }
+
+    /** @override */
+    get angleStartPoints() { return ANGLE_POINTS.VERTEX; }
+
+    /** @override */
+    get followFrom() { return this.token ? FOLLOW_FROM.TOKEN : FOLLOW_FROM.CURRENT; }
+
+    /** @override */
+    async initializeVariables() {
+        const { x, y } = canvas.mousePosition;
+        this.document.x = x;
+        this.document.y = y;
+        this._isSelectingOrigin = !this.token;
+        return true;
+    }
 
     /** @override */
     async getSourcePoint() {

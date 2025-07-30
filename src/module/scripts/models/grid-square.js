@@ -1,3 +1,6 @@
+import { ANGLE_POINTS } from '../../consts';
+import { isSet } from '../utils/bits';
+
 export class GridSquare {
     #x;
     #y;
@@ -20,6 +23,17 @@ export class GridSquare {
      * @returns {number}
      */
     get w() { return this.#w; }
+
+    /**
+     * Height in grid squares
+     * @returns {number}
+     */
+    get heightSquares() { return this.#heightSquares; }
+    /**
+     * Width in grid squares
+     * @returns {number}
+     */
+    get widthSquares() { return this.#widthSquares; }
 
     get center() {
         const gridSize = canvas.grid.sizeY;
@@ -211,6 +225,96 @@ export class GridSquare {
         ];
         return allPoints;
     }
+    /**
+     * @param {ANGLE_POINTS[keyof ANGLE_POINTS]} anglePoints
+     * @returns {{x: number, y: number, direction: number}[]}
+     */
+    getAngleStartPoints(anglePoints) {
+        const bottom = this.#y + this.#h;
+        const left = this.#x;
+        const top = this.#y;
+        const right = this.#x + this.#w;
+
+        if (this.#heightSquares == 0 && this.#widthSquares == 0) {
+            return [{
+                direction: 0,
+                x: left,
+                y: top,
+            }];
+        }
+
+        const isMid = isSet(anglePoints, ANGLE_POINTS.EDGE_MIDPOINT);
+        const isVertex = isSet(anglePoints, ANGLE_POINTS.EDGE_VERTEX);
+        const isOuterVertex = isSet(anglePoints, ANGLE_POINTS.OUTER_VERTEX);
+
+        const gridSizeX = canvas.grid.sizeX;
+        const gridSizeY = canvas.grid.sizeY;
+
+        let gridOffsetX = 0;
+        let gridOffsetY = 0;
+
+        if (isMid && !isVertex) {
+            gridOffsetX = Math.floor(gridSizeX / 2);
+            gridOffsetY = Math.floor(gridSizeY / 2);
+        }
+
+        if (isMid && isVertex) {
+            gridSizeX /= 2;
+            gridSizeY /= 2;
+        }
+
+        const heightSpots = isMid && isVertex
+            ? this.#heightSquares * 2 + 1
+            : isMid
+                ? this.#heightSquares
+                : this.#heightSquares + 1;
+        const widthSpots = isMid && isVertex
+            ? this.#widthSquares * 2 + 1
+            : isMid
+                ? this.#widthSquares
+                : this.#widthSquares + 1;
+
+        // right-top to right-bottom
+        const rightSpots = [...new Array(widthSpots)].map((_, i) => ({
+            direction: 0,
+            x: right,
+            y: top + gridSizeY * i + gridOffsetY,
+        }));
+
+        // bottom-right to bottom-left
+        const bottomSpots = [...new Array(heightSpots)].map((_, i) => ({
+            direction: 90,
+            x: right - gridSizeX * i - gridOffsetX,
+            y: bottom,
+        }));
+
+        // left-bottom to left-top
+        const leftSpots = [...new Array(widthSpots)].map((_, i) => ({
+            direction: 180,
+            x: left,
+            y: bottom - gridSizeY * i - gridOffsetY,
+        }));
+
+        // top-left to top-right
+        const topSpots = [...new Array(heightSpots)].map((_, i) => ({
+            direction: 270,
+            x: left + gridSizeX * i + gridOffsetX,
+            y: top,
+        }));
+
+        const allSpots = [
+            ...rightSpots.slice(Math.floor(rightSpots.length / 2)),
+            ...(isOuterVertex ? [{ direction: 45, x: right, y: bottom }] : []),
+            ...bottomSpots,
+            ...(isOuterVertex ? [{ direction: 135, x: left, y: bottom }] : []),
+            ...leftSpots,
+            ...(isOuterVertex ? [{ direction: 225, x: left, y: top }] : []),
+            ...topSpots,
+            ...(isOuterVertex ? [{ direction: 315, x: right, y: top }] : []),
+            ...rightSpots.slice(0, Math.floor(rightSpots.length / 2)),
+        ];
+        return allSpots;
+    }
 
     constructor(x, y, heightSquares = 1, widthSquares = 1) {
         this.#x = x;
@@ -235,6 +339,16 @@ export class GridSquare {
         const x1 = (x || 0) - gridSize * heightSquares / 2;
         const y1 = (y || 0) - gridSize * widthSquares / 2;
         return new GridSquare(x1, y1, heightSquares, widthSquares);
+    }
+
+    static fromGridSquare({ x, y }) {
+        const x1 = x - (x % canvas.grid.sizeX) + canvas.grid.sizeX / 2;
+        const y1 = y - (y % canvas.grid.sizeY) + canvas.grid.sizeY / 2;
+        return this.fromCenter(({ x: x1, y: y1 }));
+    }
+
+    static fromGridPoint({ x, y }) {
+        return new GridSquare(x, y, 0, 0);
     }
 
     contains(x, y) {

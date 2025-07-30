@@ -1,10 +1,18 @@
-import { CONSTS, MODULE_NAME } from '../../consts';
+import { ANGLE_POINTS, CONSTS, FOLLOW_FROM, MODULE_NAME, PLACEMENT_TYPE } from '../../consts';
 import { Settings } from '../../settings';
 import { GridSquare } from '../models/grid-square';
 import { localize, localizeFull } from '../utils';
+import { isSet } from '../utils/bits';
 import { MeasuredTemplatePFAdvanced } from './measured-template-pf-advanced';
 
 export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
+
+    get followFrom() { return FOLLOW_FROM.CURRENT; }
+
+    get angleStartPoints() { return ANGLE_POINTS.ALL; }
+
+    get placementType() { return PLACEMENT_TYPE.SET_XY; }
+
     static async fromData(templateData, { action } = {}) {
         const { t: type, distance } = templateData;
         if (!type
@@ -105,6 +113,8 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         await this.draw();
         this.layer.activate();
         this.layer.preview.addChild(this);
+
+        this._isSelectingOrigin = this.placementType !== PLACEMENT_TYPE.SET_XY;
 
         return this.activatePreviewListeners(initialLayer);
     }
@@ -218,6 +228,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     #lastMove = 0;
     #isDrag = false;
     #isPanning = false;
+    _isSelectingOrigin = false;
 
     async handleRangeAndTargeting() {
         let isInRange = true;
@@ -264,7 +275,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
         const leftDown = (event.buttons & 1) > 0;
         const rightDown = (event.buttons & 2) > 0;
-        this.#isDrag = !!(leftDown && canvas.mouseInteractionManager.isDragging);
+        this._isDrag = !!(leftDown && canvas.mouseInteractionManager.isDragging);
         this.#isPanning = this.#isPanning || !!(rightDown && canvas.mouseInteractionManager.isDragging);
 
         // Throttle
@@ -274,16 +285,91 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         const center = event.data.getLocalPosition(this.layer);
         const pos = canvas.grid.getSnappedPoint(center, { mode: this._snapMode });
 
-        this.document.updateSource({
-            x: pos.x,
-            y: pos.y,
-        });
+        this._setPreviewVisibility(!this._isSelectingOrigin);
 
-        this.handleRangeAndTargeting();
+        if (isSet(placementType, PLACEMENT_TYPE.SET_XY)) {
+            this.document.updateSource({
+                x: pos.x,
+                y: pos.y,
+            });
+        } else if (isSet(placementType, PLACEMENT_TYPE.SET_ANGLE)) {
+            this._followAngle(pos);
+        } else {
+            throw new Error('this should never be reached');
+        }
+
+        if (!this._isSelectingOrigin) {
+            this.handleRangeAndTargeting();
+        }
 
         this.refresh();
 
         this.#lastMove = now;
+    }
+
+    #isGridPoint({ x, y }) {
+        return !(x % canvas.grid.size) && !(y % canvas.grid.size);
+    }
+
+    /**=
+     * @param {object} input
+     * @param {number} input.x
+     * @param {number} input.y
+     * @returns { GridSquare }
+     */
+    #getStartingGridSquare({ x, y }) {
+        if (isSet(this.followFrom, FOLLOW_FROM.CURRENT)) {
+            return this.#isGridPoint({ x, y })
+                ? GridSquare.fromGridPoint({ x, y })
+                : GridSquare.fromGridSquare({ x, y }).getAngleStartPoints(this.angleStartPoints);
+        }
+        else if (isSet(this.followFrom, FOLLOW_FROM.TOKEN)) {
+            return GridSquare.fromToken(this.token).getAngleStartPoints(this.angleStartPoints);
+        }
+        else {
+            throw new Error('this should never happen');
+        }
+    }
+
+    #currentSpotIndex = 0;
+    _followAngle({ x, y }) {
+        if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
+            const square = this.#getStartingGridSquare({ x, y });
+            const totalSpots = square.getAngleStartPoints(this.angleStartPoints);
+            const isMid = isSet(this.angleStartPoints, ANGLE_POINTS.EDGE_MIDPOINT);
+            const isVertex = isSet(this.angleStartPoints, ANGLE_POINTS.EDGE_VERTEX);
+            const radToNormalizedAngle = (rad) => {
+                let angle = (rad * 180 / Math.PI) % 360;
+                // offset the angle for even-sided tokens, because it's centered in the grid it's just wonky without the offset
+                const offset = isMid
+                    ? isVertex
+                        ? 0.5
+                        : 0
+                    : 1;
+                if (square.heightSquares % 2 === offset && square.widthSquares % 2 === offset) {
+                    angle -= (360 / totalSpots) / 2;
+                }
+                const normalizedAngle = Math.round(angle / (360 / totalSpots)) * (360 / totalSpots);
+                return normalizedAngle < 0
+                    ? normalizedAngle + 360
+                    : normalizedAngle;
+            };
+
+            const ray = new Ray(square.center, crosshairs);
+            const angle = radToNormalizedAngle(ray.angle);
+            const spotIndex = Math.ceil(angle / 360 * totalSpots) % totalSpots;
+            if (spotIndex === this.#currentSpotIndex) {
+                return;
+            }
+
+            this.#currentSpotIndex = spotIndex;
+
+            const spot = square.allSpots[this.#currentSpotIndex];
+            this.document.direction = spot.direction;
+            this.document.x = spot.x;
+            this.document.y = spot.y;
+        }
+        // todo hex and gridless
     }
 
     /**
@@ -296,6 +382,14 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             this.#isPanning = false;
             return;
         }
+
+        if (this.placementType !== PLACEMENT_TYPE.SET_XY && !this._isSelectingOrigin) {
+            this._isSelectingOrigin = true;
+            this._setPreviewVisibility(false);
+            this.refresh();
+            return;
+        }
+
         console.debug("PF1 | Cancelling template placement for", this.action?.item?.name ?? "unknown");
 
         this._onFinish(event);
@@ -305,13 +399,21 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     /**
      * Confirm the workflow (left-click)
      */
-    _onConfirm(event) {
+    async _onConfirm(event) {
         if (event.button !== 0) return;
 
         if (this.#isDrag) {
-            this.#isDrag = false;
+            this._isDrag = false;
             return;
         }
+
+        if (this.placementType !== PLACEMENT_TYPE.SET_XY && this._isSelectingOrigin) {
+            this._isSelectingOrigin = false;
+            await this.handleRangeAndTargeting();
+            this.refresh();
+            return;
+        }
+
         console.debug("PF1 | Placing template for", this.action?.item?.name ?? "unknown");
 
         this._onFinish(event);
@@ -320,6 +422,11 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         if (!this.document.distance) return this.#events.reject();
 
         this.#events.resolve(this.templateResult);
+    }
+
+    /** @override */
+    _onClickRight(event) {
+        event.stopPropagation(); // Prevent right click counting as left click
     }
 
     get templateResult() {
@@ -349,6 +456,8 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         return doc;
     }
 
+    get _canRotate() { return true; }
+
     /**
      * Rotate the template by 3 degree increments (mouse-wheel)
      *
@@ -357,6 +466,8 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     _onRotate(event) {
         event.preventDefault(); // Prevent browser zoom
         event.stopPropagation(); // Prevent other handlers
+
+        if (!this._canRotate) return;
 
         let { distance, direction } = this.document,
             delta;
@@ -385,11 +496,6 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         this.document.updateSource({ distance, direction });
 
         this.refresh();
-    }
-
-    /** @override */
-    _onClickRight(event) {
-        event.stopPropagation(); // Prevent right click counting as left click
     }
 
     /**

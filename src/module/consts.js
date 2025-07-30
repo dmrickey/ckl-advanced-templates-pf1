@@ -1,6 +1,6 @@
 export const MODULE_NAME = 'ckl-advanced-templates-pf1';
 
-export const CONSTS = {
+export const CONSTS = /** @type {const} */ ({
     placement: {
         circle: {
             grid: 'grid',
@@ -62,5 +62,28 @@ export const CONSTS = {
         endOfTurn: 'endOfTurn',
         timespan: 'timespan',
     },
-};
+});
 
+export const PLACEMENT_TYPE = /** @type {const} */ ({
+    SET_XY: 1,
+    SET_ANGLE: 2,
+});
+
+export const ANGLE_POINTS = /** @type {const} */ ({
+    OUTER_VERTEX: 1,
+    EDGE_VERTEX: 2,
+    VERTEX: 3,
+    EDGE_MIDPOINT: 4,
+    ALL: 7,
+
+    // traditional 15' cone (exactly like diagram)
+    CONE_15_TRADITIONAL: 6,
+
+    // rules accurate, includes all point intersections
+    CONE_15_ALTERNATE: 7,
+});
+
+export const FOLLOW_FROM = /** @type {const} */ ({
+    CURRENT: 1,
+    TOKEN: 2,
+});
