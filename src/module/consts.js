@@ -35,7 +35,6 @@ export const CONSTS = /** @type {const} */ ({
         allowConeRotation: 'allowConeRotation',
         colorAlpha: 'colorAlpha',
         coneRotationAngle: 'coneRotationAngle',
-        controlIconText: 'controlIconText',
         deletion: 'deletion',
         deletionInterval: 'deletionInterval',
         deletionUnit: 'deletionUnit',
@@ -86,7 +85,8 @@ export const ANGLE_POINTS = /** @type {const} */ ({
     CONE_FROM_MIDPOINT_AND_VERTEX: 7,
 });
 
-export const FOLLOW_FROM = /** @type {const} */ ({
+export const ANGLE_ORIGIN = /** @type {const} */ ({
+    NONE: 0,
     CURRENT: 1,
     TOKEN: 2,
 });

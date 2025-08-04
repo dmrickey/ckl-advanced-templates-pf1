@@ -1,8 +1,9 @@
 import { ANGLE_POINTS, ANGLE_ORIGIN, PLACEMENT_TYPE } from '../../../consts';
 import { Settings } from '../../../settings';
+import { localize } from '../../utils';
 import { AbilityTemplateAdvanced } from '../ability-template';
 
-export class ConeFromSelf extends AbilityTemplateAdvanced {
+export class ConeFromTargetSquare extends AbilityTemplateAdvanced {
 
     get #is15() { return this.document?.distance === 15 };
 
@@ -17,17 +18,17 @@ export class ConeFromSelf extends AbilityTemplateAdvanced {
 
     /** @override */
     get placementType() {
-        return (this.token || !this._isSelectingOrigin)
-            ? PLACEMENT_TYPE.SET_ANGLE
-            : PLACEMENT_TYPE.SET_XY;
+        return this._isSelectingOrigin
+            ? PLACEMENT_TYPE.SET_XY
+            : PLACEMENT_TYPE.SET_ANGLE;
     }
 
     /** @override */
-    get angleOrigin() { return this.token ? ANGLE_ORIGIN.TOKEN : ANGLE_ORIGIN.CURRENT; }
+    get angleOrigin() { return ANGLE_ORIGIN.CURRENT; }
 
     /** @override */
     async initializeVariables() {
-        this._isSelectingOrigin = !this.token;
+        this._isSelectingOrigin = true;
         this.document.angle = 90;
         return super.initializeVariables();
     }
@@ -39,13 +40,5 @@ export class ConeFromSelf extends AbilityTemplateAdvanced {
             : Settings.coneAlternate ? ANGLE_POINTS.CONE_FROM_MIDPOINT_AND_VERTEX : ANGLE_POINTS.VERTEX;
     }
 
-    // /** @override */
-    // async initializeVariables() {
-    //     ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializeVariables.name}`));
-
-    //     const token = this.token;
-    //     const width = Math.max(Math.round(token.document.width), 1);
-    //     const height = Math.max(Math.round(token.document.height), 1);
-    //     return await super.initializeConeData(token.center, width, height);
-    // }
+    get selectOriginText() { return localize('coneStart'); }
 }

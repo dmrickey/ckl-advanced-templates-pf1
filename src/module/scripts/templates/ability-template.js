@@ -1,5 +1,6 @@
-import { ANGLE_POINTS, CONSTS, FOLLOW_FROM, MODULE_NAME, PLACEMENT_TYPE } from '../../consts';
+import { ANGLE_POINTS, CONSTS, ANGLE_ORIGIN, MODULE_NAME, PLACEMENT_TYPE } from '../../consts';
 import { Settings } from '../../settings';
+import HintHandler from '../../view/hint-handler';
 import { GridSquare } from '../models/grid-square';
 import { localize, localizeFull } from '../utils';
 import { isSet } from '../utils/bits';
@@ -7,11 +8,17 @@ import { MeasuredTemplatePFAdvanced } from './measured-template-pf-advanced';
 
 export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
-    get followFrom() { return FOLLOW_FROM.CURRENT; }
-
+    get angleOrigin() { return ANGLE_ORIGIN.NONE; }
     get angleStartPoints() { return ANGLE_POINTS.ALL; }
 
     get placementType() { return PLACEMENT_TYPE.SET_XY; }
+
+    get selectOriginText() { return ''; }
+
+    #lastMove = 0;
+    #isDrag = false;
+    #isPanning = false;
+    _isSelectingOrigin = false;
 
     static async fromData(templateData, { action } = {}) {
         const { t: type, distance } = templateData;
@@ -83,15 +90,15 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                 }
                 break;
             case 'rect':
-                if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
-                    abilityCls = game.modules.get(MODULE_NAME).api.ability.rects.RectCentered;
-                }
-                else {
-                    // rotating rects is too hard, so "cheat" and change it to a line that can be rotated with the mouse wheel
-                    templateData.t = 'ray';
-                    templateData.width = distance;
-                    abilityCls = game.modules.get(MODULE_NAME).api.ability.lines.LineSystem;
-                }
+                // if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
+                //     abilityCls = game.modules.get(MODULE_NAME).api.ability.rects.RectCentered;
+                // }
+                // else {
+                // rotating rects is too hard, so "cheat" and change it to a line that can be rotated with the mouse wheel
+                templateData.t = 'ray';
+                templateData.width = distance;
+                abilityCls = game.modules.get(MODULE_NAME).api.ability.lines.LineSystem;
+                // }
                 break;
         }
 
@@ -113,8 +120,6 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         await this.draw();
         this.layer.activate();
         this.layer.preview.addChild(this);
-
-        this._isSelectingOrigin = this.placementType !== PLACEMENT_TYPE.SET_XY;
 
         return this.activatePreviewListeners(initialLayer);
     }
@@ -139,9 +144,24 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
      * @returns {Promise<Boolean>}
      */
     async initializeVariables() {
-        const { x, y } = canvas.mousePosition;
+        let { x, y } = canvas.grid.getSnappedPoint(canvas.mousePosition, { mode: this._snapMode });
+        let direction = this.document.direction ?? 0;
+        if (this.angleOrigin === ANGLE_ORIGIN.TOKEN && this.token) {
+            const square = GridSquare.fromToken(this.token);
+            const spot = square.getFollowPositionForCoords(this.angleStartPoints, canvas.mousePosition);
+            x = spot.x;
+            y = spot.y;
+            direction = spot.direction;
+        }
         this.document.x = x;
         this.document.y = y;
+        this.document.direction = direction;
+
+        if (this._isSelectingOrigin) {
+            HintHandler.show({ title: localize('cone'), hint: localize('hints.chooseStart') });
+            this.controlIconTextContents = this.selectOriginText;
+        }
+
         return true;
     }
 
@@ -225,11 +245,6 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         canvas.templates._onClickLeft2 = this.tempLeft2;
     }
 
-    #lastMove = 0;
-    #isDrag = false;
-    #isPanning = false;
-    _isSelectingOrigin = false;
-
     async handleRangeAndTargeting() {
         let isInRange = true;
 
@@ -258,9 +273,9 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             const unit = game.settings.get('pf1', 'units') === 'imperial'
                 ? localizeFull('PF1.Distance.ftShort')
                 : localizeFull('PF1.Distance.mShort');
-            this.#customLabel = localize('range', { range, unit });
+            this.controlIconTextContents = localize('range', { range, unit });
             if (!isInRange) {
-                this.#customLabel += '\n' + localize('errors.outOfRange');
+                this.controlIconTextContents += '\n' + localize('errors.outOfRange');
             }
         }
 
@@ -287,12 +302,12 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
         this._setPreviewVisibility(!this._isSelectingOrigin);
 
-        if (isSet(this.placementType, PLACEMENT_TYPE.SET_XY)) {
+        if (this.placementType === PLACEMENT_TYPE.SET_XY) {
             this.document.updateSource({
                 x: pos.x,
                 y: pos.y,
             });
-        } else if (isSet(this.placementType, PLACEMENT_TYPE.SET_ANGLE)) {
+        } else if (this.placementType === PLACEMENT_TYPE.SET_ANGLE) {
             this._followAngle(pos);
         } else {
             throw new Error('this should never be reached');
@@ -312,18 +327,16 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     }
 
     /**=
-     * @param {object} input
-     * @param {number} input.x
-     * @param {number} input.y
      * @returns { GridSquare }
      */
-    #getStartingGridSquare({ x, y }) {
-        if (isSet(this.followFrom, FOLLOW_FROM.CURRENT)) {
+    #getStartingGridSquare() {
+        if (this.angleOrigin === ANGLE_ORIGIN.CURRENT) {
+            const { x, y } = this.document;
             return this.#isGridPoint({ x, y })
                 ? GridSquare.fromGridPoint({ x, y })
                 : GridSquare.fromGridSquare({ x, y });
         }
-        else if (isSet(this.followFrom, FOLLOW_FROM.TOKEN)) {
+        else if (this.angleOrigin === ANGLE_ORIGIN.TOKEN) {
             return GridSquare.fromToken(this.token);
         }
         else {
@@ -331,41 +344,12 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         }
     }
 
-    #currentSpotIndex = 0;
     _followAngle({ x, y }) {
+        if (this.angleOrigin === ANGLE_ORIGIN.NONE) return;
+
         if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
-            const square = this.#getStartingGridSquare({ x, y });
-            const allSpots = square.getAngleStartPoints(this.angleStartPoints);
-            const totalSpots = allSpots.length;
-            const isMid = isSet(this.angleStartPoints, ANGLE_POINTS.EDGE_MIDPOINT);
-            const isVertex = isSet(this.angleStartPoints, ANGLE_POINTS.EDGE_VERTEX);
-            const radToNormalizedAngle = (rad) => {
-                let angle = (rad * 180 / Math.PI) % 360;
-                // offset the angle for even-sided tokens, because it's centered in the grid it's just wonky without the offset
-                const offset = isMid
-                    ? isVertex
-                        ? 0.5
-                        : 0
-                    : 1;
-                if (square.heightSquares % 2 === offset && square.widthSquares % 2 === offset) {
-                    angle -= (360 / totalSpots) / 2;
-                }
-                const normalizedAngle = Math.round(angle / (360 / totalSpots)) * (360 / totalSpots);
-                return normalizedAngle < 0
-                    ? normalizedAngle + 360
-                    : normalizedAngle;
-            };
-
-            const ray = new Ray(square.center, { x, y });
-            const angle = radToNormalizedAngle(ray.angle);
-            const spotIndex = Math.ceil(angle / 360 * totalSpots) % totalSpots;
-            if (spotIndex === this.#currentSpotIndex) {
-                return;
-            }
-
-            this.#currentSpotIndex = spotIndex;
-
-            const spot = allSpots[this.#currentSpotIndex];
+            const square = this.#getStartingGridSquare();
+            const spot = square.getFollowPositionForCoords(this.angleStartPoints, { x, y });
             this.document.direction = spot.direction;
             this.document.x = spot.x;
             this.document.y = spot.y;
@@ -384,9 +368,10 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             return;
         }
 
-        if (this.placementType !== PLACEMENT_TYPE.SET_XY && !this._isSelectingOrigin) {
+        if (this.angleOrigin === ANGLE_ORIGIN.CURRENT && !this._isSelectingOrigin) {
             this._isSelectingOrigin = true;
             this._setPreviewVisibility(false);
+            this.controlIconTextContents = this.selectOriginText;
             this.refresh();
             return;
         }
@@ -408,9 +393,10 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             return;
         }
 
-        if (this.placementType !== PLACEMENT_TYPE.SET_XY && this._isSelectingOrigin) {
+        if (this.angleOrigin === ANGLE_ORIGIN.CURRENT && this._isSelectingOrigin) {
             this._isSelectingOrigin = false;
             await this.handleRangeAndTargeting();
+            this.controlIconTextContents = null;
             this.refresh();
             return;
         }
@@ -508,33 +494,11 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
         this.#removeListeners();
 
+        HintHandler.close();
+
         this.#initialLayer.activate();
     }
 
     // #endregion
     #customLabel = null;
-    #customPreciseText = null;
-
-    _refreshRulerText() {
-        super._refreshRulerText();
-        if (this.#customLabel) {
-            if (!this.#customPreciseText) {
-                const style = CONFIG.canvasTextStyle.clone();
-                style.align = 'center';
-                this.#customPreciseText = this.template.addChild(new PreciseText("", style));
-            }
-            if (this.#customPreciseText.text !== this.#customLabel) {
-                this.#customPreciseText.text = this.#customLabel;
-            }
-            this.#customPreciseText.anchor.set(0.5, 0);
-            this.#customPreciseText.position.set(0, 50);
-        } else {
-            if (this.#customPreciseText) {
-                this.#customPreciseText.text = "";
-                this.#customPreciseText.destroy();
-                this.#customPreciseText = null;
-            }
-            return super._refreshRulerText();
-        }
-    }
 }

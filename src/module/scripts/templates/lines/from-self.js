@@ -1,6 +1,4 @@
-import { ANGLE_POINTS, FOLLOW_FROM, PLACEMENT_TYPE } from '../../../consts';
-import { GridSquare } from '../../models/grid-square';
-import { ifDebug, localize } from '../../utils';
+import { ANGLE_POINTS, ANGLE_ORIGIN, PLACEMENT_TYPE } from '../../../consts';
 import { AbilityTemplateAdvanced } from '../ability-template';
 
 export class LineFromSelf extends AbilityTemplateAdvanced {
@@ -19,86 +17,85 @@ export class LineFromSelf extends AbilityTemplateAdvanced {
     get angleStartPoints() { return ANGLE_POINTS.VERTEX; }
 
     /** @override */
-    get followFrom() { return this.token ? FOLLOW_FROM.TOKEN : FOLLOW_FROM.CURRENT; }
+    get angleOrigin() { return this.token ? ANGLE_ORIGIN.TOKEN : ANGLE_ORIGIN.CURRENT; }
 
     /** @override */
     async initializeVariables() {
-        const { x, y } = canvas.mousePosition;
-        this.document.x = x;
-        this.document.y = y;
         this._isSelectingOrigin = !this.token;
-        return true;
+        return super.initializeVariables();
     }
 
-    /** @override */
-    async getSourcePoint() {
-        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.getSourcePoint.name}`));
+    get selectOriginText() { return localize('lineStart'); }
 
-        this._setPreviewVisibility(false);
-        this.controlIconText = localize('lineStart');
-        super.clearTempate();
+    // /** @override */
+    // async getSourcePoint() {
+    //     ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.getSourcePoint.name}`));
 
-        const tokenSquare = GridSquare.fromToken(this.token);
-        const availablePoints = tokenSquare.gridPoints;
+    //     this._setPreviewVisibility(false);
+    //     this.controlIconTextContents = localize('lineStart');
+    //     super.clearTempate();
 
-        const totalSpots = availablePoints.length;
+    //     const tokenSquare = GridSquare.fromToken(this.token);
+    //     const availablePoints = tokenSquare.gridPoints;
 
-        const radToNormalizedAngle = (rad) => {
-            const degrees = Math.toDegrees(rad);
-            return Math.normalizeDegrees(degrees);
-        };
+    //     const totalSpots = availablePoints.length;
 
-        let point;
-        const selectSquareFromCrosshairsRotation = async (crosshairs) => {
-            let currentSpotIndex = 0;
+    //     const radToNormalizedAngle = (rad) => {
+    //         const degrees = Math.toDegrees(rad);
+    //         return Math.normalizeDegrees(degrees);
+    //     };
 
-            let tempPoint = { x: 0, y: 0 };
+    //     let point;
+    //     const selectSquareFromCrosshairsRotation = async (crosshairs) => {
+    //         let currentSpotIndex = 0;
 
-            const ray = new Ray(tokenSquare.center, crosshairs);
-            if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
-                const followAngle = radToNormalizedAngle(ray.angle);
-                const pointIndex = Math.ceil(followAngle / 360 * totalSpots) - 1 % totalSpots;
-                if (pointIndex === currentSpotIndex) {
-                    return;
-                }
-                currentSpotIndex = pointIndex;
-                point = availablePoints[pointIndex];
-            }
-            else {
-                point = tokenSquare.edgePoint(ray);
-            }
+    //         let tempPoint = { x: 0, y: 0 };
 
-            if (point.x === tempPoint.x && point.y === tempPoint.y) {
-                return;
-            }
-            tempPoint = point;
+    //         const ray = new Ray(tokenSquare.center, crosshairs);
+    //         if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
+    //             const followAngle = radToNormalizedAngle(ray.angle);
+    //             const pointIndex = Math.ceil(followAngle / 360 * totalSpots) - 1 % totalSpots;
+    //             if (pointIndex === currentSpotIndex) {
+    //                 return;
+    //             }
+    //             currentSpotIndex = pointIndex;
+    //             point = availablePoints[pointIndex];
+    //         }
+    //         else {
+    //             point = tokenSquare.edgePoint(ray);
+    //         }
 
-            super.setCenter = point;
-            this.refresh();
-        }
+    //         if (point.x === tempPoint.x && point.y === tempPoint.y) {
+    //             return;
+    //         }
+    //         tempPoint = point;
 
-        const config = {
-            borderAlpha: 0,
-            icon: { borderVisible: false },
-            snap: { resolution: canvas.grid.size },
-        }
-        const sourceSquare = await Sequencer.Crosshair.show(
-            config,
-            {
-                [Sequencer.Crosshair.CALLBACKS.MOUSE_MOVE]: async (crosshair) => {
-                    await selectSquareFromCrosshairsRotation(crosshair);
-                }
-            },
-        );
+    //         super.setCenter = point;
+    //         this.refresh();
+    //     }
+
+    //     const config = {
+    //         borderAlpha: 0,
+    //         icon: { borderVisible: false },
+    //         snap: { resolution: canvas.grid.size },
+    //     }
+    //     const sourceSquare = await Sequencer.Crosshair.show(
+    //         config,
+    //         {
+    //             [Sequencer.Crosshair.CALLBACKS.MOUSE_MOVE]: async (crosshair) => {
+    //                 await selectSquareFromCrosshairsRotation(crosshair);
+    //             }
+    //         },
+    //     );
 
 
-        if (!sourceSquare) {
-            return false;
-        }
+    //     if (!sourceSquare) {
+    //         return false;
+    //     }
 
-        this._setPreviewVisibility(true);
-        this.controlIconText = null;
+    //     this._setPreviewVisibility(true);
+    //     this.controlIconTextContents = null;
 
-        return point;
-    }
+    //     return point;
+    // }
 }

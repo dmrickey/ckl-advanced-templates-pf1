@@ -6,7 +6,7 @@ import { CircleSelf } from "./circles/self";
 import { CircleSplash } from "./circles/splash";
 import { ConeFromSelf } from "./cones/self";
 import { ConeSystem } from "./cones/system";
-import { ConeFromTargetSquare } from "./cones/target-square";
+import { ConeFromTargetSquare } from "./cones/target-grid";
 import { LineFromSelf } from "./lines/from-self";
 import { LineSystem } from "./lines/system";
 import { LineFromSquare } from "./lines/target-square";

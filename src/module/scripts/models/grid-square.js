@@ -36,9 +36,8 @@ export class GridSquare {
     get widthSquares() { return this.#widthSquares; }
 
     get center() {
-        const gridSize = canvas.grid.sizeY;
-        const x = this.#x + this.#widthSquares * gridSize / 2;
-        const y = this.#y + this.#heightSquares * gridSize / 2;
+        const x = this.#x + this.#widthSquares * canvas.grid.sizeX / 2;
+        const y = this.#y + this.#heightSquares * canvas.grid.sizeY / 2;
         return { x, y };
     }
 
@@ -53,12 +52,13 @@ export class GridSquare {
         const heightSpots = this.#heightSquares;
         const widthSpots = this.#widthSquares;
 
-        const gridSize = canvas.grid.sizeY;
+        const gridSizeX = canvas.grid.sizeX;
+        const gridSizeY = canvas.grid.sizeY;
 
         const rightSpots = [...new Array(widthSpots)].map((_, i) => ({
             direction: 0,
             x: right,
-            y: top + gridSize * i,
+            y: top + gridSizeY * i,
         }));
         const bottomRight = {
             direction: 45,
@@ -67,33 +67,33 @@ export class GridSquare {
         };
         const bottomSpots = [...new Array(heightSpots)].map((_, i) => ({
             direction: 90,
-            x: right - gridSize * i,
+            x: right - gridSizeX * i,
             y: bottom,
         }));
         const bottomLeft = {
             direction: 135,
-            x: left - gridSize,
+            x: left - gridSizeX,
             y: bottom,
         };
         const leftSpots = [...new Array(widthSpots)].map((_, i) => ({
             direction: 180,
-            x: left - gridSize,
-            y: bottom - gridSize * i,
+            x: left - gridSizeX,
+            y: bottom - gridSizeY * i,
         }));
         const topLeft = {
             direction: 225,
-            x: left - gridSize,
-            y: top - gridSize,
+            x: left - gridSizeX,
+            y: top - gridSizeY,
         };
         const topSpots = [...new Array(heightSpots)].map((_, i) => ({
             direction: 270,
-            x: left + gridSize * i,
-            y: top - gridSize,
+            x: left + gridSizeX * i,
+            y: top - gridSizeY,
         }));
         const topRight = {
             direction: 315,
             x: right,
-            y: top - gridSize,
+            y: top - gridSizeY,
         };
         const allSpots = [
             ...rightSpots.slice(Math.floor(rightSpots.length / 2)),
@@ -125,14 +125,15 @@ export class GridSquare {
         const heightSpots = this.#heightSquares;
         const widthSpots = this.#widthSquares;
 
-        const gridSize = canvas.grid.sizeY;
+        const gridSizeX = canvas.grid.sizeX;
+        const gridSizeY = canvas.grid.sizeY;
 
         const squares = [];
         for (let x = 0; x < widthSpots; x++) {
             for (let y = 0; y < heightSpots; y++) {
                 squares.push({
-                    x: left + x * gridSize,
-                    y: top + y * gridSize,
+                    x: left + x * gridSizeX,
+                    y: top + y * gridSizeY,
                 });
             }
         }
@@ -170,12 +171,13 @@ export class GridSquare {
         const heightSpots = Math.max(0, this.#heightSquares - 1);
         const widthSpots = Math.max(0, this.#widthSquares - 1);
 
-        const gridSize = canvas.grid.sizeY;
+        const gridSizeX = canvas.grid.sizeX;
+        const gridSizeY = canvas.grid.sizeY;
 
         const rightPoints = [...new Array(widthSpots)].map((_, i) => ({
             direction: 0,
             x: right,
-            y: top + gridSize * (i + 1),
+            y: top + gridSizeY * (i + 1),
         }));
         const bottomRight = {
             direction: 45,
@@ -184,7 +186,7 @@ export class GridSquare {
         };
         const bottomPoints = [...new Array(heightSpots)].map((_, i) => ({
             direction: 90,
-            x: right - gridSize * (i + 1),
+            x: right - gridSizeX * (i + 1),
             y: bottom,
         }));
         const bottomLeft = {
@@ -195,7 +197,7 @@ export class GridSquare {
         const leftPoints = [...new Array(widthSpots)].map((_, i) => ({
             direction: 180,
             x: left,
-            y: bottom - gridSize * (i + 1),
+            y: bottom - gridSizeY * (i + 1),
         }));
         const topLeft = {
             direction: 225,
@@ -204,7 +206,7 @@ export class GridSquare {
         };
         const topPoints = [...new Array(heightSpots)].map((_, i) => ({
             direction: 270,
-            x: left + gridSize * (i + 1),
+            x: left + gridSizeX * (i + 1),
             y: top,
         }));
         const topRight = {
@@ -229,7 +231,7 @@ export class GridSquare {
      * @param {ANGLE_POINTS[keyof ANGLE_POINTS]} anglePoints
      * @returns {{x: number, y: number, direction: number}[]}
      */
-    getAngleStartPoints(anglePoints) {
+    #getAngleStartPoints(anglePoints) {
         const bottom = this.#y + this.#h;
         const left = this.#x;
         const top = this.#y;
@@ -316,15 +318,52 @@ export class GridSquare {
         return allSpots;
     }
 
+    /**
+     *
+     * @param {ANGLE_POINTS[keyof ANGLE_POINTS]} angleStartPoints
+     * @param {object} coords
+     * @param {number} coords.x
+     * @param {number} coords.y
+     * @returns { {direction: number, x: number, y: number} }
+     */
+    getFollowPositionForCoords(angleStartPoints, { x, y }) {
+        const allSpots = this.#getAngleStartPoints(angleStartPoints);
+        const totalSpots = allSpots.length;
+        const isMid = isSet(angleStartPoints, ANGLE_POINTS.EDGE_MIDPOINT);
+        const isVertex = isSet(angleStartPoints, ANGLE_POINTS.EDGE_VERTEX);
+        const radToNormalizedAngle = (rad) => {
+            let angle = (rad * 180 / Math.PI) % 360;
+            // offset the angle for even-sided tokens, because it's centered in the grid it's just wonky without the offset
+            const offset = isMid
+                ? isVertex
+                    ? 0.5
+                    : 0
+                : 1;
+            if (this.heightSquares % 2 === offset && this.widthSquares % 2 === offset) {
+                angle -= (360 / totalSpots) / 2;
+            }
+            const normalizedAngle = Math.round(angle / (360 / totalSpots)) * (360 / totalSpots);
+            return normalizedAngle < 0
+                ? normalizedAngle + 360
+                : normalizedAngle;
+        };
+
+        const ray = new Ray(this.center, { x, y });
+        const angle = radToNormalizedAngle(ray.angle);
+        const spotIndex = Math.ceil(angle / 360 * totalSpots) % totalSpots;
+
+        const spot = allSpots[spotIndex];
+        return spot;
+    }
+
     constructor(x, y, heightSquares = 1, widthSquares = 1) {
         this.#x = x;
         this.#y = y;
         this.#heightSquares = heightSquares;
         this.#widthSquares = widthSquares;
 
-        const gridSize = canvas.grid.sizeY;
-        this.#h = gridSize * heightSquares;
-        this.#w = gridSize * widthSquares;
+        this.#h = canvas.grid.sizeY * heightSquares;
+        this.#w = canvas.grid.sizeX * widthSquares;
     }
 
     static fromToken(token) {
@@ -335,9 +374,8 @@ export class GridSquare {
     }
 
     static fromCenter({ x, y }, heightSquares = 1, widthSquares = 1) {
-        const gridSize = canvas.grid.sizeY;
-        const x1 = (x || 0) - gridSize * heightSquares / 2;
-        const y1 = (y || 0) - gridSize * widthSquares / 2;
+        const x1 = (x || 0) - canvas.grid.sizeX * heightSquares / 2;
+        const y1 = (y || 0) - canvas.grid.sizeY * widthSquares / 2;
         return new GridSquare(x1, y1, heightSquares, widthSquares);
     }
 

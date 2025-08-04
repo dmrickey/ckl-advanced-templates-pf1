@@ -27,12 +27,6 @@ const withinRect = (point, rect) => {
  */
 export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
 
-    //#region  COPIED FROM PF1
-    degToRad(deg) {
-        return deg * (Math.PI / 180);
-    }
-    //#endregion
-
     //#region BEGIN MY CODE
     get shouldOverrideTokenEmanation() {
         return game.settings.get('pf1', 'measureStyle')
@@ -51,7 +45,8 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
     }
 
     set hideHighlight(value) {
-        this.document.flags ||= { [MODULE_NAME]: {} };
+        this.document.flags ||= {};
+        this.document.flags[MODULE_NAME] ||= {};
         this.document.flags[MODULE_NAME][CONSTS.flags.hideHighlight] = value;
     }
 
@@ -87,7 +82,8 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
 
     get actualRotation() { return this.document.flags?.[MODULE_NAME]?.rotation ?? 0; }
     set actualRotation(value) {
-        this.document.flags ||= { [MODULE_NAME]: {} };
+        this.document.flags ||= {};
+        this.document.flags[MODULE_NAME] ||= {};
         this.document.flags[MODULE_NAME].rotation = value;
     }
 
@@ -96,20 +92,12 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
      */
     get _snapMode() { return CONST.GRID_SNAPPING_MODES.CENTER | CONST.GRID_SNAPPING_MODES.EDGE_MIDPOINT | CONST.GRID_SNAPPING_MODES.CORNER; }
 
+    controlIconTextContents = '';
     /**
-     * The control icon label
+     * The control icon text
      * @type {PreciseText}
      */
-    controlIconTextLabel;
-
-    get controlIconText() {
-        return this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.controlIconText] || '';
-    }
-
-    set controlIconText(value) {
-        this.document.flags ||= { [MODULE_NAME]: {} };
-        this.document.flags[MODULE_NAME][CONSTS.flags.controlIconText] = value;
-    }
+    #controlIconText;
 
     /**
      * Draw the Text label used for the MeasuredTemplate
@@ -128,10 +116,24 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
      * @protected
      */
     _refreshControlIconText() {
-        const text = this.controlIconText;
-        this.controlIconTextLabel.text = text;
-        // todo fix text position
-        this.controlIconTextLabel.position.set(0, 80);
+        if (this.controlIconTextContents) {
+            if (!this.#controlIconText) {
+                const style = CONFIG.canvasTextStyle.clone();
+                style.align = 'center';
+                this.#controlIconText = this.template.addChild(new PreciseText("", style));
+            }
+            if (this.#controlIconText.text !== this.controlIconTextContents) {
+                this.#controlIconText.text = this.controlIconTextContents;
+            }
+            this.#controlIconText.anchor.set(0.5, 0);
+            this.#controlIconText.position.set(0, 50);
+        } else {
+            if (this.#controlIconText) {
+                this.#controlIconText.text = "";
+                this.#controlIconText.destroy();
+                this.#controlIconText = null;
+            }
+        }
     }
     //#endregion
 
@@ -159,7 +161,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         await this.controlIcon.draw();
 
         //#region BEGIN MY CODE
-        this.controlIconTextLabel = this.addChild(this.#drawControlIconText());
+        this.controlIconText = this.addChild(this.#drawControlIconText());
         //#endregion
 
         // Ruler Text
@@ -224,7 +226,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         if (flags.refreshElevation) this._refreshElevation();
 
         // BEGIN MY CODE
-        if (flags.refreshPosition) this._refreshControlIconText();
+        if (flags.refreshPosition || flags.refreshText) this._refreshControlIconText();
         // END MY CODE
     }
 
