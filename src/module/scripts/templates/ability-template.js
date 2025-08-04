@@ -159,7 +159,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
         if (this._isSelectingOrigin) {
             HintHandler.show({ title: localize('cone'), hint: localize('hints.chooseStart') });
-            this.controlIconTextContents = this.selectOriginText;
+            this.controlIconTextContents.push(this.selectOriginText);
         }
 
         return true;
@@ -273,9 +273,9 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             const unit = game.settings.get('pf1', 'units') === 'imperial'
                 ? localizeFull('PF1.Distance.ftShort')
                 : localizeFull('PF1.Distance.mShort');
-            this.controlIconTextContents = localize('range', { range, unit });
+            this.controlIconTextContents = [localize('range', { range, unit })];
             if (!isInRange) {
-                this.controlIconTextContents += '\n' + localize('errors.outOfRange');
+                this.controlIconTextContents.push(localize('errors.outOfRange'));
             }
         }
 
@@ -371,7 +371,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         if (this.angleOrigin === ANGLE_ORIGIN.CURRENT && !this._isSelectingOrigin) {
             this._isSelectingOrigin = true;
             this._setPreviewVisibility(false);
-            this.controlIconTextContents = this.selectOriginText;
+            this.controlIconTextContents = [this.selectOriginText];
             this.refresh();
             return;
         }
@@ -396,7 +396,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         if (this.angleOrigin === ANGLE_ORIGIN.CURRENT && this._isSelectingOrigin) {
             this._isSelectingOrigin = false;
             await this.handleRangeAndTargeting();
-            this.controlIconTextContents = null;
+            this.controlIconTextContents = [];
             this.refresh();
             return;
         }
