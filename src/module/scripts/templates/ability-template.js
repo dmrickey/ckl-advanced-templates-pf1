@@ -249,18 +249,18 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         let isInRange = true;
 
         if ((this.hasMaxRange || this.hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange && this.token) {
-            const { x, y } = this.center;
+            const { x, y } = canvas.grid.getSnappedPoint(this.center, { mode: CONST.GRID_SNAPPING_MODES.VERTEX });
 
-            const tokenSquare = GridSquare.fromToken(this.token);
+            const sourceSquare = GridSquare.fromToken(this.token);
 
-            const distances = tokenSquare.gridPoints
+            const distances = sourceSquare.gridPoints
                 .map((spot) => [spot, { x, y }])
                 .map((coords) => canvas.grid.measurePath(coords).distance);
             let range = Math.min(...distances);
             range = !!(range % 1)
                 ? range.toFixed(1)
                 : range;
-            const isInToken = tokenSquare.contains(x, y);
+            const isInToken = sourceSquare.contains(x, y);
             if (isInToken) {
                 range = 0;
             }
