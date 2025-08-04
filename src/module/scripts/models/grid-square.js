@@ -247,8 +247,8 @@ export class GridSquare {
         const isVertex = isSet(anglePoints, ANGLE_POINTS.EDGE_VERTEX);
         const isOuterVertex = isSet(anglePoints, ANGLE_POINTS.OUTER_VERTEX);
 
-        const gridSizeX = canvas.grid.sizeX;
-        const gridSizeY = canvas.grid.sizeY;
+        let gridSizeX = canvas.grid.sizeX;
+        let gridSizeY = canvas.grid.sizeY;
 
         let gridOffsetX = 0;
         let gridOffsetY = 0;

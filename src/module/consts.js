@@ -76,11 +76,14 @@ export const ANGLE_POINTS = /** @type {const} */ ({
     EDGE_MIDPOINT: 4,
     ALL: 7,
 
-    // traditional 15' cone (exactly like diagram)
-    CONE_15_TRADITIONAL: 6,
+    /** traditional 15' cone (exactly like diagram) */
+    CONE_15_TRADITIONAL: 5,
 
-    // rules accurate, includes all point intersections
+    /** rules accurate 15' cone, includes all grid point intersections */
     CONE_15_ALTERNATE: 7,
+
+    /** Essentially the same as a rules accurate 15' cone. This allows larger cones to start from an edge midpoint */
+    CONE_FROM_MIDPOINT_AND_VERTEX: 7,
 });
 
 export const FOLLOW_FROM = /** @type {const} */ ({

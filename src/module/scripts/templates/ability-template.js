@@ -287,12 +287,12 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
         this._setPreviewVisibility(!this._isSelectingOrigin);
 
-        if (isSet(placementType, PLACEMENT_TYPE.SET_XY)) {
+        if (isSet(this.placementType, PLACEMENT_TYPE.SET_XY)) {
             this.document.updateSource({
                 x: pos.x,
                 y: pos.y,
             });
-        } else if (isSet(placementType, PLACEMENT_TYPE.SET_ANGLE)) {
+        } else if (isSet(this.placementType, PLACEMENT_TYPE.SET_ANGLE)) {
             this._followAngle(pos);
         } else {
             throw new Error('this should never be reached');
@@ -321,10 +321,10 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         if (isSet(this.followFrom, FOLLOW_FROM.CURRENT)) {
             return this.#isGridPoint({ x, y })
                 ? GridSquare.fromGridPoint({ x, y })
-                : GridSquare.fromGridSquare({ x, y }).getAngleStartPoints(this.angleStartPoints);
+                : GridSquare.fromGridSquare({ x, y });
         }
         else if (isSet(this.followFrom, FOLLOW_FROM.TOKEN)) {
-            return GridSquare.fromToken(this.token).getAngleStartPoints(this.angleStartPoints);
+            return GridSquare.fromToken(this.token);
         }
         else {
             throw new Error('this should never happen');
@@ -335,7 +335,8 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     _followAngle({ x, y }) {
         if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
             const square = this.#getStartingGridSquare({ x, y });
-            const totalSpots = square.getAngleStartPoints(this.angleStartPoints);
+            const allSpots = square.getAngleStartPoints(this.angleStartPoints);
+            const totalSpots = allSpots.length;
             const isMid = isSet(this.angleStartPoints, ANGLE_POINTS.EDGE_MIDPOINT);
             const isVertex = isSet(this.angleStartPoints, ANGLE_POINTS.EDGE_VERTEX);
             const radToNormalizedAngle = (rad) => {
@@ -355,7 +356,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                     : normalizedAngle;
             };
 
-            const ray = new Ray(square.center, crosshairs);
+            const ray = new Ray(square.center, { x, y });
             const angle = radToNormalizedAngle(ray.angle);
             const spotIndex = Math.ceil(angle / 360 * totalSpots) % totalSpots;
             if (spotIndex === this.#currentSpotIndex) {
@@ -364,7 +365,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
             this.#currentSpotIndex = spotIndex;
 
-            const spot = square.allSpots[this.#currentSpotIndex];
+            const spot = allSpots[this.#currentSpotIndex];
             this.document.direction = spot.direction;
             this.document.x = spot.x;
             this.document.y = spot.y;

@@ -2,6 +2,7 @@ import { MODULE_NAME } from "./consts";
 
 const keys = {
     cone15Alternate: 'cone15Alternate',
+    coneAlternate: 'coneAlternate',
     coneRotation: 'coneRotation',
     debug: 'debug',
     defaultLineWidth: 'defaultLineWidth',
@@ -25,6 +26,12 @@ const settings = {
         scope: 'client',
     },
     [keys.cone15Alternate]: {
+        config: true,
+        default: false,
+        type: Boolean,
+        scope: 'world',
+    },
+    [keys.coneAlternate]: {
         config: true,
         default: false,
         type: Boolean,
@@ -92,6 +99,15 @@ export class Settings {
      */
     static get cone15Alternate() {
         return Settings.#getSetting(keys.cone15Alternate);
+    }
+
+    /**
+     * GM: allows users to place all cones on the middle of a grid square (just like a 15' cone) in addition to the vertex
+     *
+     * @returns {boolean} True if alternate cone placement is allowed
+     */
+    static get coneAlternate() {
+        return Settings.#getSetting(keys.coneAlternate);
     }
 
     /**
