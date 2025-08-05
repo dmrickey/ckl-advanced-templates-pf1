@@ -293,13 +293,8 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         if (this.placementType === PLACEMENT_TYPE.SET_XY) {
             this.document.x = pos.x;
             this.document.y = pos.y;
-            // this.document.updateSource({
-            //     x: pos.x,
-            //     y: pos.y,
-            // });
         } else if (this.placementType === PLACEMENT_TYPE.SET_ANGLE) {
             this._followAngle(pos);
-            // this.refresh();
         } else {
             throw new Error('this should never be reached');
         }
@@ -343,11 +338,6 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             this.document.direction = spot.direction;
             this.document.x = spot.x;
             this.document.y = spot.y;
-            // this.document.updateSource({
-            //     x: spot.x,
-            //     y: spot.y,
-            //     direction: spot.direction,
-            // });
         }
         // todo hex and gridless
     }
@@ -479,7 +469,6 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             }
         }
 
-        // this.document.updateSource({ distance, direction });
         this.document.distance = distance;
         this.document.direction = direction;
 
