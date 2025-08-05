@@ -394,6 +394,27 @@ export class GridSquare {
     }
 
     /**
+     * @param {object} coords
+     * @param {number} coords.posX
+     * @param {number} coords.posY
+     * @returns {number}
+     */
+    distanceToPoint({ x: posX, y: posY }) {
+        let { x, y } = canvas.grid.getSnappedPoint({ x: posX, y: posY }, { mode: CONST.GRID_SNAPPING_MODES.VERTEX });
+
+        if (this.contains(x, y)) {
+            return 0;
+        }
+
+        const distances = this.gridPoints
+            .map((point) => [point, { x, y }])
+            .map((coords) => canvas.grid.measurePath(coords).distance);
+
+        const range = Math.min(...distances);
+        return range;
+    }
+
+    /**
      * Gets the point at the edge of a circle token (assuming width/height is the same (i.e. a circle))
      * @param {Ray} ray
      */

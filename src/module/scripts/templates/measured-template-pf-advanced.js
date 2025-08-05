@@ -27,6 +27,8 @@ const withinRect = (point, rect) => {
  */
 export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
 
+    _isSelectingOrigin = false;
+
     //#region BEGIN MY CODE
     get shouldOverrideTokenEmanation() {
         return game.settings.get('pf1', 'measureStyle')
@@ -107,7 +109,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         const style = CONFIG.canvasTextStyle.clone();
         style.fontSize = Math.max(Math.round(canvas.dimensions.size * 0.36 * 12) / 12, 36);
         const text = new PreciseText(null, style);
-        text.anchor.set(.5, 1);
+        text.anchor.set(.5, 0);
         return text;
     }
 
@@ -121,13 +123,13 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
                 const style = CONFIG.canvasTextStyle.clone();
                 style.align = 'center';
                 this.#controlIconText = this.template.addChild(new PreciseText("", style));
+                this.#controlIconText.anchor.set(0.5, 0);
+                this.#controlIconText.position.set(0, 50);
             }
             const text = this.controlIconTextContents.join("\n");
             if (this.#controlIconText.text !== text) {
                 this.#controlIconText.text = text;
             }
-            this.#controlIconText.anchor.set(0.5, 0);
-            this.#controlIconText.position.set(0, 50);
         } else {
             if (this.#controlIconText) {
                 this.#controlIconText.text = "";
@@ -145,7 +147,10 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
     /*  Initial Drawing                             */
     /* -------------------------------------------- */
 
-    /** @override */
+    /**
+     * This is only used so I can override #createControlIcon to mess with the icon
+     * @override
+     */
     async _draw() {
         // Load Fill Texture
         if (this.document.texture) {
@@ -160,10 +165,6 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         // Control Icon
         this.controlIcon = this.addChild(this.#createControlIcon());
         await this.controlIcon.draw();
-
-        //#region BEGIN MY CODE
-        this.controlIconText = this.addChild(this.#drawControlIconText());
-        //#endregion
 
         // Ruler Text
         this.ruler = this.addChild(this.#drawRulerText());
@@ -372,12 +373,14 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
             endx += this.tokenSizeSquares.sizeSquares * canvas.scene.grid.size / 2;
         }
 
-        // Draw origin and destination points
-        template.lineStyle(this._borderThickness, 0x000000)
-            .beginFill(0x000000, 0.5)
-            .drawCircle(0, 0, 6)
-            .drawCircle(endx, endy, 6)
-            .endFill();
+        if (!this._isSelectingOrigin) {
+            // Draw origin and destination points
+            template.lineStyle(this._borderThickness, 0x000000)
+                .beginFill(0x000000, 0.5)
+                .drawCircle(0, 0, 6)
+                .drawCircle(endx, endy, 6)
+                .endFill();
+        }
     }
     /** END MY CODE */
 
@@ -433,6 +436,11 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
      * @protected
      */
     _refreshRulerText() {
+        if (this._isSelectingOrigin) {
+            this.ruler.text = '';
+            return;
+        }
+
         const { distance, t } = this.document;
         const grid = canvas.grid;
         if (t === "rect") {
@@ -463,6 +471,8 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
      * Highlight the grid squares which should be shown under the area of effect
      */
     highlightGrid() {
+        if (this._isSelectingOrigin) return;
+
         // Clear the existing highlight layer
         canvas.interface.grid.clearHighlightLayer(this.highlightId);
 

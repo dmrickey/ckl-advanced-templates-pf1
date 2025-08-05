@@ -18,7 +18,6 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     #lastMove = 0;
     #isDrag = false;
     #isPanning = false;
-    _isSelectingOrigin = false;
 
     static async fromData(templateData, { action } = {}) {
         const { t: type, distance } = templateData;
@@ -249,21 +248,8 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         let isInRange = true;
 
         if ((this.hasMaxRange || this.hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange && this.token) {
-            const { x, y } = canvas.grid.getSnappedPoint(this.center, { mode: CONST.GRID_SNAPPING_MODES.VERTEX });
-
             const sourceSquare = GridSquare.fromToken(this.token);
-
-            const distances = sourceSquare.gridPoints
-                .map((spot) => [spot, { x, y }])
-                .map((coords) => canvas.grid.measurePath(coords).distance);
-            let range = Math.min(...distances);
-            range = !!(range % 1)
-                ? range.toFixed(1)
-                : range;
-            const isInToken = sourceSquare.contains(x, y);
-            if (isInToken) {
-                range = 0;
-            }
+            const range = sourceSquare.distanceToPoint(this.center);
 
             isInRange = !(this.hasMinRange && range < this.minRange
                 || this.hasMaxRange && range > this.maxRange);
@@ -280,7 +266,9 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         }
 
         // todo handled for gridless lines
-        isInRange ? await this.targetIfEnabled() : this.clearTargetIfEnabled();
+        isInRange
+            ? await this.targetIfEnabled()
+            : this.clearTargetIfEnabled();
     }
 
     /** @virtual */
@@ -372,6 +360,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             this._isSelectingOrigin = true;
             this._setPreviewVisibility(false);
             this.controlIconTextContents = [this.selectOriginText];
+            this._applyRenderFlags({ refreshText: true });
             this.refresh();
             return;
         }
