@@ -238,7 +238,7 @@ export class GridSquare {
         const right = this.#x + this.#w;
 
         if (this.#heightSquares == 0 && this.#widthSquares == 0) {
-            return [...new Array(widthSpots)].map((_, i) => ({
+            return [...new Array(8)].map((_, i) => ({
                 direction: i * 45,
                 x: left,
                 y: top,
