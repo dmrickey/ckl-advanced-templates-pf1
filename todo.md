@@ -135,4 +135,5 @@
     - rotates 45 degrees
     - when centered in a box, the template starts at an edge/vertex
 - Make sure bombs work
-- Add a method into grid square for "get distance from source" because right now the bottom left grid point is assuming I mean the square below it
+- error when canceling template
+- fix "get source angle points" in GridSquare when the starting point is on a grid edge midpoint

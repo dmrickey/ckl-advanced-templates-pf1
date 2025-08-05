@@ -471,10 +471,10 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
      * Highlight the grid squares which should be shown under the area of effect
      */
     highlightGrid() {
-        if (this._isSelectingOrigin) return;
-
         // Clear the existing highlight layer
         canvas.interface.grid.clearHighlightLayer(this.highlightId);
+
+        if (this._isSelectingOrigin) return;
 
         //#region BEGIN MY CODE
         const alpha = this.document.flags[MODULE_NAME]?.[CONSTS.flags.colorAlpha];

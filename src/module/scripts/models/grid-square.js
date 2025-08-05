@@ -238,12 +238,14 @@ export class GridSquare {
         const right = this.#x + this.#w;
 
         if (this.#heightSquares == 0 && this.#widthSquares == 0) {
-            return [{
-                direction: 0,
+            return [...new Array(widthSpots)].map((_, i) => ({
+                direction: i * 45,
                 x: left,
                 y: top,
-            }];
+            }));
         }
+
+        // todo handle height = 0 or width = 0
 
         const isMid = isSet(anglePoints, ANGLE_POINTS.EDGE_MIDPOINT);
         const isVertex = isSet(anglePoints, ANGLE_POINTS.EDGE_VERTEX);

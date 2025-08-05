@@ -291,12 +291,15 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         this._setPreviewVisibility(!this._isSelectingOrigin);
 
         if (this.placementType === PLACEMENT_TYPE.SET_XY) {
-            this.document.updateSource({
-                x: pos.x,
-                y: pos.y,
-            });
+            this.document.x = pos.x;
+            this.document.y = pos.y;
+            // this.document.updateSource({
+            //     x: pos.x,
+            //     y: pos.y,
+            // });
         } else if (this.placementType === PLACEMENT_TYPE.SET_ANGLE) {
             this._followAngle(pos);
+            // this.refresh();
         } else {
             throw new Error('this should never be reached');
         }
@@ -317,7 +320,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     /**=
      * @returns { GridSquare }
      */
-    #getStartingGridSquare() {
+    _getStartingGridSquare() {
         if (this.angleOrigin === ANGLE_ORIGIN.CURRENT) {
             const { x, y } = this.document;
             return this.#isGridPoint({ x, y })
@@ -336,11 +339,15 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         if (this.angleOrigin === ANGLE_ORIGIN.NONE) return;
 
         if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
-            const square = this.#getStartingGridSquare();
-            const spot = square.getFollowPositionForCoords(this.angleStartPoints, { x, y });
+            const spot = this._gridSquare.getFollowPositionForCoords(this.angleStartPoints, { x, y });
             this.document.direction = spot.direction;
             this.document.x = spot.x;
             this.document.y = spot.y;
+            // this.document.updateSource({
+            //     x: spot.x,
+            //     y: spot.y,
+            //     direction: spot.direction,
+            // });
         }
         // todo hex and gridless
     }
@@ -357,6 +364,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         }
 
         if (this.angleOrigin === ANGLE_ORIGIN.CURRENT && !this._isSelectingOrigin) {
+            this._gridSquare = null;
             this._isSelectingOrigin = true;
             this._setPreviewVisibility(false);
             this.controlIconTextContents = [this.selectOriginText];
@@ -371,6 +379,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         this.#events.reject();
     }
 
+    _gridSquare = null;
     /**
      * Confirm the workflow (left-click)
      */
@@ -383,6 +392,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         }
 
         if (this.angleOrigin === ANGLE_ORIGIN.CURRENT && this._isSelectingOrigin) {
+            this._gridSquare = this._getStartingGridSquare();
             this._isSelectingOrigin = false;
             await this.handleRangeAndTargeting();
             this.controlIconTextContents = [];
@@ -469,7 +479,9 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             }
         }
 
-        this.document.updateSource({ distance, direction });
+        // this.document.updateSource({ distance, direction });
+        this.document.distance = distance;
+        this.document.direction = direction;
 
         this.refresh();
     }

@@ -1,5 +1,6 @@
 import { ANGLE_POINTS, ANGLE_ORIGIN, PLACEMENT_TYPE } from '../../../consts';
 import { Settings } from '../../../settings';
+import { GridSquare } from '../../models/grid-square';
 import { AbilityTemplateAdvanced } from '../ability-template';
 
 export class ConeFromSelf extends AbilityTemplateAdvanced {
@@ -28,6 +29,7 @@ export class ConeFromSelf extends AbilityTemplateAdvanced {
     /** @override */
     async initializeVariables() {
         this._isSelectingOrigin = !this.token;
+        this._gridSquare = GridSquare.fromToken(this.token);
         this.document.angle = 90;
         return super.initializeVariables();
     }
