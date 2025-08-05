@@ -158,6 +158,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
         if (this._isSelectingOrigin) {
             HintHandler.show({ title: localize('cone'), hint: localize('hints.chooseStart') });
+            // todo this is getting overridden when moving
             this.controlIconTextContents.push(this.selectOriginText);
         }
 
@@ -254,7 +255,6 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             isInRange = !(this.hasMinRange && range < this.minRange
                 || this.hasMaxRange && range > this.maxRange);
             this._setPreviewVisibility(isInRange);
-            this._setErrorIconVisibility(isInRange);
 
             const unit = game.settings.get('pf1', 'units') === 'imperial'
                 ? localizeFull('PF1.Distance.ftShort')
@@ -264,6 +264,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                 this.controlIconTextContents.push(localize('errors.outOfRange'));
             }
         }
+        this._setErrorIconVisibility(isInRange);
 
         // todo handled for gridless lines
         isInRange
@@ -299,9 +300,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             throw new Error('this should never be reached');
         }
 
-        if (!this._isSelectingOrigin) {
-            this.handleRangeAndTargeting();
-        }
+        await this.handleRangeAndTargeting();
 
         this.refresh();
 
@@ -384,9 +383,9 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         if (this.angleOrigin === ANGLE_ORIGIN.CURRENT && this._isSelectingOrigin) {
             this._gridSquare = this._getStartingGridSquare();
             this._isSelectingOrigin = false;
-            await this.handleRangeAndTargeting();
             this.controlIconTextContents = [];
             this.refresh();
+            await this.handleRangeAndTargeting();
             return;
         }
 

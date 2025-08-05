@@ -122,14 +122,14 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
             if (!this.#controlIconText) {
                 const style = CONFIG.canvasTextStyle.clone();
                 style.align = 'center';
-                this.#controlIconText = this.template.addChild(new PreciseText("", style));
-                this.#controlIconText.anchor.set(0.5, 0);
-                this.#controlIconText.position.set(0, 50);
+                this.#controlIconText = this.template.addChild(new PreciseText(null, style));
             }
             const text = this.controlIconTextContents.join("\n");
             if (this.#controlIconText.text !== text) {
                 this.#controlIconText.text = text;
             }
+            this.#controlIconText.anchor.set(0.5, 0);
+            this.#controlIconText.position.set(0, 50);
         } else {
             if (this.#controlIconText) {
                 this.#controlIconText.text = "";
@@ -179,10 +179,10 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
      * Draw the ControlIcon for the MeasuredTemplate
      * @returns {ControlIcon}
      */
-    #createControlIcon() {
+    #createControlIcon(iconTexture) {
         const size = Math.max(Math.round((canvas.dimensions.size * 0.5) / 20) * 20, 40);
         //#region override icon texture
-        const iconTexture = this.document.flags?.[MODULE_NAME]?.icon || CONFIG.controlIcons.template;
+        iconTexture ||= this.document.flags?.[MODULE_NAME]?.icon || CONFIG.controlIcons.template;
         let icon = new ControlIcon({ texture: iconTexture, size: size });
         //#endregion
         icon.x -= (size * 0.5);
@@ -274,7 +274,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
     _refreshTemplate() {
         if (!this.template) return;
         const template = this.template.clear();
-        if (!this.isVisible || this.hideHighlight) {
+        if (!this.isVisible || this.hideHighlight || this._isSelectingOrigin) {
             return;
         }
 

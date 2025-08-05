@@ -137,3 +137,4 @@
 - Make sure bombs work
 - error when canceling template
 - fix "get source angle points" in GridSquare when the starting point is on a grid edge midpoint
+- icon text isn't centered
