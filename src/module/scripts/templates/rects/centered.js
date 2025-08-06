@@ -112,7 +112,7 @@ export class RectCentered extends AbilityTemplateAdvanced {
     get offset() { return this.document.flags?.[MODULE_NAME]?.offset ?? 0; }
 
     /** @override */
-    get _canRotate() { return false; }
+    get _rotationType() { return false; }
 
     /** @override */
     get _snapMode() {

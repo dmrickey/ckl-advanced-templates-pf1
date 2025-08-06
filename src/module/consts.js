@@ -90,3 +90,9 @@ export const ANGLE_ORIGIN = /** @type {const} */ ({
     CURRENT: 1,
     TOKEN: 2,
 });
+
+export const ROTATION_TYPE = /** @type {const} */ ({
+    NONE: 0,
+    ADVANCED_TEMPLATES: 1,
+    SYSTEM: 2,
+});

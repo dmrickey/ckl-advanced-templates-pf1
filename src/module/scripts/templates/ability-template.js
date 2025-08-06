@@ -1,4 +1,4 @@
-import { ANGLE_POINTS, CONSTS, ANGLE_ORIGIN, MODULE_NAME, PLACEMENT_TYPE } from '../../consts';
+import { ANGLE_POINTS, CONSTS, ANGLE_ORIGIN, MODULE_NAME, PLACEMENT_TYPE, ROTATION_TYPE } from '../../consts';
 import { Settings } from '../../settings';
 import HintHandler from '../../view/hint-handler';
 import { GridSquare } from '../models/grid-square';
@@ -431,7 +431,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         return doc;
     }
 
-    get _canRotate() { return true; }
+    get _rotationType() { return ROTATION_TYPE.ADVANCED_TEMPLATES; }
 
     /**
      * Rotate the template by 3 degree increments (mouse-wheel)
@@ -442,10 +442,24 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         event.preventDefault(); // Prevent browser zoom
         event.stopPropagation(); // Prevent other handlers
 
-        if (!this._canRotate) return;
+        if (!this._rotationType) return;
 
-        let { distance, direction } = this.document,
-            delta;
+        if (this._rotationType === ROTATION_TYPE.SYSTEM) {
+            this.#systemRotation(event);
+        }
+        else if (this._rotationType === ROTATION_TYPE.ADVANCED_TEMPLATES) {
+            this.#advancedTemplatesRotation(event);
+        }
+
+        this.refresh();
+    }
+
+    /**
+     * @param {Event} event
+     */
+    #systemRotation(event) {
+        let { distance, direction } = this.document;
+        let delta = 0;
 
         if (event.ctrlKey) {
             delta = canvas.dimensions.distance * -Math.sign(event.deltaY);
@@ -454,10 +468,10 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         } else {
             let snap;
             if (this.pfStyle && this.document.t === "cone") {
-                delta = game.canvas.grid.isHexagonal ? 60 : 90;
-                snap = event.shiftKey ? delta : game.canvas.grid.isHexagonal ? 30 : 45;
+                delta = canvas.grid.isHexagonal ? 60 : 90;
+                snap = event.shiftKey ? delta : canvas.grid.isHexagonal ? 30 : 45;
             } else {
-                delta = canvas.grid.type > CONST.GRID_TYPES.SQUARE ? 30 : 15;
+                delta = canvas.grid.isHexagonal ? 30 : 15;
                 snap = event.shiftKey ? delta : 5;
             }
             if (this.document.t === "rect") {
@@ -466,12 +480,26 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             } else {
                 direction += snap * Math.sign(event.deltaY);
             }
+
+            direction = (direction + 360) % 360;
         }
 
         this.document.distance = distance;
         this.document.direction = direction;
+    }
 
-        this.refresh();
+    /**
+     * @param {Event} event
+     */
+    #advancedTemplatesRotation(event) {
+        const snap = Settings.coneRotation;
+        if (!snap) return;
+
+        let { direction } = this.document;
+
+        direction += snap * Math.sign(event.deltaY);
+
+        this.document.direction = direction;
     }
 
     /**
