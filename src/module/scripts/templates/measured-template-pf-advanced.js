@@ -420,11 +420,10 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         const existingIcon = this.document.flags[MODULE_NAME]?.icon;
         const icon = show ? existingIcon : 'icons/svg/hazard.svg';
         if (icon && icon !== this.controlIcon?.iconSrc) {
-            this.document.flags[MODULE_NAME].icon = icon;
             if (this.controlIcon) {
                 this.controlIcon.destroy();
             }
-            this.controlIcon = this.addChild(this.#createControlIcon());
+            this.controlIcon = this.addChild(this.#createControlIcon(icon));
         }
     }
     /** END MY CODE */

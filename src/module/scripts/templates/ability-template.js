@@ -245,29 +245,30 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         canvas.templates._onClickLeft2 = this.tempLeft2;
     }
 
+    #isInRange = true;
     async handleRangeAndTargeting() {
-        let isInRange = true;
+        this.#isInRange = true;
 
         if ((this.hasMaxRange || this.hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange && this.token) {
             const sourceSquare = GridSquare.fromToken(this.token);
             const range = sourceSquare.distanceToPoint(this.center);
 
-            isInRange = !(this.hasMinRange && range < this.minRange
+            this.#isInRange = !(this.hasMinRange && range < this.minRange
                 || this.hasMaxRange && range > this.maxRange);
-            this._setPreviewVisibility(isInRange);
+            this._setPreviewVisibility(this.#isInRange);
 
             const unit = game.settings.get('pf1', 'units') === 'imperial'
                 ? localizeFull('PF1.Distance.ftShort')
                 : localizeFull('PF1.Distance.mShort');
             this.controlIconTextContents = [localize('range', { range, unit })];
-            if (!isInRange) {
+            if (!this.#isInRange) {
                 this.controlIconTextContents.push(localize('errors.outOfRange'));
             }
         }
-        this._setErrorIconVisibility(isInRange);
+        this._setErrorIconVisibility(this.#isInRange);
 
         // todo handled for gridless lines
-        isInRange
+        this.#isInRange
             ? await this.targetIfEnabled()
             : this.clearTargetIfEnabled();
     }
@@ -395,6 +396,12 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
         // Reject if template size is zero
         if (!this.document.distance) return this.#events.reject();
+
+        if (!this.#isInRange && !this.document.flags[MODULE_NAME].ignoreRange) {
+            const message = localize('errors.outOfRange');
+            ui.notifications.error(message);
+            return this.#events.reject();
+        }
 
         this.#events.resolve(this.templateResult);
     }
