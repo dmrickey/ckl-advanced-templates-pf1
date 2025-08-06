@@ -138,3 +138,5 @@
 - error when canceling template
 - fix "get source angle points" in GridSquare when the starting point is on a grid edge midpoint
 - icon text isn't centered
+- turn off template icons when placing
+- add hint for rotating cone

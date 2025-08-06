@@ -334,7 +334,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
         if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
             const spot = this._gridSquare.getFollowPositionForCoords(this.angleStartPoints, { x, y });
-            this.document.direction = spot.direction;
+            this.document.direction = spot.direction + this.#directionOffset;
             this.document.x = spot.x;
             this.document.y = spot.y;
         }
@@ -488,6 +488,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         this.document.direction = direction;
     }
 
+    #directionOffset = 0;
     /**
      * @param {Event} event
      */
@@ -495,9 +496,12 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         const snap = Settings.coneRotation;
         if (!snap) return;
 
-        let { direction } = this.document;
+        const offset = snap * Math.sign(event.deltaY)
+        this.#directionOffset += offset;
 
-        direction += snap * Math.sign(event.deltaY);
+        let { direction } = this.document;
+        direction += offset;
+        direction = (direction + 360) % 360;
 
         this.document.direction = direction;
     }
