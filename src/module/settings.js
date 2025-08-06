@@ -56,7 +56,7 @@ const settings = {
         scope: 'client',
         range: {
             min: .1,
-            max: 5,
+            max: 50,
             step: .1
         },
     },

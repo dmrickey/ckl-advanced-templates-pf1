@@ -32,9 +32,10 @@ export const CONSTS = /** @type {const} */ ({
             width: 'width',
             widthOverride: 'widthOverride',
         },
-        allowConeRotation: 'allowConeRotation',
+        rect: {
+            height: 'height',
+        },
         colorAlpha: 'colorAlpha',
-        coneRotationAngle: 'coneRotationAngle',
         deletion: 'deletion',
         deletionInterval: 'deletionInterval',
         deletionUnit: 'deletionUnit',
@@ -69,9 +70,13 @@ export const PLACEMENT_TYPE = /** @type {const} */ ({
 });
 
 export const ANGLE_POINTS = /** @type {const} */ ({
+    /** if more than 1x1 square, then only use the outermost vertexes */
     OUTER_VERTEX: 1,
+    /** use all grid vertexes, even if that means grid vertexes in the center of an edge */
     EDGE_VERTEX: 2,
+    /** 1 | 2 */
     VERTEX: 3,
+    /** All grid midpoints along the square's edge */
     EDGE_MIDPOINT: 4,
     ALL: 7,
 

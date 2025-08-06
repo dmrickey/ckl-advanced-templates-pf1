@@ -75,6 +75,14 @@
             "rect": {
                 "placement": {
                     "centered.label": "Centered on cursor"
+                },
+                "height": {
+                    "name": "Height Formula (ft)",
+                    "hint": "{value} (same as width)"
+                },
+                "width": {
+                    "name": "Width Formula (ft)",
+                    "hint": "0"
                 }
             },
             "deletion": {

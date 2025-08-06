@@ -46,6 +46,11 @@ const injectTemplateSelector = async (sheet, [html], _options) => {
         html.querySelector('color-picker[name="measureTemplate.color"]')?.parentElement?.parentElement?.remove();
         html.querySelector('file-picker[name="measureTemplate.texture"]')?.parentElement?.parentElement?.remove();
 
+        // remove size formula for rects since I provide a width/height input
+        if (type === 'rect') {
+            html.querySelector('input[name="measureTemplate.size"]')?.parentElement?.parentElement?.remove();
+        }
+
         const sibling = html.querySelector('.tab[data-tab=misc] .form-group.stacked');
         sheet._templateSettings = injected(templateGroupOptions, sibling, action);
     }

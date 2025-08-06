@@ -6,6 +6,7 @@ export const prepareData = (action) => {
         data: {
             measureTemplate: {
                 color: action.measureTemplate.color,
+                size: action.measureTemplate.size,
                 texture: action.measureTemplate.texture,
             },
             flags: {
@@ -27,6 +28,7 @@ export const prepareData = (action) => {
                     [CONSTS.flags.deletion]: flags?.[CONSTS.flags.deletion] || CONSTS.deletionOptions.doNotDelete,
                     [CONSTS.flags.deletionInterval]: flags?.[CONSTS.flags.deletionInterval] || CONSTS.deletionIntervals.rounds,
                     [CONSTS.flags.deletionUnit]: flags?.[CONSTS.flags.deletionUnit] || 0,
+                    [CONSTS.flags.rect.height]: flags?.[CONSTS.flags.rect.height] || '',
                 },
             },
         },

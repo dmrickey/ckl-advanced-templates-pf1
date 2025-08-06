@@ -372,12 +372,12 @@ export class GridSquare {
         token ||= { x: 0, y: 0, document: { width: 1, height: 1 } };
         const width = Math.max(Math.round(token.document.width), 1);
         const height = Math.max(Math.round(token.document.height), 1);
-        return new GridSquare(token.x, token.y, width, height);
+        return new GridSquare(token.x, token.y, height, width);
     }
 
     static fromCenter({ x, y }, heightSquares = 1, widthSquares = 1) {
-        const x1 = (x || 0) - canvas.grid.sizeX * heightSquares / 2;
-        const y1 = (y || 0) - canvas.grid.sizeY * widthSquares / 2;
+        const x1 = (x || 0) - canvas.grid.sizeX * widthSquares / 2;
+        const y1 = (y || 0) - canvas.grid.sizeY * heightSquares / 2;
         return new GridSquare(x1, y1, heightSquares, widthSquares);
     }
 

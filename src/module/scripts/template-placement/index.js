@@ -90,6 +90,9 @@ async function promptMeasureTemplate() {
     let { maxRange, minRange } = this.shared.action;
     const flags = this.shared.action.flags?.[MODULE_NAME] || {};
     let distance = _getSize(this.shared) || 5;
+    let height = flags[CONSTS.flags.rect.height]
+        ? _getHeight(this.shared, flags[CONSTS.flags.rect.height])
+        : distance;
 
     const expirationTime = calculateExpiration(this.getRollData(), flags);
 
@@ -103,6 +106,7 @@ async function promptMeasureTemplate() {
                 [CONSTS.flags.circle.movesWithToken]: flags[CONSTS.flags.placementType] === CONSTS.placement.circle.self && !!flags[CONSTS.flags.circle.movesWithToken],
                 [CONSTS.flags.expirationTime]: expirationTime,
                 [CONSTS.flags.ignoreRange]: flags[CONSTS.flags.ignoreRange] || !!this.formData[ignoreRangeKey],
+                [CONSTS.flags.rect.height]: height,
                 baseDistance: distance,
                 icon,
                 itemId: this.item?.id,
@@ -151,6 +155,7 @@ export {
 };
 
 const _getSize = (shared) => pf1.utils.convertDistance(RollPF.safeTotal(shared.action.measureTemplate.size, shared.rollData))[0];
+const _getHeight = (shared, distance) => pf1.utils.convertDistance(RollPF.safeTotal(distance, shared.rollData))[0];
 
 const hasTemplatePermission = () => game.permissions.TEMPLATE_CREATE.includes(game.user.role);
 

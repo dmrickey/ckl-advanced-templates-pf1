@@ -1,107 +1,9 @@
 import { AbilityTemplateAdvanced } from "../ability-template";
 import { ifDebug, localize, localizeFull } from '../../utils';
-import { MODULE_NAME } from "../../../consts";
+import { CONSTS, MODULE_NAME } from "../../../consts";
 import { GridSquare } from "../../models/grid-square";
 
 export class RectCentered extends AbilityTemplateAdvanced {
-
-    // /** @override */
-    // async commitPreview() {
-    //     ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
-    //     super.clearTargetIfEnabled();
-
-    //     const existingIcon = this.controlIcon?.iconSrc;
-    //     let isInRange = true;
-
-    //     const tokenSquare = GridSquare.fromToken(this.token);
-
-    //     const updateTemplateLocation = async (crosshairs) => {
-
-    //         // leaving this here but I can't get the highlight to rotate properly
-    //         // if (canvas.scene.grid.type === CONST.GRID_TYPES.GRIDLESS) {
-    //         //     canvas.app.view.onwheel = (event) => {
-    //         //         // Avoid rotation while zooming the browser window
-    //         //         if (event.ctrlKey) {
-    //         //             event.preventDefault();
-    //         //         }
-    //         //         event.stopPropagation();
-
-    //         //         this.template.rotation += Math.toRadians(45) * Math.sign(event.deltaY);
-    //         //         this.actualRotation = Math.normalizeRadians(this.template.rotation);
-    //         //     };
-    //         // }
-
-    //         this.document.flags[MODULE_NAME].icon = existingIcon;
-
-    //         const { x, y } = crosshairs.center;
-    //         const templateX = x - this.offset;
-    //         const templateY = y - this.offset;
-    //         if (this.document.x === templateX && this.document.y === templateY) {
-    //             return;
-    //         }
-
-    //         if ((this.hasMaxRange || this.hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange) {
-    //             const distances = tokenSquare.gridPoints
-    //                 .map((spot) => [spot, { x, y }])
-    //                 .map((coords) => canvas.grid.measurePath(coords).distance);
-    //             let range = Math.min(...distances);
-    //             range = !!(range % 1)
-    //                 ? range.toFixed(1)
-    //                 : range;
-    //             const isInToken = tokenSquare.contains(x, y);
-    //             if (isInToken) {
-    //                 range = 0;
-    //             }
-
-    //             isInRange = !(this.hasMinRange && range < this.minRange
-    //                 || this.hasMaxRange && range > this.maxRange);
-    //             this._setPreviewVisibility(isInRange);
-    //             this._setErrorIconVisibility(isInRange);
-
-    //             const unit = game.settings.get('pf1', 'units') === 'imperial'
-    //                 ? localizeFull('PF1.Distance.ftShort')
-    //                 : localizeFull('PF1.Distance.mShort');
-    //             crosshairs.crosshair.label.text = localize('range', { range, unit });
-    //             if (!isInRange) {
-    //                 crosshairs.crosshair.label.text += '\n' + localize('errors.outOfRange');
-    //             }
-    //         }
-
-    //         this.document.x = templateX;
-    //         this.document.y = templateY;
-    //         this.refresh();
-
-    //         await super.targetIfEnabled();
-
-    //         canvas.app.view.onwheel = null;
-    //     };
-
-    //     const config = {
-    //         borderAlpha: 0,
-    //         icon: { borderVisible: false },
-    //         snap: { position: this._snapMode },
-    //         label: { dy: 50 }
-    //     }
-    //     const crosshairs = await Sequencer.Crosshair.show(
-    //         config,
-    //         {
-    //             [Sequencer.Crosshair.CALLBACKS.MOUSE_MOVE]: async (crosshair) => {
-    //                 await updateTemplateLocation(crosshair);
-    //             }
-    //         },
-    //     );
-
-    //     if (!crosshairs || !isInRange) {
-    //         if (!isInRange && !!crosshairs) {
-    //             const message = localize('errors.outOfRange');
-    //             ui.notifications.error(message);
-    //         }
-    //         super.clearTargetIfEnabled();
-    //         return false;
-    //     }
-
-    //     return true;
-    // }
 
     get distance() { return this.document.distance; }
     set distance(value) { this.document.distance = value; }
@@ -109,34 +11,143 @@ export class RectCentered extends AbilityTemplateAdvanced {
     get direction() { return this.document.direction; }
     set direction(value) { this.document.direction = value; }
 
-    get offset() { return this.document.flags?.[MODULE_NAME]?.offset ?? 0; }
-
     /** @override */
     get _rotationType() { return false; }
 
     /** @override */
     get _snapMode() {
-        return (super.baseDistance % 2 && !(canvas.grid.distance % 2))
-            ? CONST.GRID_SNAPPING_MODES.CENTER
-            : CONST.GRID_SNAPPING_MODES.VERTEX;
+        const isEvenSquareWidth = !(this.#widthSquares % 2);
+        const isEvenSquareHeight = !(this.#heightSquares % 2);
+
+        return isEvenSquareHeight && isEvenSquareWidth
+            ? CONST.GRID_SNAPPING_MODES.VERTEX
+            : isEvenSquareWidth
+                ? CONST.GRID_SNAPPING_MODES.LEFT_SIDE_MIDPOINT | CONST.GRID_SNAPPING_MODES.RIGHT_SIDE_MIDPOINT
+                : CONST.GRID_SNAPPING_MODES.BOTTOM_SIDE_MIDPOINT | CONST.GRID_SNAPPING_MODES.TOP_SIDE_MIDPOINT;
     }
+
+    #widthSquares = 0;
+    #heightSquares = 0;
+
+    get #widthPx() { return this.#widthSquares * canvas.scene.grid.sizeX }
+    get #heightPx() { return this.#heightSquares * canvas.scene.grid.sizeY; }
+
+    get #xOffset() { return -this.#widthSquares * canvas.scene.grid.sizeX / 2; }
+    get #yOffset() { return -this.#heightSquares * canvas.scene.grid.sizeY / 2; }
 
     /** @override */
     async initializeVariables() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializeVariables.name}`));
 
-        const d = this.distance;
-        const squares = d / canvas.scene.grid.distance;
-        const offset = squares * canvas.scene.grid.size / 2;
+        const width = this.distance;
+        const height = this.document.flags[MODULE_NAME]?.[CONSTS.flags.rect.height] || this.distance;
 
-        this.document.flags[MODULE_NAME].offset = offset;
+        this.#widthSquares = width / canvas.scene.grid.distance;
+        this.#heightSquares = height / canvas.scene.grid.distance;
 
-        this.distance = Math.sqrt(Math.pow(d, 2) + Math.pow(d, 2));
-        this.direction = 45;
+        this.distance = Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2));
+        this.direction = Math.toDegrees(Math.atan(height / width));
 
-        const { x, y } = canvas.mousePosition;
-        this.document.x = x - offset;
-        this.document.y = y - offset;
+        return super.initializeVariables();
+    }
+
+    /**
+     * Calculates a set of x & y coordinates that the template actually should have based on type and origin
+     *
+     * @returns {{x: number, y: number}}
+     * @private
+     */
+    _getTemplateSnapCoordinates() {
+        let { x, y } = this.document;
+
+        if (this.document.t === "rect" && game.canvas.grid.isSquare) {
+            x = x - this.#xOffset;
+            y = y - this.#yOffset;
+        }
+
+        return { x, y };
+    }
+
+    /**
+     * Recalculate template visual element positions based on snap coordinates
+     *
+     * @private
+     */
+    _setElementOffsets() {
+        const { x: snapX, y: snapY } = this._getTemplateSnapCoordinates();
+        const offsetX = this.document.x - snapX;
+        const offsetY = this.document.y - snapY;
+
+        this.template.x = offsetX;
+        this.template.y = offsetY;
+
+        this.ruler.position.set(this.ray?.dx + 10 + offsetX, this.ray?.dy + 5 + offsetY);
+    }
+
+    /**
+     * @override
+     * @private
+     */
+    _refreshRulerText() {
+        super._refreshRulerText();
+        this._setElementOffsets();
+    }
+
+    /**
+     * @override
+     * @private
+     */
+    _refreshPosition() {
+        super._refreshPosition();
+        this._setElementOffsets();
+    }
+
+    /**
+     * @override
+     * @private
+     */
+    _refreshTemplate() {
+        super._refreshTemplate();
+        this._setElementOffsets();
+    }
+
+    /** @override */
+    _getGridHighlightPositions() {
+        const points = GridSquare.fromCenter(this.center, this.#heightSquares, this.#widthSquares).containedSquares;
+        return points;
+    }
+
+    get center() { return { x: this.document.x, y: this.document.y }; }
+
+    /** @override */
+    async getTokensWithin() {
+        const gridSizePx = Math.max(canvas.scene.grid.sizeX, canvas.scene.grid.sizeY);
+        const maxDistance = Math.max(this.#heightPx, this.#widthPx) + gridSizePx + 1;
+        const relevantTokens = new Set(
+            canvas.tokens.placeables.filter((t) => new Ray(t.center, this.center).distance - t.sizeErrorMargin <= maxDistance)
+        );
+
+        const results = new Set();
+        const rect = {
+            x: this.document.x + this.#xOffset,
+            y: this.document.y + this.#yOffset,
+            width: this.#widthPx,
+            height: this.#heightPx,
+        };
+
+        for (const t of relevantTokens) {
+            const tokenGridSquares = GridSquare.fromToken(t);
+            if (tokenGridSquares.containedSquares.some((square) => this.withinRect(square.center, rect))) {
+                results.add(t);
+            }
+        }
+        return Array.from(results);
+    }
+
+    /** @override */
+    _finalizeTemplate() {
+        this.document.x += this.#xOffset;
+        this.document.y += this.#yOffset;
         return true;
     }
 }

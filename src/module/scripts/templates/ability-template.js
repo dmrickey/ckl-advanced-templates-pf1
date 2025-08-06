@@ -89,15 +89,15 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                 }
                 break;
             case 'rect':
-                // if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
-                //     abilityCls = game.modules.get(MODULE_NAME).api.ability.rects.RectCentered;
-                // }
-                // else {
-                // rotating rects is too hard, so "cheat" and change it to a line that can be rotated with the mouse wheel
-                templateData.t = 'ray';
-                templateData.width = distance;
-                abilityCls = game.modules.get(MODULE_NAME).api.ability.lines.LineSystem;
-                // }
+                if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
+                    abilityCls = game.modules.get(MODULE_NAME).api.ability.rects.RectCentered;
+                }
+                else {
+                    // rotating rects is too hard, so "cheat" and change it to a line that can be rotated with the mouse wheel
+                    templateData.t = 'ray';
+                    templateData.width = distance;
+                    abilityCls = game.modules.get(MODULE_NAME).api.ability.lines.LineSystem;
+                }
                 break;
         }
 
@@ -369,6 +369,9 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         this.#events.reject();
     }
 
+    /** so individual templates can finalize their own variables */
+    _finalizeTemplate() { return true; }
+
     _gridSquare = null;
     /**
      * Confirm the workflow (left-click)
@@ -400,6 +403,10 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         if (!this.#isInRange && !this.document.flags[MODULE_NAME].ignoreRange) {
             const message = localize('errors.outOfRange');
             ui.notifications.error(message);
+            return this.#events.reject();
+        }
+
+        if (!this._finalizeTemplate()) {
             return this.#events.reject();
         }
 

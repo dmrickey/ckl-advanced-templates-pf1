@@ -11,15 +11,6 @@ const withinAngle = (min, max, value) => {
 };
 
 /**
- * @param {Point} point
- * @param {Rectangle} rect
- * @returns {boolean}
- */
-const withinRect = (point, rect) => {
-    return point.x >= rect.x && point.x < rect.x + rect.width && point.y >= rect.y && point.y < rect.y + rect.height;
-};
-
-/**
  * A type of Placeable Object which highlights an area of the grid as covered by some area of effect.
  * @category - Canvas
  * @see {@link MeasuredTemplateDocument}
@@ -28,6 +19,10 @@ const withinRect = (point, rect) => {
 export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
 
     _isSelectingOrigin = false;
+
+    withinRect(point, rect) {
+        return point.x >= rect.x && point.x < rect.x + rect.width && point.y >= rect.y && point.y < rect.y + rect.height;
+    };
 
     //#region BEGIN MY CODE
     get shouldOverrideTokenEmanation() {
@@ -187,13 +182,6 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         //#endregion
         icon.x -= (size * 0.5);
         icon.y -= (size * 0.5);
-
-        //#region BEGIN MY CODE
-        if (this.document.t === 'rect') {
-            icon.x += this.baseDistance / canvas.scene.grid.distance * canvas.scene.grid.size / 2;
-            icon.y += this.baseDistance / canvas.scene.grid.distance * canvas.scene.grid.size / 2;
-        }
-        //#endregion
 
         return icon;
     }
@@ -590,7 +578,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
 
             for (const t of relevantTokens) {
                 const tokenGridSquares = GridSquare.fromToken(t);
-                if (tokenGridSquares.containedSquares.some((square) => withinRect(square.center, rect))) {
+                if (tokenGridSquares.containedSquares.some((square) => this.withinRect(square.center, rect))) {
                     results.add(t);
                 }
             }
@@ -631,7 +619,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
                     const tokenGridSquares = GridSquare.fromToken(t);
                     const cells = tokenGridSquares.containedSquares.map(x => x.center);
 
-                    if (cells.some((tc) => withinRect(tc, cell))) {
+                    if (cells.some((tc) => this.withinRect(tc, cell))) {
                         results.add(t);
                         relevantTokens.delete(t);
                     }
