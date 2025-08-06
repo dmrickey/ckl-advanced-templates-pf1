@@ -1,39 +1,36 @@
-import { ifDebug, localize } from '../../utils';
-import { LineFromTargetBase } from './base';
+import { ANGLE_ORIGIN, ANGLE_POINTS, PLACEMENT_TYPE } from '../../../consts';
+import { localize } from '../../utils';
+import { AbilityTemplateAdvanced } from '../ability-template';
 
-export class LineFromSquare extends LineFromTargetBase {
+export class LineFromSquare extends AbilityTemplateAdvanced {
+
     /** @override */
-    async getSourcePoint() {
-        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.getSourcePoint.name}`));
-
-        this._setPreviewVisibility(false);
-        super.clearTempate();
-
-        const show = async (crosshairs) => {
-            super.setCenter = crosshairs.center;
-        }
-
-        const config = {
-            borderAlpha: 0,
-            icon: { borderVisible: false },
-            snap: { position: this._snapMode },
-            label: { text: localize('lineStart') },
-        }
-        const crosshairs = await Sequencer.Crosshair.show(
-            config,
-            {
-                [Sequencer.Crosshair.CALLBACKS.MOUSE_MOVE]: async (crosshair) => {
-                    await show(crosshair);
-                }
-            },
-        );
-
-        if (!crosshairs) {
-            return false;
-        }
-
-        this._setPreviewVisibility(true);
-
-        return crosshairs;
+    get _snapMode() {
+        return this._isSelectingOrigin
+            ? CONST.GRID_SNAPPING_MODES.VERTEX
+            : 0;
     }
+
+    /** @override */
+    get placementType() {
+        return this._isSelectingOrigin
+            ? PLACEMENT_TYPE.SET_XY
+            : PLACEMENT_TYPE.SET_ANGLE;
+    }
+
+    /** @override */
+    get angleOrigin() { return ANGLE_ORIGIN.CURRENT; }
+
+    /** @override */
+    async initializeVariables() {
+        this._isSelectingOrigin = true;
+        return super.initializeVariables();
+    }
+
+    /** @override */
+    get angleStartPoints() {
+        return ANGLE_POINTS.VERTEX;
+    }
+
+    get selectOriginText() { return localize('coneStart'); }
 }
