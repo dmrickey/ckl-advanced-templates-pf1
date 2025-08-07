@@ -36,7 +36,7 @@ export class RectCentered extends AbilityTemplateAdvanced {
     get #yOffset() { return -this.#heightSquares * canvas.scene.grid.sizeY / 2; }
 
     /** @override */
-    async initializeVariables() {
+    initializeVariables() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializeVariables.name}`));
 
         const width = this.distance;

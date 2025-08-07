@@ -254,8 +254,8 @@ export class GridSquare {
         let gridSizeX = canvas.grid.sizeX;
         let gridSizeY = canvas.grid.sizeY;
 
-        let gridOffsetX = 0;
-        let gridOffsetY = 0;
+        let gridOffsetX = isSet(anglePoints, ANGLE_POINTS.LINE_OFFSET) ? 1 : 0;
+        let gridOffsetY = isSet(anglePoints, ANGLE_POINTS.LINE_OFFSET) ? 1 : 0;
 
         if (isMid && !isVertex) {
             gridOffsetX = Math.floor(gridSizeX / 2);

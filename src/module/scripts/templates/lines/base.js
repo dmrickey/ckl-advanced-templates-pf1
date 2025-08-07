@@ -78,7 +78,7 @@ export class LineFromTargetBase extends AbilityTemplateAdvanced {
     }
 
     /** @override */
-    async initializeVariables() {
+    initializeVariables() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializeVariables.name}`));
         const center = this.token?.center ?? canvas?.mousePosition ?? { x: 0, y: 0 };
         this.setCenter = center;

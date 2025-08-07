@@ -108,7 +108,7 @@ export class AbilityTemplateFollowMouseAngleCone extends AbilityTemplateAdvanced
 
             if (this.canRestart) {
                 super.clearTempate();
-                if (await this.initializeVariables()) {
+                if (this.initializeVariables()) {
                     return await this.commitPreview();
                 }
             }

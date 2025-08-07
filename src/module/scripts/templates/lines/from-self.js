@@ -1,5 +1,6 @@
-import { ANGLE_ORIGIN, PLACEMENT_TYPE } from '../../../consts';
+import { ANGLE_ORIGIN, ANGLE_POINTS, PLACEMENT_TYPE } from '../../../consts';
 import { GridSquare } from '../../models/grid-square';
+import { localize } from '../../utils';
 import { AbilityTemplateAdvanced } from '../ability-template';
 
 export class LineFromSelf extends AbilityTemplateAdvanced {
@@ -12,21 +13,36 @@ export class LineFromSelf extends AbilityTemplateAdvanced {
     }
 
     /** @override */
+    get angleStartPoints() { return ANGLE_POINTS.VERTEX | ANGLE_POINTS.LINE_OFFSET; }
+
+    /** @override */
     get placementType() {
-        return (this.token || !this._isSelectingOrigin)
-            ? PLACEMENT_TYPE.SET_ANGLE
-            : PLACEMENT_TYPE.SET_XY;
+        return (this.token && this._isSelectingOrigin)
+            ? PLACEMENT_TYPE.SET_XY_FROM_TOKEN
+            : this._isSelectingOrigin
+                ? PLACEMENT_TYPE.SET_XY
+                : PLACEMENT_TYPE.SET_ANGLE;
     }
 
     /** @override */
-    get angleOrigin() { return this.token ? ANGLE_ORIGIN.TOKEN : ANGLE_ORIGIN.CURRENT; }
+    get angleOrigin() { return ANGLE_ORIGIN.CURRENT; }
 
     /** @override */
-    async initializeVariables() {
-        this._isSelectingOrigin = !this.token;
-        this._gridSquare = GridSquare.fromToken(this.token);
+    initializeVariables() {
+        this._isSelectingOrigin = true;
+        if (this.token) {
+            this._gridSquare = GridSquare.fromToken(this.token);
+        }
         return super.initializeVariables();
     }
 
     get selectOriginText() { return localize('lineStart'); }
+
+    /** @override */
+    _followAngle({ x, y }) {
+        const ray = new Ray(this.center, { x, y });
+        const degrees = Math.toDegrees(ray.angle);
+        this.document.direction = degrees;
+        // todo hex and gridless
+    }
 }

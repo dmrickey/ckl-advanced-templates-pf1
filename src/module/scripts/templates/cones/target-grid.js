@@ -27,7 +27,7 @@ export class ConeFromTargetSquare extends AbilityTemplateAdvanced {
     get angleOrigin() { return ANGLE_ORIGIN.CURRENT; }
 
     /** @override */
-    async initializeVariables() {
+    initializeVariables() {
         this._isSelectingOrigin = true;
         this.document.angle = 90;
         return super.initializeVariables();

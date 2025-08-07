@@ -128,15 +128,10 @@
 - make sure to test without tokens in the scene
 - make sure to test when canvas is disabled
 - out of range label does not have proper offset
-- Fix "system" configurations
-- system
-  - line rotates 5 degrees
-  - cone
-    - rotates 45 degrees
-    - when centered in a box, the template starts at an edge/vertex
 - Make sure bombs work
-- error when canceling template
 - fix "get source angle points" in GridSquare when the starting point is on a grid edge midpoint
 - icon text isn't centered
 - turn off template icons when placing
 - add hint for rotating cone
+- line rotation override is killing the 1px offset
+- range finding is killing "line start hint"

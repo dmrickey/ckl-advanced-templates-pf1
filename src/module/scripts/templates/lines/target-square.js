@@ -22,7 +22,7 @@ export class LineFromSquare extends AbilityTemplateAdvanced {
     get angleOrigin() { return ANGLE_ORIGIN.CURRENT; }
 
     /** @override */
-    async initializeVariables() {
+    initializeVariables() {
         this._isSelectingOrigin = true;
         return super.initializeVariables();
     }

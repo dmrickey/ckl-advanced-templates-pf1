@@ -67,6 +67,7 @@ export const CONSTS = /** @type {const} */ ({
 export const PLACEMENT_TYPE = /** @type {const} */ ({
     SET_XY: 1,
     SET_ANGLE: 2,
+    SET_XY_FROM_TOKEN: 3,
 });
 
 export const ANGLE_POINTS = /** @type {const} */ ({
@@ -78,6 +79,10 @@ export const ANGLE_POINTS = /** @type {const} */ ({
     VERTEX: 3,
     /** All grid midpoints along the square's edge */
     EDGE_MIDPOINT: 4,
+
+    /** lines live right in the middle and highlight two rows with an additional pixel offset - this fixes that*/
+    LINE_OFFSET: 8,
+
     ALL: 7,
 
     /** traditional 15' cone (exactly like diagram) */

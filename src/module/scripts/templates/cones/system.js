@@ -11,7 +11,7 @@ export class ConeSystem extends AbilityTemplateAdvanced {
     }
 
     /** @override */
-    async initializeVariables() {
+    initializeVariables() {
         this.document.angle = 90;
         return super.initializeVariables();
     }

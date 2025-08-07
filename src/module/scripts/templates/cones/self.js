@@ -27,7 +27,7 @@ export class ConeFromSelf extends AbilityTemplateAdvanced {
     get angleOrigin() { return this.token ? ANGLE_ORIGIN.TOKEN : ANGLE_ORIGIN.CURRENT; }
 
     /** @override */
-    async initializeVariables() {
+    initializeVariables() {
         this._isSelectingOrigin = !this.token;
         this._gridSquare = GridSquare.fromToken(this.token);
         this.document.angle = 90;

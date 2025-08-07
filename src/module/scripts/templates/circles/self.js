@@ -3,7 +3,7 @@ import { ifDebug } from '../../utils';
 
 export class CircleSelf extends AbilityTemplateAdvanced {
     /** @override */
-    async initializeVariables() {
+    initializeVariables() {
         ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.initializeVariables.name}`));
 
         const { x, y } = this.token?.getCenterPoint() ?? { center: { x: 0, y: 0 } };

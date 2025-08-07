@@ -107,7 +107,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         const thisTemplate = /** @type {AbilityTemplateAdvanced} */ (/** @type {any} */ new abilityCls(template));
         thisTemplate.action = action;
 
-        if (await thisTemplate.initializeVariables()) {
+        if (thisTemplate.initializeVariables()) {
             return thisTemplate;
         }
 
@@ -142,7 +142,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
      *
      * @returns {Promise<Boolean>}
      */
-    async initializeVariables() {
+    initializeVariables() {
         let { x, y } = canvas.grid.getSnappedPoint(canvas.mousePosition, { mode: this._snapMode });
         let direction = this.document.direction ?? 0;
         if (this.angleOrigin === ANGLE_ORIGIN.TOKEN && this.token) {
@@ -172,7 +172,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     }
 
     async targetIfEnabled() {
-        if (Settings.target) {
+        if (Settings.target && !this._isSelectingOrigin) {
             const targets = await this.getTokensWithin();
             const ids = targets.map((t) => t.id);
             game.user.updateTokenTargets(ids);
@@ -296,6 +296,11 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         if (this.placementType === PLACEMENT_TYPE.SET_XY) {
             this.document.x = pos.x;
             this.document.y = pos.y;
+        } else if (this.placementType === PLACEMENT_TYPE.SET_XY_FROM_TOKEN) {
+            const tokenEdgePos = this._gridSquare.getFollowPositionForCoords(this.angleStartPoints, pos);
+            this.document.x = tokenEdgePos.x;
+            this.document.y = tokenEdgePos.y;
+            this.document.direction = tokenEdgePos.direction;
         } else if (this.placementType === PLACEMENT_TYPE.SET_ANGLE) {
             this._followAngle(pos);
         } else {
@@ -310,7 +315,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     }
 
     #isGridPoint({ x, y }) {
-        return !(x % canvas.grid.size) && !(y % canvas.grid.size);
+        return Math.abs((x % canvas.grid.size) + 1) <= 2 && Math.abs((y % canvas.grid.size) + 1) <= 2;
     }
 
     /**=
@@ -319,6 +324,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     _getStartingGridSquare() {
         if (this.angleOrigin === ANGLE_ORIGIN.CURRENT) {
             const { x, y } = this.document;
+            console.error(this.#isGridPoint({ x, y }));
             return this.#isGridPoint({ x, y })
                 ? GridSquare.fromGridPoint({ x, y })
                 : GridSquare.fromGridSquare({ x, y });
@@ -355,8 +361,9 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         }
 
         if (this.angleOrigin === ANGLE_ORIGIN.CURRENT && !this._isSelectingOrigin) {
-            this._gridSquare = null;
-            this._isSelectingOrigin = true;
+            // this._gridSquare = null;
+            // this._isSelectingOrigin = true;
+            this.initializeVariables();
             this._setPreviewVisibility(false);
             this.controlIconTextContents = [this.selectOriginText];
             this._applyRenderFlags({ refreshText: true });
@@ -373,6 +380,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     /** so individual templates can finalize their own variables */
     _finalizeTemplate() { return true; }
 
+    /** @type {GridSquare} */
     _gridSquare = null;
     /**
      * Confirm the workflow (left-click)
@@ -449,8 +457,6 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     get _rotationType() { return ROTATION_TYPE.ADVANCED_TEMPLATES; }
 
     /**
-     * Rotate the template by 3 degree increments (mouse-wheel)
-     *
      * @param {Event} event
      */
     _onRotate(event) {
@@ -470,6 +476,8 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     }
 
     /**
+     * Rotate the template by 3 degree increments (mouse-wheel)
+     *
      * @param {Event} event
      */
     #systemRotation(event) {
