@@ -423,7 +423,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
      * @protected
      */
     _refreshRulerText() {
-        if (this._isSelectingOrigin) {
+        if (this._isSelectingOrigin || this.hideHighlight) {
             this.ruler.text = '';
             return;
         }
@@ -461,7 +461,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         // Clear the existing highlight layer
         canvas.interface.grid.clearHighlightLayer(this.highlightId);
 
-        if (this._isSelectingOrigin) return;
+        if (this._isSelectingOrigin || this.hideHighlight) return;
 
         //#region BEGIN MY CODE
         const alpha = this.document.flags[MODULE_NAME]?.[CONSTS.flags.colorAlpha];
@@ -501,7 +501,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
     * @returns {Point[]} - Array of grid coordinates
     */
     _getGridHighlightPositions() {
-        if (!this.id || !this.shape) return [];
+        if (!this.id || !this.shape || this.hideHighlight) return [];
 
         if (this.shouldOverrideTokenEmanation) {
             const { token, sizeSquares } = this.tokenSizeSquares;

@@ -255,7 +255,6 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
             this.#isInRange = !(this.hasMinRange && range < this.minRange
                 || this.hasMaxRange && range > this.maxRange);
-            this._setPreviewVisibility(this.#isInRange);
 
             const unit = game.settings.get('pf1', 'units') === 'imperial'
                 ? localizeFull('PF1.Distance.ftShort')
@@ -265,6 +264,8 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                 this.controlIconTextContents.push(localize('errors.outOfRange'));
             }
         }
+
+        this._setPreviewVisibility(this.#isInRange);
         this._setErrorIconVisibility(this.#isInRange);
 
         // todo handled for gridless lines
