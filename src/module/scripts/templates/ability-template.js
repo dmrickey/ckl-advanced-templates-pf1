@@ -361,8 +361,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         }
 
         if (this.angleOrigin === ANGLE_ORIGIN.CURRENT && !this._isSelectingOrigin) {
-            // this._gridSquare = null;
-            // this._isSelectingOrigin = true;
+            this.clearTargetIfEnabled();
             this.initializeVariables();
             this._setPreviewVisibility(false);
             this.controlIconTextContents = [this.selectOriginText];

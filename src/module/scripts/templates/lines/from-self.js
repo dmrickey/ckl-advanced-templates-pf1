@@ -43,6 +43,12 @@ export class LineFromSelf extends AbilityTemplateAdvanced {
         const ray = new Ray(this.center, { x, y });
         const degrees = Math.toDegrees(ray.angle);
         this.document.direction = degrees;
-        // todo hex and gridless
+
+        const xOffset = degrees < 90 || degrees >= 270 ? 1 : -1;
+        const yOffset = degrees > 0 && degrees <= 180 ? 1 : -1;
+
+        this.template.x = this.document.x + xOffset;
+        this.template.y = this.document.y + yOffset;
     }
+    // todo hex and gridless
 }
