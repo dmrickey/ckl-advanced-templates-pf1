@@ -89,7 +89,8 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
      */
     get _snapMode() { return CONST.GRID_SNAPPING_MODES.CENTER | CONST.GRID_SNAPPING_MODES.EDGE_MIDPOINT | CONST.GRID_SNAPPING_MODES.CORNER; }
 
-    controlIconTextContents = [];
+    _controlIconTextContents = [];
+    _controlIconTextRangeContents = [];
     /**
      * The control icon text
      * @type {PreciseText}
@@ -113,15 +114,16 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
      * @protected
      */
     _refreshControlIconText() {
-        if (this.controlIconTextContents?.length) {
+        const text = [...this._controlIconTextContents, ...this._controlIconTextRangeContents].filter(x => !!x);
+        if (text.length) {
             if (!this.#controlIconText) {
                 const style = CONFIG.canvasTextStyle.clone();
                 style.align = 'center';
                 this.#controlIconText = this.template.addChild(new PreciseText(null, style));
             }
-            const text = this.controlIconTextContents.join("\n");
-            if (this.#controlIconText.text !== text) {
-                this.#controlIconText.text = text;
+            const _text = text.join("\n");
+            if (this.#controlIconText.text !== _text) {
+                this.#controlIconText.text = _text;
             }
             this.#controlIconText.anchor.set(0.5, 0);
             this.#controlIconText.position.set(0, 50);

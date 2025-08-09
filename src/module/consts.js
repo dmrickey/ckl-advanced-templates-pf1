@@ -80,9 +80,6 @@ export const ANGLE_POINTS = /** @type {const} */ ({
     /** All grid midpoints along the square's edge */
     EDGE_MIDPOINT: 4,
 
-    /** lines live right in the middle and highlight two rows with an additional pixel offset - this fixes that*/
-    LINE_OFFSET: 8,
-
     ALL: 7,
 
     /** traditional 15' cone (exactly like diagram) */

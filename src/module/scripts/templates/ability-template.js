@@ -159,7 +159,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         if (this._isSelectingOrigin) {
             HintHandler.show({ title: localize('cone'), hint: localize('hints.chooseStart') });
             // todo this is getting overridden when moving
-            this.controlIconTextContents.push(this.selectOriginText);
+            this._controlIconTextContents.push(this.selectOriginText);
         }
 
         return true;
@@ -246,6 +246,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     }
 
     #isInRange = true;
+
     async handleRangeAndTargeting() {
         this.#isInRange = true;
 
@@ -259,9 +260,11 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             const unit = game.settings.get('pf1', 'units') === 'imperial'
                 ? localizeFull('PF1.Distance.ftShort')
                 : localizeFull('PF1.Distance.mShort');
-            this.controlIconTextContents = [localize('range', { range, unit })];
+            this._controlIconTextRangeContents = !range && this._isSelectingOrigin
+                ? []
+                : [localize('range', { range, unit })];
             if (!this.#isInRange) {
-                this.controlIconTextContents.push(localize('errors.outOfRange'));
+                this._controlIconTextRangeContents.push(localize('errors.outOfRange'));
             }
         }
 
@@ -324,7 +327,6 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     _getStartingGridSquare() {
         if (this.angleOrigin === ANGLE_ORIGIN.CURRENT) {
             const { x, y } = this.document;
-            console.error(this.#isGridPoint({ x, y }));
             return this.#isGridPoint({ x, y })
                 ? GridSquare.fromGridPoint({ x, y })
                 : GridSquare.fromGridSquare({ x, y });
@@ -364,7 +366,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             this.clearTargetIfEnabled();
             this.initializeVariables();
             this._setPreviewVisibility(false);
-            this.controlIconTextContents = [this.selectOriginText];
+            this._controlIconTextContents = [this.selectOriginText];
             this._applyRenderFlags({ refreshText: true });
             this.refresh();
             return;
@@ -395,7 +397,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         if (this.angleOrigin === ANGLE_ORIGIN.CURRENT && this._isSelectingOrigin) {
             this._gridSquare = this._getStartingGridSquare();
             this._isSelectingOrigin = false;
-            this.controlIconTextContents = [];
+            this._controlIconTextContents = [];
             this.refresh();
             await this.handleRangeAndTargeting();
             return;

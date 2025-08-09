@@ -13,7 +13,7 @@ export class LineFromSelf extends AbilityTemplateAdvanced {
     }
 
     /** @override */
-    get angleStartPoints() { return ANGLE_POINTS.VERTEX | ANGLE_POINTS.LINE_OFFSET; }
+    get angleStartPoints() { return ANGLE_POINTS.VERTEX; }
 
     /** @override */
     get placementType() {
@@ -44,11 +44,11 @@ export class LineFromSelf extends AbilityTemplateAdvanced {
         const degrees = Math.toDegrees(ray.angle);
         this.document.direction = degrees;
 
-        const xOffset = degrees < 90 || degrees >= 270 ? 1 : -1;
-        const yOffset = degrees > 0 && degrees <= 180 ? 1 : -1;
+        // const xOffset = degrees < 90 || degrees >= 270 ? 1 : -1;
+        // const yOffset = degrees > 0 && degrees <= 180 ? 1 : -1;
 
-        this.template.x = this.document.x + xOffset;
-        this.template.y = this.document.y + yOffset;
+        // this.template.x = this.document.x + xOffset;
+        // this.template.y = this.document.y + yOffset;
     }
     // todo hex and gridless
 }
