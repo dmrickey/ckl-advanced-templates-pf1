@@ -1,9 +1,8 @@
-import { ANGLE_POINTS, CONSTS, ANGLE_ORIGIN, MODULE_NAME, PLACEMENT_TYPE, ROTATION_TYPE } from '../../consts';
+import { ANGLE_ORIGIN, ANGLE_POINTS, CONSTS, MODULE_NAME, PLACEMENT_TYPE, ROTATION_TYPE } from '../../consts';
 import { Settings } from '../../settings';
 import HintHandler from '../../view/hint-handler';
 import { GridSquare } from '../models/grid-square';
 import { localize, localizeFull } from '../utils';
-import { isSet } from '../utils/bits';
 import { MeasuredTemplatePFAdvanced } from './measured-template-pf-advanced';
 
 export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
@@ -18,6 +17,26 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     #lastMove = 0;
     #isDrag = false;
     #isPanning = false;
+
+    #originalIconXOffset = undefined;
+    set iconX(value) {
+        if (this.#originalIconXOffset === undefined) {
+            this.#originalIconXOffset = this.controlIcon.x;
+        }
+
+        const offset = this.#originalIconXOffset + value - this.document.x;
+        this.controlIcon.x = offset;
+    }
+
+    #originalIconYOffset = undefined;
+    set iconY(value) {
+        if (this.#originalIconYOffset === undefined) {
+            this.#originalIconYOffset = this.controlIcon.y;
+        }
+
+        const offset = this.#originalIconYOffset + value - this.document.y;
+        this.controlIcon.y = offset;
+    }
 
     static async fromData(templateData, { action } = {}) {
         const { t: type, distance } = templateData;
@@ -151,6 +170,11 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             x = spot.x;
             y = spot.y;
             direction = spot.direction;
+
+            if (!isNaN(spot.iconX) && !isNaN(spot.iconY)) {
+                this.iconX = spot.iconX;
+                this.iconY = spot.iconY;
+            }
         }
         this.document.x = x;
         this.document.y = y;
@@ -304,6 +328,10 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             this.document.x = tokenEdgePos.x;
             this.document.y = tokenEdgePos.y;
             this.document.direction = tokenEdgePos.direction;
+            if (!isNaN(tokenEdgePos.iconX) && !isNaN(tokenEdgePos.iconY)) {
+                this.iconX = tokenEdgePos.iconX;
+                this.iconY = tokenEdgePos.iconY;
+            }
         } else if (this.placementType === PLACEMENT_TYPE.SET_ANGLE) {
             this._followAngle(pos);
         } else {
@@ -347,6 +375,10 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             this.document.direction = spot.direction + this.#directionOffset;
             this.document.x = spot.x;
             this.document.y = spot.y;
+            if (!isNaN(spot.iconX) && !isNaN(spot.iconY)) {
+                this.iconX = spot.iconX;
+                this.iconY = spot.iconY;
+            }
         }
         // todo hex and gridless
     }

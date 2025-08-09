@@ -59,30 +59,10 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         return token;
     }
 
-    /**
-     * Used to get the original distance, i.e. for a rect.
-     */
-    get baseDistance() { return this.document.flags?.[MODULE_NAME]?.baseDistance || 0; }
-
     get hasMaxRange() { return !!this.token && !!this.maxRange && !isNaN(this.maxRange); }
     get hasMinRange() { return !!this.token && !!this.minRange && !isNaN(this.minRange); }
     get maxRange() { return this.document.flags?.[MODULE_NAME]?.maxRange; }
     get minRange() { return this.document.flags?.[MODULE_NAME]?.minRange; }
-
-    get iconImg() { return this.document.flags?.[MODULE_NAME]?.icon || 'systems/pf1/icons/misc/magic-swirl.png'; }
-
-    set setCenter({ x, y }) {
-        this.document.x = x;
-        this.document.y = y;
-        this.refresh();
-    }
-
-    get actualRotation() { return this.document.flags?.[MODULE_NAME]?.rotation ?? 0; }
-    set actualRotation(value) {
-        this.document.flags ||= {};
-        this.document.flags[MODULE_NAME] ||= {};
-        this.document.flags[MODULE_NAME].rotation = value;
-    }
 
     /**
      * @virtual
@@ -319,7 +299,6 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
 
                         // don't change angle of texture as the shape of the rect changes width/height
                         direction = 0;
-                        template.rotation = this.actualRotation;
                     }
                     break;
                 case 'line':

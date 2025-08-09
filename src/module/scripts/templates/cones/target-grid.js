@@ -10,10 +10,7 @@ export class ConeFromTargetSquare extends AbilityTemplateAdvanced {
     /** @override */
     get _snapMode() {
         if (!this._isSelectingOrigin) return 0;
-
-        return this.#is15 || Settings.coneAlternate
-            ? CONST.GRID_SNAPPING_MODES.CENTER
-            : CONST.GRID_SNAPPING_MODES.VERTEX;
+        return CONST.GRID_SNAPPING_MODES.VERTEX;
     }
 
     /** @override */

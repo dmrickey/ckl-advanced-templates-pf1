@@ -107,7 +107,6 @@ async function promptMeasureTemplate() {
                 [CONSTS.flags.expirationTime]: expirationTime,
                 [CONSTS.flags.ignoreRange]: flags[CONSTS.flags.ignoreRange] || !!this.formData[ignoreRangeKey],
                 [CONSTS.flags.rect.height]: height,
-                baseDistance: distance,
                 icon,
                 itemId: this.item?.id,
                 maxRange,

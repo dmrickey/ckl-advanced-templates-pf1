@@ -227,9 +227,109 @@ export class GridSquare {
         ];
         return allPoints;
     }
+
     /**
      * @param {ANGLE_POINTS[keyof ANGLE_POINTS]} anglePoints
-     * @returns {{x: number, y: number, direction: number}[]}
+     * @returns {{x: number, y: number, direction: number, iconX?: number, iconY?: number}[]}
+     */
+    #getAnglesForPoints(anglePoints) {
+        const gridSizeX = canvas.grid.sizeX;
+        const gridSizeY = canvas.grid.sizeY;
+        const left = this.#x;
+        const top = this.#y;
+
+        const isMid = isSet(anglePoints, ANGLE_POINTS.EDGE_MIDPOINT);
+        const isVertex = isSet(anglePoints, ANGLE_POINTS.EDGE_VERTEX);
+        const isOuterVertex = isSet(anglePoints, ANGLE_POINTS.OUTER_VERTEX);
+
+        let direction = 0;
+        const points = [];
+
+        // end of right
+        if (isVertex) {
+            points.push({ direction, x: left, y: top });
+        }
+        if (isMid) {
+            points.push({ direction, x: left, y: top + gridSizeY / 2 });
+        }
+
+        // bottom right
+        direction += 45;
+        if (isOuterVertex) {
+            points.push({ direction, x: left, y: top });
+        }
+
+        // bottom
+        direction += 45;
+        if (isMid) {
+            points.push({ direction, x: left + gridSizeX / 2, y: top });
+        }
+        if (isVertex) {
+            points.push({ direction, x: left, y: top });
+        }
+        if (isMid) {
+            points.push({ direction, x: left - gridSizeX / 2, y: top });
+        }
+
+        // bottom left
+        direction += 45;
+        if (isOuterVertex) {
+            points.push({ direction, x: left, y: top });
+        }
+
+        // left
+        direction += 45;
+        if (isMid) {
+            points.push({ direction, x: left, y: top + gridSizeY / 2 });
+        }
+        if (isVertex) {
+            points.push({ direction, x: left, y: top });
+        }
+        if (isMid) {
+            points.push({ direction, x: left, y: top - gridSizeY / 2 });
+        }
+
+        // top left
+        direction += 45;
+        if (isOuterVertex) {
+            points.push({ direction, x: left, y: top });
+        }
+
+        // top
+        direction += 45;
+        if (isMid) {
+            points.push({ direction, x: left - gridSizeX / 2, y: top });
+        }
+        if (isVertex) {
+            points.push({ direction, x: left, y: top });
+        }
+        if (isMid) {
+            points.push({ direction, x: left + gridSizeX / 2, y: top });
+        }
+
+        // top right
+        direction += 45;
+        if (isOuterVertex) {
+            points.push({ direction, x: left, y: top });
+        }
+
+        // start of right
+        direction = 0;
+        if (isMid) {
+            points.push({ direction, x: left, y: top - gridSizeY / 2 });
+        }
+
+        points.forEach((point) => {
+            point.iconX = left;
+            point.iconY = top;
+        });
+
+        return points;
+    }
+
+    /**
+     * @param {ANGLE_POINTS[keyof ANGLE_POINTS]} anglePoints
+     * @returns {{x: number, y: number, direction: number, iconX?: number, iconY?: number}[]}
      */
     #getAngleStartPoints(anglePoints) {
         const bottom = this.#y + this.#h;
@@ -238,14 +338,8 @@ export class GridSquare {
         const right = this.#x + this.#w;
 
         if (this.#heightSquares == 0 && this.#widthSquares == 0) {
-            return [...new Array(8)].map((_, i) => ({
-                direction: i * 45,
-                x: left,
-                y: top,
-            }));
+            return this.#getAnglesForPoints(anglePoints);
         }
-
-        // todo handle height = 0 or width = 0
 
         const isMid = isSet(anglePoints, ANGLE_POINTS.EDGE_MIDPOINT);
         const isVertex = isSet(anglePoints, ANGLE_POINTS.EDGE_VERTEX);
@@ -326,7 +420,7 @@ export class GridSquare {
      * @param {object} coords
      * @param {number} coords.x
      * @param {number} coords.y
-     * @returns { {direction: number, x: number, y: number} }
+     * @returns {{x: number, y: number, direction: number, iconX?: number, iconY?: number}}
      */
     getFollowPositionForCoords(angleStartPoints, { x, y }) {
         const allSpots = this.#getAngleStartPoints(angleStartPoints);

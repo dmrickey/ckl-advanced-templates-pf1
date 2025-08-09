@@ -135,3 +135,5 @@
 - add hint for rotating cone
 - line rotation override is killing the 1px offset
 - range finding is killing "line start hint"
+
+update other cone (if necessary) like from-grid for going around a point
