@@ -506,7 +506,10 @@ export class GridSquare {
             .map((point) => [point, { x, y }])
             .map((coords) => canvas.grid.measurePath(coords).distance);
 
-        const range = Math.min(...distances);
+        let range = Math.min(...distances);
+        range = !!(range % 1)
+            ? range.toFixed(1)
+            : range;
         return range;
     }
 
