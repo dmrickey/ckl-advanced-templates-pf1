@@ -453,8 +453,20 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
 
         // If we are in grid-less mode, highlight the shape directly
         if (canvas.grid.type === CONST.GRID_TYPES.GRIDLESS) {
-            const shape = this._getGridHighlightShape();
-            canvas.interface.grid.highlightPosition(this.highlightId, { border, color, shape, alpha });
+
+            if (!this.shape) {
+                this._applyRenderFlags({ refreshShape: true });
+                // HACK: Wait for next tick, the template won't be finalized by Foundry until then.
+                // Likely breaks with Foundry v12 with newer PIXI version
+                new Promise((resolve) => canvas.app.ticker.addOnce(() => resolve()), undefined, PIXI.UPDATE_PRIORITY.LOW).then(() => {
+                    const shape = this._getGridHighlightShape();
+                    canvas.interface.grid.highlightPosition(this.highlightId, { border, color, shape, alpha });
+                });
+            }
+            else {
+                const shape = this._getGridHighlightShape();
+                canvas.interface.grid.highlightPosition(this.highlightId, { border, color, shape, alpha });
+            }
         }
 
         // Otherwise, highlight specific grid positions
