@@ -469,6 +469,13 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             return;
         }
 
+        if (!this.#isInRange && !this.document.flags[MODULE_NAME].ignoreRange) {
+            const message = localize('errors.outOfRange');
+            ui.notifications.error(message);
+            this._onFinish(event);
+            return this.#events.reject();
+        }
+
         if (this.angleOrigin === ANGLE_ORIGIN.CURRENT && this._isSelectingOrigin) {
             this._gridSquare = this._getStartingGridSquare();
             this._isSelectingOrigin = false;
@@ -483,13 +490,6 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
         // Reject if template size is zero
         if (!this.document.distance) {
-            this._onFinish(event);
-            return this.#events.reject();
-        }
-
-        if (!this.#isInRange && !this.document.flags[MODULE_NAME].ignoreRange) {
-            const message = localize('errors.outOfRange');
-            ui.notifications.error(message);
             this._onFinish(event);
             return this.#events.reject();
         }
