@@ -7,6 +7,8 @@ import { MeasuredTemplatePFAdvanced } from './measured-template-pf-advanced';
 
 export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
+    static RENDER_THROTTLE = 30;
+
     get angleOrigin() { return ANGLE_ORIGIN.NONE; }
     get angleStartPoints() { return ANGLE_POINTS.ALL; }
 
@@ -36,6 +38,17 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
         const offset = this.#originalIconYOffset + value - this.document.y;
         this.controlIcon.y = offset;
+    }
+
+    _resetIconPosition() {
+        if (this.#originalIconXOffset !== undefined) {
+            this.controlIcon.x = this.#originalIconXOffset;
+            this.#originalIconXOffset = undefined;
+        }
+        if (this.#originalIconYOffset !== undefined) {
+            this.controlIcon.y = this.#originalIconYOffset;
+            this.#originalIconYOffset = undefined;
+        }
     }
 
     static async fromData(templateData, { action } = {}) {
@@ -395,6 +408,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         }
 
         if (this.angleOrigin === ANGLE_ORIGIN.CURRENT && !this._isSelectingOrigin) {
+            this._resetIconPosition();
             this.clearTargetIfEnabled();
             this.initializeVariables();
             this._setPreviewVisibility(false);

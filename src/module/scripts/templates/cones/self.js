@@ -9,13 +9,9 @@ export class ConeFromSelf extends AbilityTemplateAdvanced {
 
     /** @override */
     get _snapMode() {
-        if (!this._isSelectingOrigin) return 0;
-
-        return CONST.GRID_SNAPPING_MODES.VERTEX;
-
-        return this.#is15 || Settings.coneAlternate
-            ? CONST.GRID_SNAPPING_MODES.CENTER
-            : CONST.GRID_SNAPPING_MODES.VERTEX;
+        return this._isSelectingOrigin
+            ? CONST.GRID_SNAPPING_MODES.VERTEX
+            : 0;
     }
 
     /** @override */
