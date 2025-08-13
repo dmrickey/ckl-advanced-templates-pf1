@@ -294,7 +294,11 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     async handleRangeAndTargeting() {
         this.#isInRange = true;
 
-        if ((this.hasMaxRange || this.hasMinRange) && !this.document.flags[MODULE_NAME].ignoreRange && this.token) {
+        if (this.placementType === PLACEMENT_TYPE.SET_XY
+            && (this.hasMaxRange || this.hasMinRange)
+            && !this.document.flags[MODULE_NAME].ignoreRange
+            && this.token
+        ) {
             const sourceSquare = GridSquare.fromToken(this.token);
             const range = sourceSquare.distanceToPoint(this.center);
 
@@ -376,9 +380,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             throw new Error('this should never be reached');
         }
 
-        if (!this._isSelectingOrigin) {
-            await this.handleRangeAndTargeting();
-        }
+        await this.handleRangeAndTargeting();
 
         this.refresh();
 
