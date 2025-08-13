@@ -14,6 +14,8 @@ export class CircleSelf extends AbilityTemplateAdvanced {
 
     /** @override */
     drawPreview() {
-        return this.templateResult;
+        return new Promise((resolve) => {
+            resolve(this.templateResult);
+        });
     }
 }
