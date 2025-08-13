@@ -208,7 +208,14 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         }
     }
 
-    async targetIfEnabled() {
+    async targetIfEnabled(force = false) {
+        if (this._isSelectingOrigin) return;
+
+        if (!force
+            && canvas.scene.grid.type !== CONST.GRID_TYPES.SQUARE
+            && ['line', 'ray'].includes(this.document.t)
+        ) return;
+
         if (Settings.target && !this._isSelectingOrigin) {
             const targets = await this.getTokensWithin();
             const ids = targets.map((t) => t.id);
@@ -314,6 +321,22 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             : this.clearTargetIfEnabled();
     }
 
+    #getTokenEdgeForPoint() {
+        if (!this.token) return { ...canvas.mousePosition, direction: 0 };
+
+        const radToNormalizedAngle = (rad) => {
+            const angle = (rad * 180 / Math.PI) % 360;
+            return angle < 0
+                ? angle + 360
+                : angle;
+        };
+        const ray = new Ray(this.token.center, canvas.mousePosition);
+        const direction = radToNormalizedAngle(ray.angle);
+        const x = Math.cos(ray.angle) * this.token.w / 2 + this.token.center.x;
+        const y = Math.sin(ray.angle) * this.token.h / 2 + this.token.center.y;
+        return { x, y, direction };
+    }
+
     /** @virtual */
     /** Update placement (mouse-move) */
     async _onMove(event) {
@@ -337,7 +360,9 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             this.document.x = pos.x;
             this.document.y = pos.y;
         } else if (this.placementType === PLACEMENT_TYPE.SET_XY_FROM_TOKEN) {
-            const tokenEdgePos = this._gridSquare.getFollowPositionForCoords(this.angleStartPoints, pos);
+            const tokenEdgePos = canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE
+                ? this._gridSquare.getFollowPositionForCoords(this.angleStartPoints, pos)
+                : this.#getTokenEdgeForPoint();
             this.document.x = tokenEdgePos.x;
             this.document.y = tokenEdgePos.y;
             this.document.direction = tokenEdgePos.direction;
@@ -351,7 +376,9 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             throw new Error('this should never be reached');
         }
 
-        await this.handleRangeAndTargeting();
+        if (!this._isSelectingOrigin) {
+            await this.handleRangeAndTargeting();
+        }
 
         this.refresh();
 
@@ -451,20 +478,27 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
         console.debug("PF1 | Placing template for", this.action?.item?.name ?? "unknown");
 
-        this._onFinish(event);
 
         // Reject if template size is zero
-        if (!this.document.distance) return this.#events.reject();
+        if (!this.document.distance) {
+            this._onFinish(event);
+            return this.#events.reject();
+        }
 
         if (!this.#isInRange && !this.document.flags[MODULE_NAME].ignoreRange) {
             const message = localize('errors.outOfRange');
             ui.notifications.error(message);
+            this._onFinish(event);
             return this.#events.reject();
         }
 
         if (!this._finalizeTemplate()) {
+            this._onFinish(event);
             return this.#events.reject();
         }
+
+        await this.targetIfEnabled(true);
+        this._onFinish(event);
 
         this.#events.resolve(this.templateResult);
     }
@@ -591,5 +625,4 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
     }
 
     // #endregion
-    #customLabel = null;
 }
