@@ -1,12 +1,13 @@
 import { CONSTS, MODULE_NAME } from "../consts";
 
 export const prepareData = (action) => {
-    const flags = action.data.flags?.[MODULE_NAME];
+    const flags = action.flags?.[MODULE_NAME];
     return {
         data: {
             measureTemplate: {
-                color: action.data.measureTemplate.color,
-                texture: action.data.measureTemplate.texture,
+                color: action.measureTemplate.color,
+                size: action.measureTemplate.size,
+                texture: action.measureTemplate.texture,
             },
             flags: {
                 [MODULE_NAME]: {
@@ -27,6 +28,7 @@ export const prepareData = (action) => {
                     [CONSTS.flags.deletion]: flags?.[CONSTS.flags.deletion] || CONSTS.deletionOptions.doNotDelete,
                     [CONSTS.flags.deletionInterval]: flags?.[CONSTS.flags.deletionInterval] || CONSTS.deletionIntervals.rounds,
                     [CONSTS.flags.deletionUnit]: flags?.[CONSTS.flags.deletionUnit] || 0,
+                    [CONSTS.flags.rect.height]: flags?.[CONSTS.flags.rect.height] || '',
                 },
             },
         },

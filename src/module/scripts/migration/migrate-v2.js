@@ -3,14 +3,14 @@ import { log } from './migration-log';
 
 const migrateItem = async (item) => {
     for (const action of item.actions ?? []) {
-        if (action.data.flags?.[MODULE_NAME]) {
+        if (action.flags?.[MODULE_NAME]) {
             await action.update({
                 flags:
                 {
                     [MODULE_NAME]: {
                         '-=expireAtTurnEnd': null,
                         '-=exireAtTurnEnd': null,
-                        [CONSTS.flags.deletion]: !!action.data.flags[MODULE_NAME]?.expireAtTurnEnd
+                        [CONSTS.flags.deletion]: !!action.flags[MODULE_NAME]?.expireAtTurnEnd
                             ? [CONSTS.deletionOptions.endOfTurn]
                             : [CONSTS.deletionOptions.doNotDelete],
                     }

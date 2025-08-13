@@ -1,65 +1,97 @@
+import { ROTATION_TYPE } from '../../../consts';
 import { AbilityTemplateAdvanced } from "../ability-template";
-import { ifDebug } from '../../utils';
-import { wait } from '../../utils/wait';
-import { xhairs } from '../../utils/crosshairs';
 
 export class ConeSystem extends AbilityTemplateAdvanced {
+
     /** @override */
-    async commitPreview() {
-        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.commitPreview.name}`));
+    get _snapMode() {
+        return CONST.GRID_SNAPPING_MODES.CENTER
+            | CONST.GRID_SNAPPING_MODES.VERTEX
+            | CONST.GRID_SNAPPING_MODES.EDGE_MIDPOINT;
+    }
 
-        super.clearTargetIfEnabled();
-
-        const targetConfig = {
-            drawIcon: false,
-            drawOutline: false,
-        };
-
+    /** @override */
+    initializeVariables() {
         this.document.angle = 90;
-        const updatePosition = async (crosshairs) => {
+        return super.initializeVariables();
+    }
 
-            let newDirection = 0;
-            canvas.app.view.onwheel = (event) => {
-                // Avoid rotation while zooming the browser window
-                if (event.ctrlKey) {
-                    event.preventDefault();
-                }
-                event.stopPropagation();
+    /** @override */
+    async handleRangeAndTargeting() {
+        await this.targetIfEnabled()
+    }
 
-                newDirection = this.document.direction + 45 * Math.sign(event.deltaY);
-            };
+    get _rotationType() { return ROTATION_TYPE.SYSTEM; }
 
-            while (crosshairs.inFlight) {
-                await wait(100);
+    /**
+     * Calculates a set of x & y coordinates that the template actually should have based on type and origin
+     *
+     * @returns {{x: number, y: number}}
+     * @private
+     */
+    _getTemplateSnapCoordinates() {
+        let { x, y } = this.document;
+        const grid = canvas.grid;
 
-                const { x, y } = crosshairs;
-                if (this.document.direction === newDirection && x === this.document.x && y === this.document.y) {
-                    continue;
-                }
+        if (this.document.t === "cone" && game.canvas.grid.isSquare) {
+            const { direction } = this.document;
 
-                this.document.direction = newDirection;
-                this.document.x = crosshairs.x;
-                this.document.y = crosshairs.y;
-                this.refresh();
-
-                await super.targetIfEnabled();
+            if (direction <= 45 || direction >= 315) {
+                x = Math.ceil(x / grid.size) * grid.size;
+            } else if (direction >= 135 && direction <= 225) {
+                x = Math.floor(x / grid.size) * grid.size;
             }
 
-            canvas.app.view.onwheel = null;
-        };
-
-        const coneCrosshairs = await xhairs.show(
-            targetConfig,
-            {
-                show: updatePosition
+            if (direction >= 45 && direction <= 135) {
+                y = Math.ceil(y / grid.size) * grid.size;
+            } else if (direction >= 225 && direction <= 315) {
+                y = Math.floor(y / grid.size) * grid.size;
             }
-        );
-
-        if (coneCrosshairs.cancelled) {
-            super.clearTargetIfEnabled();
-            return false;
         }
 
-        return true;
+        return { x, y };
+    }
+
+    /**
+     * Recalculate template visual element positions based on snap coordinates
+     *
+     * @private
+     */
+    _setElementOffsets() {
+        const { x: snapX, y: snapY } = this._getTemplateSnapCoordinates();
+        const offsetX = snapX - this.document.x;
+        const offsetY = snapY - this.document.y;
+
+        this.template.x = offsetX;
+        this.template.y = offsetY;
+
+        this.ruler.position.set(this.ray?.dx + 10 + offsetX, this.ray?.dy + 5 + offsetY);
+    }
+
+    /**
+     * @override
+     * @private
+     */
+    _refreshRulerText() {
+        super._refreshRulerText();
+        this._setElementOffsets();
+    }
+
+    /**
+     * @override
+     * @private
+     */
+    _refreshPosition() {
+        super._refreshPosition();
+        this._setElementOffsets();
+    }
+
+    /**
+     * @override
+     * @private
+     */
+    _refreshTemplate() {
+        super._refreshTemplate();
+        this._setElementOffsets();
     }
 }

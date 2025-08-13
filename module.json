@@ -15,15 +15,15 @@
         }
     ],
     "compatibility": {
-        "minimum": "11",
-        "verified": "11"
+        "minimum": "12",
+        "verified": "12"
     },
     "scripts": [],
     "esmodules": [
-        "ckl-advanced-templates-pf1.js"
+        "dist/ckl-advanced-templates-pf1.js"
     ],
     "styles": [
-        "ckl-advanced-templates-pf1.css"
+        "dist/ckl-advanced-templates-pf1.css"
     ],
     "flags": {
         "hotReload": {
@@ -43,8 +43,7 @@
                 "type": "system",
                 "manifest": "https://gitlab.com/foundryvtt_pathfinder1e/foundryvtt-pathfinder1/-/releases/permalink/latest/downloads/system.json",
                 "compatibility": {
-                    "minimum": "9",
-                    "verified": "9.5"
+                    "verified": "11.8"
                 }
             }
         ],
@@ -54,7 +53,7 @@
                 "type": "module",
                 "manifest": "https://github.com/ruipin/fvtt-lib-wrapper/releases/latest/download/module.json",
                 "compatibility": {
-                    "verified": "1.12.11.0"
+                    "verified": "1.13.2.0"
                 }
             }
         ]
@@ -79,7 +78,6 @@
     "system": [
         "pf1"
     ],
-    "minimumSystemVersion": "9.5",
     "library": false,
     "protected": false,
     "coreTranslation": false

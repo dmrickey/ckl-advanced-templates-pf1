@@ -20,7 +20,10 @@ export default class HintHandler {
             }).render(true, { focus: true });
         }
         else {
-            this.#dialog.svelte.dialogComponent.hint = hint;
+            const dialogComponent = this.#dialog?.svelte?.appShell?.dialogComponent;
+            if (dialogComponent) {
+                dialogComponent.hint = hint;
+            }
         }
     }
 

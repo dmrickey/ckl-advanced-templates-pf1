@@ -33,12 +33,12 @@
 
     // initialize line options
     updates.data.flags[MODULE_NAME][CONSTS.flags.placementType] ||=
-        action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] || CONSTS.placement.line.selectTargetSquare;
+        action.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] || CONSTS.placement.line.selectTargetSquare;
 
     updates.data.flags[MODULE_NAME][CONSTS.flags.line.width] ||=
-        action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.line.width] || Settings.defaultLineWidth;
+        action.flags?.[MODULE_NAME]?.[CONSTS.flags.line.width] || Settings.defaultLineWidth;
     updates.data.flags[MODULE_NAME][CONSTS.flags.line.widthOverride] ||=
-        !!action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.line.widthOverride];
+        !!action.flags?.[MODULE_NAME]?.[CONSTS.flags.line.widthOverride];
 
     ifDebug(() => console.log("Opening line settings for:", updates));
 </script>

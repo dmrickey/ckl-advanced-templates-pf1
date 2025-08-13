@@ -6,7 +6,7 @@ import { calculateExpiration } from './calculate-expiration';
 const ignoreRangeKey = 'ignore-range';
 const addSkipRangeToDialog = (application, [html], data) => {
     if (application instanceof pf1.applications.AttackDialog
-        && !!data.action.data.measureTemplate?.type
+        && !!data.action.measureTemplate?.type
     ) {
         const form = html.closest('form') || html.querySelector('form');
         if (!form) {
@@ -62,6 +62,8 @@ const track = (id) => {
 }
 const untrack = (id) => trackedApps.delete(id);
 
+let placingTemplate = false;
+
 /**
  * Common logic and switch statement for placing all templates
  *
@@ -73,6 +75,8 @@ const untrack = (id) => trackedApps.delete(id);
 async function promptMeasureTemplate() {
     ifDebug(() => console.log('promptMeasureTemplate', this));
 
+    if (placingTemplate) return null;
+
     // return success early if user isn't allowed to place templates
     if (!hasTemplatePermission()) {
         return {
@@ -82,28 +86,31 @@ async function promptMeasureTemplate() {
         };
     }
 
-    const type = this.shared.action.data.measureTemplate.type;
+    const type = this.shared.action.measureTemplate.type;
 
     const actor = this.item?.actor;
     const token = getToken(this.item) || {};
-    const icon = this.shared.action.data.img === 'systems/pf1/icons/misc/magic-swirl.png' ? this.item.img : this.shared.action.data.img;
+    const icon = this.shared.action.img === 'systems/pf1/icons/misc/magic-swirl.png' ? this.item.img : this.shared.action.img;
     let { maxRange, minRange } = this.shared.action;
-    const flags = this.shared.action.data.flags?.[MODULE_NAME] || {};
+    const flags = this.shared.action.flags?.[MODULE_NAME] || {};
     let distance = _getSize(this.shared) || 5;
+    let height = flags[CONSTS.flags.rect.height]
+        ? _getHeight(this.shared, flags[CONSTS.flags.rect.height])
+        : distance;
 
     const expirationTime = calculateExpiration(this.getRollData(), flags);
 
     const templateData = {
-        _id: randomID(16),
+        _id: foundry.utils.randomID(16),
         distance,
         t: type,
         flags: {
             [MODULE_NAME]: {
                 ...flags,
-                [CONSTS.flags.circle.movesWithToken]: flags[CONSTS.flags.placementType] == CONSTS.placement.circle.self && !!flags[CONSTS.flags.circle.movesWithToken],
+                [CONSTS.flags.circle.movesWithToken]: flags[CONSTS.flags.placementType] === CONSTS.placement.circle.self && !!flags[CONSTS.flags.circle.movesWithToken],
                 [CONSTS.flags.expirationTime]: expirationTime,
                 [CONSTS.flags.ignoreRange]: flags[CONSTS.flags.ignoreRange] || !!this.formData[ignoreRangeKey],
-                baseDistance: distance,
+                [CONSTS.flags.rect.height]: height,
                 icon,
                 itemId: this.item?.id,
                 maxRange,
@@ -112,8 +119,8 @@ async function promptMeasureTemplate() {
             },
         },
         user: game.userId,
-        fillColor: this.shared.action.data.measureTemplate.color || game.user.color,
-        texture: this.shared.action.data.measureTemplate.texture || null,
+        fillColor: this.shared.action.measureTemplate.color || game.user.color,
+        texture: this.shared.action.measureTemplate.texture || null,
     };
 
     if (['ray', 'line'].includes(type)) {
@@ -123,14 +130,21 @@ async function promptMeasureTemplate() {
     const windows = Object.values(ui.windows).filter((x) => !!x.minimize && !x._minimized && !isSimpleCalender(x));
     await Promise.all(windows.map((x) => x.minimize()));
 
-    const template = await game.modules.get(MODULE_NAME).api.AbilityTemplateAdvanced.fromData(templateData, this.shared.action);
+    const api = game.modules.get(MODULE_NAME).api;
+    const template = await api.AbilityTemplateAdvanced.fromData(templateData, { action: this.shared.action });
     if (!template) {
         return { result: false };
     }
 
-    const result = await template.drawPreview();
+    placingTemplate = true;
+    let result = null;
+    try {
+        result = await template.drawPreview().catch((e) => null);
+    }
+    catch { }
+    placingTemplate = false;
 
-    if (!result.result) {
+    if (!result) {
         await Promise.all(windows.map((x) => x.maximize()));
         return result;
     }
@@ -149,7 +163,8 @@ export {
     promptMeasureTemplate,
 };
 
-const _getSize = (shared) => pf1.utils.convertDistance(RollPF.safeTotal(shared.action.data.measureTemplate.size, shared.rollData))[0];
+const _getSize = (shared) => pf1.utils.convertDistance(RollPF.safeTotal(shared.action.measureTemplate.size, shared.rollData))[0];
+const _getHeight = (shared, distance) => pf1.utils.convertDistance(RollPF.safeTotal(distance, shared.rollData))[0];
 
 const hasTemplatePermission = () => game.permissions.TEMPLATE_CREATE.includes(game.user.role);
 

@@ -20,6 +20,22 @@ const getQueue = (entity = "default") => {
     return updateQueues.get(entity);
 }
 
+const waitFor = async (fn, maxIter = 600, iterWaitTime = 100) => {
+    let i = 0;
+    const continueWait = (current, max) => {
+        /* negative max iter means wait forever */
+        if (maxIter < 0) return true;
+
+        return current < max;
+    };
+
+    while (!fn(i, (i * iterWaitTime)) && continueWait(i, maxIter)) {
+        i++;
+        await wait(iterWaitTime);
+    }
+    return i === maxIter ? false : true;
+}
+
 /**
  * Helper class to manage database updates that occur from
  * hooks that may fire back to back.
@@ -48,7 +64,7 @@ class UpdateQueue {
     }
 
     flush() {
-        return MODULE.waitFor(() => !this.inFlight)
+        return waitFor(() => !this.inFlight)
     }
 
     async runUpdate() {

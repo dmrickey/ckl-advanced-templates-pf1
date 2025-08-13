@@ -1,75 +1,54 @@
+import { ANGLE_ORIGIN, ANGLE_POINTS, PLACEMENT_TYPE } from '../../../consts';
 import { GridSquare } from '../../models/grid-square';
-import { ifDebug, localize } from '../../utils';
-import { xhairs } from '../../utils/crosshairs';
-import { wait } from '../../utils/wait';
-import { LineFromTargetBase } from './base';
+import { localize } from '../../utils';
+import { AbilityTemplateAdvanced } from '../ability-template';
 
-export class LineFromSelf extends LineFromTargetBase {
+export class LineFromSelf extends AbilityTemplateAdvanced {
 
     /** @override */
-    async getSourcePoint() {
-        ifDebug(() => console.log(`inside ${this.constructor.name} - ${this.getSourcePoint.name}`));
-
-        this._setPreviewVisibility(false);
-        this.controlIconText = localize('lineStart');
-        super.clearTempate();
-
-        const tokenSquare = GridSquare.fromToken(this.token);
-        const availablePoints = tokenSquare.gridPoints;
-
-        const totalSpots = availablePoints.length;
-
-        const radToNormalizedAngle = (rad) => {
-            const degrees = Math.toDegrees(rad);
-            return Math.normalizeDegrees(degrees);
-        };
-
-        let point;
-        const selectSquareFromCrosshairsRotation = async (crosshairs) => {
-            let currentSpotIndex = 0;
-
-            while (crosshairs.inFlight) {
-                let tempPoint = { x: 0, y: 0 };
-                await wait(100);
-
-                const ray = new Ray(tokenSquare.center, crosshairs);
-                if (canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE) {
-                    const followAngle = radToNormalizedAngle(ray.angle);
-                    const pointIndex = Math.ceil(followAngle / 360 * totalSpots) - 1 % totalSpots;
-                    if (pointIndex === currentSpotIndex) {
-                        continue;
-                    }
-                    currentSpotIndex = pointIndex;
-                    point = availablePoints[pointIndex];
-                }
-                else {
-                    point = tokenSquare.edgePoint(ray);
-                }
-
-                if (point.x === tempPoint.x && point.y === tempPoint.y) {
-                    continue;
-                }
-                tempPoint = point;
-
-                super.setCenter = point;
-                this.refresh();
-            };
-        }
-
-        const sourcePointConfig = {
-            drawIcon: false,
-            drawOutline: false,
-            interval: 0,
-            icon: this.iconImg,
-        };
-        const sourceSquare = await xhairs.show(sourcePointConfig, { show: selectSquareFromCrosshairsRotation });
-        if (sourceSquare.cancelled) {
-            return false;
-        }
-
-        this._setPreviewVisibility(true);
-        this.controlIconText = null;
-
-        return point;
+    get _snapMode() {
+        return this._isSelectingOrigin
+            ? CONST.GRID_SNAPPING_MODES.VERTEX
+            : 0;
     }
+
+    /** @override */
+    get angleStartPoints() { return ANGLE_POINTS.VERTEX; }
+
+    /** @override */
+    get placementType() {
+        return (this.token && this._isSelectingOrigin)
+            ? PLACEMENT_TYPE.SET_XY_FROM_TOKEN
+            : this._isSelectingOrigin
+                ? PLACEMENT_TYPE.SET_XY
+                : PLACEMENT_TYPE.SET_ANGLE;
+    }
+
+    /** @override */
+    get angleOrigin() { return ANGLE_ORIGIN.CURRENT; }
+
+    /** @override */
+    initializeVariables() {
+        this._isSelectingOrigin = true;
+        if (this.token) {
+            this._gridSquare = GridSquare.fromToken(this.token);
+        }
+        return super.initializeVariables();
+    }
+
+    get selectOriginText() { return localize('lineStart'); }
+
+    /** @override */
+    _followAngle({ x, y }) {
+        const ray = new Ray(this.center, { x, y });
+        const degrees = Math.toDegrees(ray.angle);
+        this.document.direction = degrees;
+
+        // const xOffset = degrees < 90 || degrees >= 270 ? 1 : -1;
+        // const yOffset = degrees > 0 && degrees <= 180 ? 1 : -1;
+
+        // this.template.x = this.document.x + xOffset;
+        // this.template.y = this.document.y + yOffset;
+    }
+    // todo hex and gridless
 }

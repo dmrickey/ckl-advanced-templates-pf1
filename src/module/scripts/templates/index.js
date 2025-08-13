@@ -1,16 +1,16 @@
-import { MeasuredTemplatePFAdvanced } from "./measured-template-pf-advanced";
-import { AbilityTemplateAdvanced } from "./ability-template";
 import { MODULE_NAME } from "../../consts";
-import { CircleAnywhere } from "./circles/anywhere";
+import { AbilityTemplateAdvanced } from "./ability-template";
+import { CircleSystem } from "./circles/system";
 import { CircleGridIntersection } from "./circles/grid";
 import { CircleSelf } from "./circles/self";
 import { CircleSplash } from "./circles/splash";
-import { ConeSystem } from "./cones/system";
-import { ConeFromTargetSquare } from "./cones/target-square";
 import { ConeFromSelf } from "./cones/self";
+import { ConeSystem } from "./cones/system";
+import { ConeFromTargetSquare } from "./cones/target-grid";
 import { LineFromSelf } from "./lines/from-self";
 import { LineSystem } from "./lines/system";
 import { LineFromSquare } from "./lines/target-square";
+import { MeasuredTemplatePFAdvanced } from "./measured-template-pf-advanced";
 import { RectCentered } from "./rects/centered";
 
 export const initTemplates = () => {
@@ -25,10 +25,10 @@ export const initTemplates = () => {
 
             ability: {
                 circles: {
-                    CircleAnywhere,
                     CircleGridIntersection,
                     CircleSelf,
                     CircleSplash,
+                    CircleSystem,
                 },
                 cones: {
                     ConeFromSelf,

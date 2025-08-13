@@ -1,3 +1,6 @@
+import { ANGLE_POINTS } from '../../consts';
+import { isSet } from '../utils/bits';
+
 export class GridSquare {
     #x;
     #y;
@@ -21,10 +24,20 @@ export class GridSquare {
      */
     get w() { return this.#w; }
 
+    /**
+     * Height in grid squares
+     * @returns {number}
+     */
+    get heightSquares() { return this.#heightSquares; }
+    /**
+     * Width in grid squares
+     * @returns {number}
+     */
+    get widthSquares() { return this.#widthSquares; }
+
     get center() {
-        const gridSize = canvas.grid.h;
-        const x = this.#x + this.#widthSquares * gridSize / 2;
-        const y = this.#y + this.#heightSquares * gridSize / 2;
+        const x = this.#x + this.#widthSquares * canvas.grid.sizeX / 2;
+        const y = this.#y + this.#heightSquares * canvas.grid.sizeY / 2;
         return { x, y };
     }
 
@@ -39,12 +52,13 @@ export class GridSquare {
         const heightSpots = this.#heightSquares;
         const widthSpots = this.#widthSquares;
 
-        const gridSize = canvas.grid.h;
+        const gridSizeX = canvas.grid.sizeX;
+        const gridSizeY = canvas.grid.sizeY;
 
         const rightSpots = [...new Array(widthSpots)].map((_, i) => ({
             direction: 0,
             x: right,
-            y: top + gridSize * i,
+            y: top + gridSizeY * i,
         }));
         const bottomRight = {
             direction: 45,
@@ -53,33 +67,33 @@ export class GridSquare {
         };
         const bottomSpots = [...new Array(heightSpots)].map((_, i) => ({
             direction: 90,
-            x: right - gridSize * i,
+            x: right - gridSizeX * i,
             y: bottom,
         }));
         const bottomLeft = {
             direction: 135,
-            x: left - gridSize,
+            x: left - gridSizeX,
             y: bottom,
         };
         const leftSpots = [...new Array(widthSpots)].map((_, i) => ({
             direction: 180,
-            x: left - gridSize,
-            y: bottom - gridSize * i,
+            x: left - gridSizeX,
+            y: bottom - gridSizeY * i,
         }));
         const topLeft = {
             direction: 225,
-            x: left - gridSize,
-            y: top - gridSize,
+            x: left - gridSizeX,
+            y: top - gridSizeY,
         };
         const topSpots = [...new Array(heightSpots)].map((_, i) => ({
             direction: 270,
-            x: left + gridSize * i,
-            y: top - gridSize,
+            x: left + gridSizeX * i,
+            y: top - gridSizeY,
         }));
         const topRight = {
             direction: 315,
             x: right,
-            y: top - gridSize,
+            y: top - gridSizeY,
         };
         const allSpots = [
             ...rightSpots.slice(Math.floor(rightSpots.length / 2)),
@@ -102,6 +116,7 @@ export class GridSquare {
     }
 
     #containedSquares;
+    /** @returns {{ x: number, y: number, center: { x: number, y: number}}[]} */
     get containedSquares() { return this.#containedSquares ??= this.#initContainedSquares(); }
 
     #initContainedSquares() {
@@ -110,14 +125,15 @@ export class GridSquare {
         const heightSpots = this.#heightSquares;
         const widthSpots = this.#widthSquares;
 
-        const gridSize = canvas.grid.h;
+        const gridSizeX = canvas.grid.sizeX;
+        const gridSizeY = canvas.grid.sizeY;
 
         const squares = [];
         for (let x = 0; x < widthSpots; x++) {
             for (let y = 0; y < heightSpots; y++) {
                 squares.push({
-                    x: left + x * gridSize,
-                    y: top + y * gridSize,
+                    x: left + x * gridSizeX,
+                    y: top + y * gridSizeY,
                 });
             }
         }
@@ -134,6 +150,7 @@ export class GridSquare {
     #gridPoints;
     /**
      * returns grid intersections on perimeter of the square
+     * @returns {{x: number, y: number, direction: number}[]}
      */
     get gridPoints() { return this.#gridPoints ??= this.#initGridPoints(); }
 
@@ -154,12 +171,13 @@ export class GridSquare {
         const heightSpots = Math.max(0, this.#heightSquares - 1);
         const widthSpots = Math.max(0, this.#widthSquares - 1);
 
-        const gridSize = canvas.grid.h;
+        const gridSizeX = canvas.grid.sizeX;
+        const gridSizeY = canvas.grid.sizeY;
 
         const rightPoints = [...new Array(widthSpots)].map((_, i) => ({
             direction: 0,
             x: right,
-            y: top + gridSize * (i + 1),
+            y: top + gridSizeY * (i + 1),
         }));
         const bottomRight = {
             direction: 45,
@@ -168,7 +186,7 @@ export class GridSquare {
         };
         const bottomPoints = [...new Array(heightSpots)].map((_, i) => ({
             direction: 90,
-            x: right - gridSize * (i + 1),
+            x: right - gridSizeX * (i + 1),
             y: bottom,
         }));
         const bottomLeft = {
@@ -179,7 +197,7 @@ export class GridSquare {
         const leftPoints = [...new Array(widthSpots)].map((_, i) => ({
             direction: 180,
             x: left,
-            y: bottom - gridSize * (i + 1),
+            y: bottom - gridSizeY * (i + 1),
         }));
         const topLeft = {
             direction: 225,
@@ -188,7 +206,7 @@ export class GridSquare {
         };
         const topPoints = [...new Array(heightSpots)].map((_, i) => ({
             direction: 270,
-            x: left + gridSize * (i + 1),
+            x: left + gridSizeX * (i + 1),
             y: top,
         }));
         const topRight = {
@@ -210,28 +228,289 @@ export class GridSquare {
         return allPoints;
     }
 
+    /**
+     * @param {ANGLE_POINTS[keyof ANGLE_POINTS]} anglePoints
+     * @returns {{x: number, y: number, direction: number, iconX?: number, iconY?: number}[]}
+     */
+    #getAnglesForPoints(anglePoints) {
+        const gridSizeX = canvas.grid.sizeX;
+        const gridSizeY = canvas.grid.sizeY;
+        const left = this.#x;
+        const top = this.#y;
+
+        const isMid = isSet(anglePoints, ANGLE_POINTS.EDGE_MIDPOINT);
+        const isVertex = isSet(anglePoints, ANGLE_POINTS.EDGE_VERTEX);
+        const isOuterVertex = isSet(anglePoints, ANGLE_POINTS.OUTER_VERTEX);
+
+        let direction = 0;
+        const points = [];
+
+        // end of right
+        if (isVertex) {
+            points.push({ direction, x: left, y: top });
+        }
+        if (isMid) {
+            points.push({ direction, x: left, y: top + gridSizeY / 2 });
+        }
+
+        // bottom right
+        direction += 45;
+        if (isOuterVertex) {
+            points.push({ direction, x: left, y: top });
+        }
+
+        // bottom
+        direction += 45;
+        if (isMid) {
+            points.push({ direction, x: left + gridSizeX / 2, y: top });
+        }
+        if (isVertex) {
+            points.push({ direction, x: left, y: top });
+        }
+        if (isMid) {
+            points.push({ direction, x: left - gridSizeX / 2, y: top });
+        }
+
+        // bottom left
+        direction += 45;
+        if (isOuterVertex) {
+            points.push({ direction, x: left, y: top });
+        }
+
+        // left
+        direction += 45;
+        if (isMid) {
+            points.push({ direction, x: left, y: top + gridSizeY / 2 });
+        }
+        if (isVertex) {
+            points.push({ direction, x: left, y: top });
+        }
+        if (isMid) {
+            points.push({ direction, x: left, y: top - gridSizeY / 2 });
+        }
+
+        // top left
+        direction += 45;
+        if (isOuterVertex) {
+            points.push({ direction, x: left, y: top });
+        }
+
+        // top
+        direction += 45;
+        if (isMid) {
+            points.push({ direction, x: left - gridSizeX / 2, y: top });
+        }
+        if (isVertex) {
+            points.push({ direction, x: left, y: top });
+        }
+        if (isMid) {
+            points.push({ direction, x: left + gridSizeX / 2, y: top });
+        }
+
+        // top right
+        direction += 45;
+        if (isOuterVertex) {
+            points.push({ direction, x: left, y: top });
+        }
+
+        // start of right
+        direction = 0;
+        if (isMid) {
+            points.push({ direction, x: left, y: top - gridSizeY / 2 });
+        }
+
+        points.forEach((point) => {
+            point.iconX = left;
+            point.iconY = top;
+        });
+
+        return points;
+    }
+
+    /**
+     * @param {ANGLE_POINTS[keyof ANGLE_POINTS]} anglePoints
+     * @returns {{x: number, y: number, direction: number, iconX?: number, iconY?: number}[]}
+     */
+    #getAngleStartPoints(anglePoints) {
+        const bottom = this.#y + this.#h;
+        const left = this.#x;
+        const top = this.#y;
+        const right = this.#x + this.#w;
+
+        if (this.#heightSquares == 0 && this.#widthSquares == 0) {
+            return this.#getAnglesForPoints(anglePoints);
+        }
+
+        const isMid = isSet(anglePoints, ANGLE_POINTS.EDGE_MIDPOINT);
+        const isVertex = isSet(anglePoints, ANGLE_POINTS.EDGE_VERTEX);
+        const isOuterVertex = isSet(anglePoints, ANGLE_POINTS.OUTER_VERTEX);
+
+        let gridSizeX = canvas.grid.sizeX;
+        let gridSizeY = canvas.grid.sizeY;
+
+        let gridOffsetX = 0;
+        let gridOffsetY = 0;
+
+        if (isMid && !isVertex) {
+            gridOffsetX = Math.floor(gridSizeX / 2);
+            gridOffsetY = Math.floor(gridSizeY / 2);
+        }
+
+        if (isMid && isVertex) {
+            gridSizeX /= 2;
+            gridSizeY /= 2;
+        }
+
+        const heightSpots = isMid && isVertex
+            ? this.#heightSquares * 2 + 1
+            : isMid
+                ? this.#heightSquares
+                : this.#heightSquares + 1;
+        const widthSpots = isMid && isVertex
+            ? this.#widthSquares * 2 + 1
+            : isMid
+                ? this.#widthSquares
+                : this.#widthSquares + 1;
+
+        // right-top to right-bottom
+        const rightSpots = [...new Array(widthSpots)].map((_, i) => ({
+            direction: 0,
+            x: right,
+            y: top + gridSizeY * i + gridOffsetY,
+        }));
+
+        // bottom-right to bottom-left
+        const bottomSpots = [...new Array(heightSpots)].map((_, i) => ({
+            direction: 90,
+            x: right - gridSizeX * i - gridOffsetX,
+            y: bottom,
+        }));
+
+        // left-bottom to left-top
+        const leftSpots = [...new Array(widthSpots)].map((_, i) => ({
+            direction: 180,
+            x: left,
+            y: bottom - gridSizeY * i - gridOffsetY,
+        }));
+
+        // top-left to top-right
+        const topSpots = [...new Array(heightSpots)].map((_, i) => ({
+            direction: 270,
+            x: left + gridSizeX * i + gridOffsetX,
+            y: top,
+        }));
+
+        const allSpots = [
+            ...rightSpots.slice(Math.floor(rightSpots.length / 2)),
+            ...(isOuterVertex ? [{ direction: 45, x: right, y: bottom }] : []),
+            ...bottomSpots,
+            ...(isOuterVertex ? [{ direction: 135, x: left, y: bottom }] : []),
+            ...leftSpots,
+            ...(isOuterVertex ? [{ direction: 225, x: left, y: top }] : []),
+            ...topSpots,
+            ...(isOuterVertex ? [{ direction: 315, x: right, y: top }] : []),
+            ...rightSpots.slice(0, Math.floor(rightSpots.length / 2)),
+        ];
+        return allSpots;
+    }
+
+    /**
+     *
+     * @param {ANGLE_POINTS[keyof ANGLE_POINTS]} angleStartPoints
+     * @param {object} coords
+     * @param {number} coords.x
+     * @param {number} coords.y
+     * @returns {{x: number, y: number, direction: number, iconX?: number, iconY?: number}}
+     */
+    getFollowPositionForCoords(angleStartPoints, { x, y }) {
+        const allSpots = this.#getAngleStartPoints(angleStartPoints);
+        const totalSpots = allSpots.length;
+        const isMid = isSet(angleStartPoints, ANGLE_POINTS.EDGE_MIDPOINT);
+        const isVertex = isSet(angleStartPoints, ANGLE_POINTS.EDGE_VERTEX);
+        const radToNormalizedAngle = (rad) => {
+            let angle = (rad * 180 / Math.PI) % 360;
+            // offset the angle for even-sided tokens, because it's centered in the grid it's just wonky without the offset
+            const offset = isMid
+                ? isVertex
+                    ? 0.5
+                    : 0
+                : 1;
+            if (this.heightSquares % 2 === offset && this.widthSquares % 2 === offset) {
+                angle -= (360 / totalSpots) / 2;
+            }
+            const normalizedAngle = Math.round(angle / (360 / totalSpots)) * (360 / totalSpots);
+            return normalizedAngle < 0
+                ? normalizedAngle + 360
+                : normalizedAngle;
+        };
+
+        const ray = new Ray(this.center, { x, y });
+        const angle = radToNormalizedAngle(ray.angle);
+        const spotIndex = Math.ceil(angle / 360 * totalSpots) % totalSpots;
+
+        const spot = allSpots[spotIndex];
+        return spot;
+    }
+
     constructor(x, y, heightSquares = 1, widthSquares = 1) {
         this.#x = x;
         this.#y = y;
         this.#heightSquares = heightSquares;
         this.#widthSquares = widthSquares;
 
-        const gridSize = canvas.grid.h;
-        this.#h = gridSize * heightSquares;
-        this.#w = gridSize * widthSquares;
+        this.#h = canvas.grid.sizeY * heightSquares;
+        this.#w = canvas.grid.sizeX * widthSquares;
     }
 
     static fromToken(token) {
+        token ||= { x: 0, y: 0, document: { width: 1, height: 1 } };
         const width = Math.max(Math.round(token.document.width), 1);
         const height = Math.max(Math.round(token.document.height), 1);
-        return new GridSquare(token.x, token.y, width, height);
+        return new GridSquare(token.x, token.y, height, width);
     }
 
     static fromCenter({ x, y }, heightSquares = 1, widthSquares = 1) {
-        const gridSize = canvas.grid.h;
-        const x1 = x - gridSize * heightSquares / 2;
-        const y1 = y - gridSize * widthSquares / 2;
+        const x1 = (x || 0) - canvas.grid.sizeX * widthSquares / 2;
+        const y1 = (y || 0) - canvas.grid.sizeY * heightSquares / 2;
         return new GridSquare(x1, y1, heightSquares, widthSquares);
+    }
+
+    static fromGridSquare({ x, y }) {
+        const x1 = x - (x % canvas.grid.sizeX) + canvas.grid.sizeX / 2;
+        const y1 = y - (y % canvas.grid.sizeY) + canvas.grid.sizeY / 2;
+        return this.fromCenter(({ x: x1, y: y1 }));
+    }
+
+    static fromGridPoint({ x, y }) {
+        return new GridSquare(x, y, 0, 0);
+    }
+
+    contains(x, y) {
+        return new PIXI.Rectangle(this.x, this.y, this.w, this.h).contains(x, y);
+    }
+
+    /**
+     * @param {object} coords
+     * @param {number} coords.posX
+     * @param {number} coords.posY
+     * @returns {number}
+     */
+    distanceToPoint({ x: posX, y: posY }) {
+        let { x, y } = canvas.grid.getSnappedPoint({ x: posX, y: posY }, { mode: CONST.GRID_SNAPPING_MODES.VERTEX });
+
+        if (this.contains(x, y)) {
+            return 0;
+        }
+
+        const distances = this.gridPoints
+            .map((point) => [point, { x, y }])
+            .map((coords) => canvas.grid.measurePath(coords).distance);
+
+        let range = Math.min(...distances);
+        range = !!(range % 1)
+            ? range.toFixed(1)
+            : range;
+        return range;
     }
 
     /**
@@ -241,7 +520,7 @@ export class GridSquare {
     edgePoint(ray) {
         const { angle } = ray;
         const { x, y } = this.center;
-        const radius = this.#heightSquares * canvas.grid.h / 2;
+        const radius = this.#heightSquares * canvas.grid.sizeY / 2;
 
         const x1 = x + radius * Math.cos(angle);
         const y1 = y + radius * Math.sin(angle);

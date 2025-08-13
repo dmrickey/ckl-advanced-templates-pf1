@@ -18,7 +18,7 @@ const injectTemplateSelector = async (sheet, [html], _options) => {
     }
 
     const action = sheet.action;
-    const type = action?.data.measureTemplate?.type;
+    const type = action?.measureTemplate?.type;
 
     const templateGroupOptions = html.querySelector('div[data-tab=misc]');
 
@@ -43,8 +43,13 @@ const injectTemplateSelector = async (sheet, [html], _options) => {
 
         // remove system's default color and texture options since I replace them within my mod
         // simply hiding causes multiple inputs with the same `name` property and breaks the data
-        html.querySelector('input[name="measureTemplate.color"]')?.parentElement?.parentElement?.remove();
-        html.querySelector('input[name="measureTemplate.texture"]')?.parentElement?.parentElement?.remove();
+        html.querySelector('color-picker[name="measureTemplate.color"]')?.parentElement?.parentElement?.remove();
+        html.querySelector('file-picker[name="measureTemplate.texture"]')?.parentElement?.parentElement?.remove();
+
+        // remove size formula for rects since I provide a width/height input
+        if (type === 'rect') {
+            html.querySelector('input[name="measureTemplate.size"]')?.parentElement?.parentElement?.remove();
+        }
 
         const sibling = html.querySelector('.tab[data-tab=misc] .form-group.stacked');
         sheet._templateSettings = injected(templateGroupOptions, sibling, action);

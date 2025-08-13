@@ -1,9 +1,9 @@
-import { ANGLE_ORIGIN, ANGLE_POINTS, PLACEMENT_TYPE } from '../../../consts';
+import { ANGLE_POINTS, ANGLE_ORIGIN, PLACEMENT_TYPE } from '../../../consts';
 import { Settings } from '../../../settings';
-import { GridSquare } from '../../models/grid-square';
+import { localize } from '../../utils';
 import { AbilityTemplateAdvanced } from '../ability-template';
 
-export class ConeFromSelf extends AbilityTemplateAdvanced {
+export class ConeFromTargetSquare extends AbilityTemplateAdvanced {
 
     get #is15() { return this.document?.distance === 15 };
 
@@ -16,18 +16,17 @@ export class ConeFromSelf extends AbilityTemplateAdvanced {
 
     /** @override */
     get placementType() {
-        return (this.token || !this._isSelectingOrigin)
-            ? PLACEMENT_TYPE.SET_ANGLE
-            : PLACEMENT_TYPE.SET_XY;
+        return this._isSelectingOrigin
+            ? PLACEMENT_TYPE.SET_XY
+            : PLACEMENT_TYPE.SET_ANGLE;
     }
 
     /** @override */
-    get angleOrigin() { return this.token ? ANGLE_ORIGIN.TOKEN : ANGLE_ORIGIN.CURRENT; }
+    get angleOrigin() { return ANGLE_ORIGIN.CURRENT; }
 
     /** @override */
     initializeVariables() {
-        this._isSelectingOrigin = !this.token;
-        this._gridSquare = GridSquare.fromToken(this.token);
+        this._isSelectingOrigin = true;
         this.document.angle = 90;
         return super.initializeVariables();
     }
@@ -38,4 +37,6 @@ export class ConeFromSelf extends AbilityTemplateAdvanced {
             ? Settings.cone15Alternate ? ANGLE_POINTS.CONE_15_ALTERNATE : ANGLE_POINTS.CONE_15_TRADITIONAL
             : Settings.coneAlternate ? ANGLE_POINTS.CONE_FROM_MIDPOINT_AND_VERTEX : ANGLE_POINTS.VERTEX;
     }
+
+    get selectOriginText() { return localize('coneStart'); }
 }

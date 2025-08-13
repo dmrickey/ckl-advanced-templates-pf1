@@ -1,14 +1,30 @@
-import { CircleGridIntersection } from "./grid";
+import { AbilityTemplateAdvanced } from '../ability-template';
 
-export class CircleSplash extends CircleGridIntersection {
+export class CircleSplash extends AbilityTemplateAdvanced {
     /** @override */
-    _crosshairsOverride(crosshairs) {
-        const boundsContains = (bounds, point) =>
-            bounds.left <= point.x
-            && point.x <= bounds.right
-            && bounds.top <= point.y
-            && point.y <= bounds.bottom;
-        const found = !!canvas.tokens.placeables.map(x => x.bounds).find(b => boundsContains(b, canvas.mousePosition));
-        crosshairs.interval = canvas.scene.grid.type !== CONST.GRID_TYPES.SQUARE ? 0 : found ? -1 : 1;
+    get _snapMode() {
+        const { x, y } = canvas.mousePosition;
+        const found = !!canvas.tokens.placeables.map(x => x.bounds).find(b => b.contains(x, y));
+        return found ? CONST.GRID_SNAPPING_MODES.CENTER : CONST.GRID_SNAPPING_MODES.VERTEX;
+    }
+
+    #originalDistance = undefined;
+    /** */
+    async _onMove(event) {
+        if (!canvas.scene.grid.isSquare && !this._isDrag) {
+            if (this.#originalDistance === undefined) {
+                this.#originalDistance = this.document.distance;
+            }
+
+            const { x, y } = canvas.mousePosition;
+            const found = !!canvas.tokens.placeables.map(x => x.bounds).find(b => b.contains(x, y));
+            if (found) {
+                this.document.distance = this.#originalDistance + 5;
+            }
+            else {
+                this.document.distance = this.#originalDistance;
+            }
+        }
+        await super._onMove(event);
     }
 }

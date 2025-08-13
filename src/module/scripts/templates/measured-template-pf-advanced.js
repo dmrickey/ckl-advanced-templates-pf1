@@ -1,7 +1,14 @@
 import { CONSTS, MODULE_NAME } from '../../consts';
-import { Settings } from '../../settings';
 import { GridSquare } from '../models/grid-square';
 
+const withinAngle = (min, max, value) => {
+    min = Math.normalizeDegrees(min);
+    max = Math.normalizeDegrees(max);
+    value = Math.normalizeDegrees(value);
+
+    if (min < max) return value >= min && value <= max;
+    return value >= min || value <= max;
+};
 
 /**
  * A type of Placeable Object which highlights an area of the grid as covered by some area of effect.
@@ -9,34 +16,24 @@ import { GridSquare } from '../models/grid-square';
  * @see {@link MeasuredTemplateDocument}
  * @see {@link TemplateLayer}
  */
-// export class MeasuredTemplatePFAdvanced extends PlaceableObject {
-export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
+export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
 
-    // COPIED FROM PF1
-    withinAngle(min, max, value) {
-        min = Math.normalizeDegrees(min);
-        max = Math.normalizeDegrees(max);
-        value = Math.normalizeDegrees(value);
-
-        if (min < max) return value >= min && value <= max;
-        return value >= min || value <= max;
-    }
+    _isSelectingOrigin = false;
 
     withinRect(point, rect) {
         return point.x >= rect.x && point.x < rect.x + rect.width && point.y >= rect.y && point.y < rect.y + rect.height;
-    }
+    };
 
-    degToRad(deg) {
-        return deg * (Math.PI / 180);
-    }
-    // END COPIED FROM PF1
-
-    /** BEGIN MY CODE */
+    //#region BEGIN MY CODE
     get shouldOverrideTokenEmanation() {
         return game.settings.get('pf1', 'measureStyle')
             && this.document.t === 'circle'
             && this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] === CONSTS.placement.circle.self
             && ['burst', 'emanation'].includes(this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.circle.areaType]);
+    }
+
+    get movesWithToken() {
+        return !!this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.circle.movesWithToken];
     }
 
     get hideHighlight() {
@@ -45,7 +42,8 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
     }
 
     set hideHighlight(value) {
-        this.document.flags ||= { [MODULE_NAME]: {} };
+        this.document.flags ||= {};
+        this.document.flags[MODULE_NAME] ||= {};
         this.document.flags[MODULE_NAME][CONSTS.flags.hideHighlight] = value;
     }
 
@@ -55,97 +53,29 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         return { token, sizeSquares };
     }
 
-    get tokenGridCorners() {
-        const { sizeSquares } = this.tokenSizeSquares;
-        const { x, y } = this.document;
-        const gridSize = canvas.grid.h;
-
-        const bottom = y + gridSize * sizeSquares / 2;
-        const left = x - gridSize * sizeSquares / 2;
-        const top = y - gridSize * sizeSquares / 2;
-        const right = x + gridSize * sizeSquares / 2;
-
-        const rightSpots = [...new Array(sizeSquares + 1)].map((_, i) => ({
-            x: right,
-            y: top + gridSize * i,
-        }));
-        const bottomSpots = [...new Array(sizeSquares + 1)].map((_, i) => ({
-            x: right - gridSize * i,
-            y: bottom,
-        }));
-        bottomSpots.shift();
-        bottomSpots.pop();
-        const leftSpots = [...new Array(sizeSquares + 1)].map((_, i) => ({
-            x: left,
-            y: bottom - gridSize * i,
-        }));
-        const topSpots = [...new Array(sizeSquares + 1)].map((_, i) => ({
-            x: left + gridSize * i,
-            y: top,
-        }));
-        topSpots.shift();
-        topSpots.pop();
-
-        const allSpots = [
-            ...rightSpots,
-            ...bottomSpots,
-            ...leftSpots,
-            ...topSpots,
-        ];
-
-        return allSpots;
-    }
-
     get token() {
         const tokenId = this.document.flags?.[MODULE_NAME]?.tokenId;
         const token = canvas.tokens.placeables.find((x) => x.id === tokenId);
         return token;
     }
 
-    /**
-     * Used to get the original distance, i.e. for a rect.
-     */
-    get baseDistance() { return this.document.flags?.[MODULE_NAME]?.baseDistance || 0; }
-
     get hasMaxRange() { return !!this.token && !!this.maxRange && !isNaN(this.maxRange); }
     get hasMinRange() { return !!this.token && !!this.minRange && !isNaN(this.minRange); }
     get maxRange() { return this.document.flags?.[MODULE_NAME]?.maxRange; }
     get minRange() { return this.document.flags?.[MODULE_NAME]?.minRange; }
 
-    get iconImg() { return this.document.flags?.[MODULE_NAME]?.icon || 'systems/pf1/icons/misc/magic-swirl.png'; }
-
-    set setCenter({ x, y }) {
-        this.document.x = x;
-        this.document.y = y;
-        this.refresh();
-    }
-
-    get actualRotation() { return this.document.flags?.[MODULE_NAME]?.rotation ?? 0; }
-    set actualRotation(value) {
-        this.document.flags ||= { [MODULE_NAME]: {} };
-        this.document.flags[MODULE_NAME].rotation = value;
-    }
-
     /**
      * @virtual
-     * @returns { -1 | 0 | 1 }
      */
-    _gridInterval() { return canvas.scene.grid.type === CONST.GRID_TYPES.SQUARE ? 1 : 0; }
+    get _snapMode() { return CONST.GRID_SNAPPING_MODES.CENTER | CONST.GRID_SNAPPING_MODES.EDGE_MIDPOINT | CONST.GRID_SNAPPING_MODES.CORNER; }
 
+    _controlIconTextContents = [];
+    _controlIconTextRangeContents = [];
     /**
-     * The control icon label
+     * The control icon text
      * @type {PreciseText}
      */
-    controlIconTextLabel;
-
-    get controlIconText() {
-        return this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.controlIconText] || '';
-    }
-
-    set controlIconText(value) {
-        this.document.flags ||= { [MODULE_NAME]: {} };
-        this.document.flags[MODULE_NAME][CONSTS.flags.controlIconText] = value;
-    }
+    #controlIconText;
 
     /**
      * Draw the Text label used for the MeasuredTemplate
@@ -155,7 +85,7 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         const style = CONFIG.canvasTextStyle.clone();
         style.fontSize = Math.max(Math.round(canvas.dimensions.size * 0.36 * 12) / 12, 36);
         const text = new PreciseText(null, style);
-        text.anchor.set(.5, 1);
+        text.anchor.set(.5, 0);
         return text;
     }
 
@@ -164,131 +94,40 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
      * @protected
      */
     _refreshControlIconText() {
-        const text = this.controlIconText;
-        this.controlIconTextLabel.text = text;
-        // todo fix text position
-        this.controlIconTextLabel.position.set(0, 80);
+        const text = [...this._controlIconTextContents, ...this._controlIconTextRangeContents].filter(x => !!x);
+        if (text.length) {
+            if (!this.#controlIconText) {
+                const style = CONFIG.canvasTextStyle.clone();
+                style.align = 'center';
+                this.#controlIconText = this.template.addChild(new PreciseText(null, style));
+            }
+            const _text = text.join("\n");
+            if (this.#controlIconText.text !== _text) {
+                this.#controlIconText.text = _text;
+            }
+            this.#controlIconText.anchor.set(0.5, 0);
+            this.#controlIconText.position.set(0, 50);
+        } else {
+            if (this.#controlIconText) {
+                this.#controlIconText.text = "";
+                this.#controlIconText.destroy();
+                this.#controlIconText = null;
+            }
+        }
     }
-    /** END MY CODE */
-
-    /**
-     * The geometry shape used for testing point intersection
-     * @type {PIXI.Circle | PIXI.Ellipse | PIXI.Polygon | PIXI.Rectangle | PIXI.RoundedRectangle}
-     */
-    shape;
-
-    /**
-     * The tiling texture used for this template, if any
-     * @type {PIXI.Texture}
-     */
-    texture;
-
-    /**
-     * The template graphics
-     * @type {PIXI.Graphics}
-     */
-    template;
-
-    /**
-     * The template control icon
-     * @type {ControlIcon}
-     */
-    controlIcon;
-
-    /**
-     * The measurement ruler label
-     * @type {PreciseText}
-     */
-    ruler;
-
-    /**
-     * Internal property used to configure the control border thickness
-     * @type {number}
-     * @protected
-     */
-    _borderThickness = 3;
+    //#endregion
 
     /** @inheritdoc */
     static embeddedName = "MeasuredTemplate";
-
-    /** @override */
-    static RENDER_FLAGS = {
-        redraw: { propagate: ["refresh"] },
-        refresh: { propagate: ["refreshState", "refreshShape"], alias: true },
-        refreshState: {},
-        refreshShape: { propagate: ["refreshPosition", "refreshGrid", "refreshText"] },
-        refreshPosition: { propagate: ["refreshGrid"] },
-        refreshGrid: {},
-        refreshText: {}
-    };
-
-    /* -------------------------------------------- */
-    /*  Properties                                  */
-    /* -------------------------------------------- */
-
-    /** @inheritdoc */
-    get bounds() {
-        const { x, y } = this.document;
-        const d = canvas.dimensions;
-        const r = this.document.distance * (d.size / d.distance);
-        return new PIXI.Rectangle(x - r, y - r, 2 * r, 2 * r);
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-     * A convenience accessor for the border color as a numeric hex code
-     * @returns {number}
-     */
-    get borderColor() {
-        return this.document.borderColor ? Color.fromString(this.document.borderColor).valueOf() : 0x000000;
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-     * A convenience accessor for the fill color as a numeric hex code
-     * @returns {number}
-     */
-    get fillColor() {
-        return this.document.fillColor ? Color.fromString(this.document.fillColor).valueOf() : 0x000000;
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-     * A flag for whether the current User has full ownership over the MeasuredTemplate document.
-     * @type {boolean}
-     */
-    get owner() {
-        return this.document.isOwner;
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-     * Is this MeasuredTemplate currently visible on the Canvas?
-     * @type {boolean}
-     */
-    get isVisible() {
-        return !this.document.hidden || this.owner;
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-     * A unique identifier which is used to uniquely identify related objects like a template effect or grid highlight.
-     * @type {string}
-     */
-    get highlightId() {
-        return this.objectId;
-    }
 
     /* -------------------------------------------- */
     /*  Initial Drawing                             */
     /* -------------------------------------------- */
 
-    /** @override */
+    /**
+     * This is only used so I can override #createControlIcon to mess with the icon
+     * @override
+     */
     async _draw() {
         // Load Fill Texture
         if (this.document.texture) {
@@ -304,15 +143,11 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         this.controlIcon = this.addChild(this.#createControlIcon());
         await this.controlIcon.draw();
 
-        // BEGIN MY CODE
-        this.controlIconTextLabel = this.addChild(this.#drawControlIconText());
-        // END MY CODE
-
         // Ruler Text
         this.ruler = this.addChild(this.#drawRulerText());
 
         // Enable highlighting for this template
-        canvas.grid.addHighlightLayer(this.highlightId);
+        canvas.interface.grid.addHighlightLayer(this.highlightId);
     }
 
     /* -------------------------------------------- */
@@ -321,19 +156,14 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
      * Draw the ControlIcon for the MeasuredTemplate
      * @returns {ControlIcon}
      */
-    #createControlIcon() {
+    #createControlIcon(iconTexture) {
         const size = Math.max(Math.round((canvas.dimensions.size * 0.5) / 20) * 20, 40);
-        const iconTexture = this.document.flags?.[MODULE_NAME]?.icon || CONFIG.controlIcons.template;
+        //#region override icon texture
+        iconTexture ||= this.document.flags?.[MODULE_NAME]?.icon || CONFIG.controlIcons.template;
         let icon = new ControlIcon({ texture: iconTexture, size: size });
+        //#endregion
         icon.x -= (size * 0.5);
         icon.y -= (size * 0.5);
-
-        /** BEGIN MY CODE */
-        if (this.document.t === 'rect') {
-            icon.x += this.baseDistance / canvas.scene.grid.distance * canvas.scene.grid.size / 2;
-            icon.y += this.baseDistance / canvas.scene.grid.distance * canvas.scene.grid.size / 2;
-        }
-        /** END MY CODE */
 
         return icon;
     }
@@ -345,6 +175,7 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
      * @returns {PreciseText}
      */
     #drawRulerText() {
+        // nothing here is overridden, but because I'm overriding _draw I need to include this
         const style = CONFIG.canvasTextStyle.clone();
         style.fontSize = Math.max(Math.round(canvas.dimensions.size * 0.36 * 12) / 12, 36);
         const text = new PreciseText(null, style);
@@ -353,100 +184,22 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
     }
 
     /* -------------------------------------------- */
-
-    /** @override */
-    _destroy(options) {
-        canvas.grid.destroyHighlightLayer(this.highlightId);
-        this.texture?.destroy();
-    }
-
-    /* -------------------------------------------- */
     /*  Incremental Refresh                         */
     /* -------------------------------------------- */
 
     /** @override */
     _applyRenderFlags(flags) {
-        if (flags.refreshState) this.#refreshState();
-        if (flags.refreshPosition) this.#refreshPosition();
-        if (flags.refreshShape) this.#refreshShape();
+        if (flags.refreshState) this._refreshState();
+        if (flags.refreshPosition) this._refreshPosition();
+        if (flags.refreshShape) this._refreshShape();
+        if (flags.refreshTemplate) this._refreshTemplate();
         if (flags.refreshGrid) this.highlightGrid();
         if (flags.refreshText) this._refreshRulerText();
+        if (flags.refreshElevation) this._refreshElevation();
 
         // BEGIN MY CODE
-        if (flags.refreshPosition) this._refreshControlIconText();
+        if (flags.refreshPosition || flags.refreshText) this._refreshControlIconText();
         // END MY CODE
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-     * Refresh the displayed state of the MeasuredTemplate.
-     * This refresh occurs when the user interaction state changes.
-     */
-    #refreshState() {
-
-        // Template Visibility
-        this.visible = this.isVisible && !this.hasPreview;
-
-        // Control Icon Visibility
-        const isHidden = this.document.hidden;
-        this.controlIcon.refresh({
-            visible: this.visible && this.layer.active && this.document.isOwner,
-            iconColor: isHidden ? 0xFF3300 : 0xFFFFFF,
-            borderColor: isHidden ? 0xFF3300 : 0xFF5500,
-            borderVisible: this.hover || this.layer.highlightObjects
-        });
-
-        // Alpha transparency
-        const alpha = isHidden ? 0.5 : 1;
-        this.template.alpha = alpha;
-        if (this.ruler) this.ruler.alpha = alpha;
-        const highlightLayer = canvas.grid.getHighlightLayer(this.highlightId);
-        if (highlightLayer) {
-            highlightLayer.visible = this.visible;
-            highlightLayer.alpha = alpha;
-        }
-        this.alpha = this._getTargetAlpha();
-
-        // Ruler Visibility
-        if (this.ruler) this.ruler.visible = this.visible && this.layer.active;
-    }
-
-    /* -------------------------------------------- */
-
-    /** @override */
-    _getTargetAlpha() {
-        return this.isPreview ? 0.8 : 1.0;
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-     * Refresh the position of the MeasuredTemplate
-     */
-    #refreshPosition() {
-        const { x, y } = this.document;
-        this.position.set(x, y);
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-     * Refresh the underlying geometric shape of the MeasuredTemplate.
-     */
-    #refreshShape() {
-        let { x, y, direction, distance } = this.document;
-        distance *= canvas.dimensions.distancePixels;
-        direction = Math.toRadians(direction);
-
-        // Create a Ray from origin to endpoint
-        this.ray = Ray.fromAngle(x, y, direction, distance);
-
-        // Get the Template shape
-        this.shape = this._computeShape();
-
-        // Refresh the drawn template shape
-        this._refreshTemplate();
     }
 
     /* -------------------------------------------- */
@@ -458,9 +211,7 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
      * @protected
      */
     _computeShape() {
-        let { angle, width, t } = this.document;
-        const { angle: direction, distance } = this.ray;
-        width *= canvas.dimensions.distancePixels;
+        const { t, distance, direction, angle, width } = this.document;
         switch (t) {
             case "circle":
                 /** BEGIN MY CODE */
@@ -474,11 +225,11 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
                 }
             /** END MY CODE */
             case "cone":
-                return this.constructor.getConeShape(direction, angle, distance);
+                return this.constructor.getConeShape(distance, direction, angle);
             case "rect":
-                return this.constructor.getRectShape(direction, distance);
+                return this.constructor.getRectShape(distance, direction);
             case "ray":
-                return this.constructor.getRayShape(direction, distance, width);
+                return this.constructor.getRayShape(distance, direction, width);
         }
     }
 
@@ -493,7 +244,7 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
     _refreshTemplate() {
         if (!this.template) return;
         const template = this.template.clear();
-        if (!this.isVisible || this.hideHighlight) {
+        if (!this.isVisible || this.hideHighlight || this._isSelectingOrigin) {
             return;
         }
 
@@ -502,7 +253,7 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
             : 0.75;
 
         // Draw the Template outline
-        template.lineStyle(this._borderThickness, this.borderColor, outlineAlpha).beginFill(0x000000, 0.0);
+        template.lineStyle(this._borderThickness, this.document.borderColor, outlineAlpha).beginFill(0x000000, 0.0);
 
         // Fill Color or Texture
         if (this.texture) {
@@ -542,14 +293,12 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
                     break;
                 case 'rect':
                     {
-                        // textureSize is basically the hypotenuse, multiple by sin(45) to get the width/height of the rect (square)
-                        textureSize *= Math.sin(Math.toRadians(45));
-                        xScale = textureSize / this.texture.width;
-                        yScale = textureSize / this.texture.height;
+                        // textureSize is basically the hypotenuse, multiple by cos/sin to get the width/height of the rect
+                        xScale = textureSize * Math.cos(Math.toRadians(direction)) / this.texture.width;
+                        yScale = yScale = textureSize * Math.sin(Math.toRadians(direction)) / this.texture.height;
 
+                        // don't change angle of texture as the shape of the rect changes width/height
                         direction = 0;
-                        textureSize /= 2;
-                        template.rotation = this.actualRotation;
                     }
                     break;
                 case 'line':
@@ -563,6 +312,11 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
                         yScale *= this.document.width / this.document.distance;
                     }
                     break;
+            }
+
+            if (this.tempPosition) {
+                xOffset += this.tempPosition.x;
+                yOffset += this.tempPosition.y;
             }
 
             template.beginTextureFill({
@@ -588,25 +342,18 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
             endx += this.tokenSizeSquares.sizeSquares * canvas.scene.grid.size / 2;
         }
 
-        // Draw origin and destination points
-        template.lineStyle(this._borderThickness, 0x000000)
-            .beginFill(0x000000, 0.5)
-            .drawCircle(0, 0, 6)
-            .drawCircle(endx, endy, 6)
-            .endFill();
+        if (!this._isSelectingOrigin) {
+            // Draw origin and destination points
+            template.lineStyle(this._borderThickness, 0x000000)
+                .beginFill(0x000000, 0.5)
+                .drawCircle(0, 0, 6)
+                .drawCircle(endx, endy, 6)
+                .endFill();
+        }
     }
     /** END MY CODE */
 
     /* -------------------------------------------- */
-
-    /**
-     * Get a Circular area of effect given a radius of effect
-     * @param {number} distance
-     * @returns {PIXI.Circle}
-     */
-    static getCircleShape(distance) {
-        return new PIXI.Circle(0, 0, distance);
-    }
 
     /** BEGIN MY CODE */
     _getEmanationShape() {
@@ -642,84 +389,13 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         const existingIcon = this.document.flags[MODULE_NAME]?.icon;
         const icon = show ? existingIcon : 'icons/svg/hazard.svg';
         if (icon && icon !== this.controlIcon?.iconSrc) {
-            this.document.flags[MODULE_NAME].icon = icon;
             if (this.controlIcon) {
                 this.controlIcon.destroy();
             }
-            this.controlIcon = this.addChild(this.#createControlIcon());
+            this.controlIcon = this.addChild(this.#createControlIcon(icon));
         }
     }
     /** END MY CODE */
-
-    /* -------------------------------------------- */
-
-    /**
-     * Get a Conical area of effect given a direction, angle, and distance
-     * @param {number} direction
-     * @param {number} angle
-     * @param {number} distance
-     * @returns {PIXI.Polygon}
-     */
-    static getConeShape(direction, angle, distance) {
-        angle = angle || 90;
-        const coneType = game.settings.get("core", "coneTemplateType");
-
-        // For round cones - approximate the shape with a ray every 3 degrees
-        let angles;
-        if (coneType === "round") {
-            const da = Math.min(angle, 3);
-            angles = Array.fromRange(Math.floor(angle / da)).map(a => (angle / -2) + (a * da)).concat([angle / 2]);
-        }
-
-        // For flat cones, direct point-to-point
-        else {
-            angles = [(angle / -2), (angle / 2)];
-            distance /= Math.cos(Math.toRadians(angle / 2));
-        }
-
-        // Get the cone shape as a polygon
-        const rays = angles.map(a => Ray.fromAngle(0, 0, direction + Math.toRadians(a), distance + 1));
-        const points = rays.reduce((arr, r) => {
-            return arr.concat([r.B.x, r.B.y]);
-        }, [0, 0]).concat([0, 0]);
-        return new PIXI.Polygon(points);
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-     * Get a Rectangular area of effect given a width and height
-     * @param {number} direction
-     * @param {number} distance
-     * @returns {PIXI.Rectangle}
-     */
-    static getRectShape(direction, distance) {
-        const d = canvas.dimensions;
-        const r = Ray.fromAngle(0, 0, direction, distance);
-        const dx = Math.round(r.dx / (d.size / 2)) * (d.size / 2);
-        const dy = Math.round(r.dy / (d.size / 2)) * (d.size / 2);
-        return new PIXI.Rectangle(0, 0, dx, dy).normalize();
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-     * Get a rotated Rectangular area of effect given a width, height, and direction
-     * @param {number} direction
-     * @param {number} distance
-     * @param {number} width
-     * @returns {PIXI.Polygon}
-     */
-    static getRayShape(direction, distance, width) {
-        const up = Ray.fromAngle(0, 0, direction - Math.toRadians(90), (width / 2) + 1);
-        const down = Ray.fromAngle(0, 0, direction + Math.toRadians(90), (width / 2) + 1);
-        const l1 = Ray.fromAngle(up.B.x, up.B.y, direction, distance + 1);
-        const l2 = Ray.fromAngle(down.B.x, down.B.y, direction, distance + 1);
-
-        // Create Polygon shape and draw
-        const points = [down.B.x, down.B.y, up.B.x, up.B.y, l1.B.x, l1.B.y, l2.B.x, l2.B.y];
-        return new PIXI.Polygon(points);
-    }
 
     /* -------------------------------------------- */
 
@@ -728,217 +404,97 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
      * @protected
      */
     _refreshRulerText() {
-        let text;
-        const { distance, t } = this.document;
-        const u = canvas.scene.grid.units;
-        if (this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.hidePreview]) {
-            text = '';
+        if (this._isSelectingOrigin || this.hideHighlight) {
+            this.ruler.text = '';
+            return;
         }
-        else if (t === "rect") {
-            const d = canvas.dimensions;
-            const dx = Math.round(this.ray.dx) * (d.distance / d.size);
-            const dy = Math.round(this.ray.dy) * (d.distance / d.size);
+
+        const { distance, t } = this.document;
+        const grid = canvas.grid;
+        if (t === "rect") {
+            const { A: { x: x0, y: y0 }, B: { x: x1, y: y1 } } = this.ray;
+            const dx = grid.measurePath([{ x: x0, y: y0 }, { x: x1, y: y0 }]).distance;
+            const dy = grid.measurePath([{ x: x0, y: y0 }, { x: x0, y: y1 }]).distance;
             const w = Math.round(dx * 10) / 10;
             const h = Math.round(dy * 10) / 10;
-            text = `${w}${u} x ${h}${u}`;
+            this.ruler.text = `${w}${grid.units} x ${h}${grid.units}`;
         } else {
-            const d = Math.round(distance * 10) / 10;
-            text = `${d}${u}`;
+            const r = Math.round(distance * 10) / 10;
+            this.ruler.text = `${r}${grid.units}`;
         }
-        this.ruler.text = text;
 
-
+        //#region BEGIN MY CODE
         let endx = this.ray.dx;
         if (this.shouldOverrideTokenEmanation) {
             endx += this.tokenSizeSquares.sizeSquares * canvas.scene.grid.size / 2;
         }
+        //#endregion
 
         this.ruler.position.set(endx + 10, this.ray.dy + 5);
     }
 
     /* -------------------------------------------- */
 
-    /** BEGIN MY CODE */
     /**
      * Highlight the grid squares which should be shown under the area of effect
      */
     highlightGrid() {
-        const usePf1Highlight = game.settings.get("pf1", "measureStyle")
-            && ["circle", "cone", "ray"].includes(this.document.t);
+        // Clear the existing highlight layer
+        canvas.interface.grid.clearHighlightLayer(this.highlightId);
 
-        // Only highlight for objects which have a defined shape
-        if (!this.id || !this.shape) {
-            return;
-        }
+        if (this._isSelectingOrigin || this.hideHighlight) return;
 
-        // Clear existing highlight
-        const highlightLayer = this.getHighlightLayer();
-        highlightLayer.clear();
-        if (!this.isVisible) {
-            return;
-        }
-
-        // highlightGridPosition has a default so undefined is fine to pass in
+        //#region BEGIN MY CODE
         const alpha = this.document.flags[MODULE_NAME]?.[CONSTS.flags.colorAlpha];
-        const border = this.borderColor;
-        const fillColor = this.fillColor;
-        const grid = canvas.grid;
+        //#endregion
+        // Highlight colors
+        const border = this.document.borderColor;
+        const color = this.document.fillColor;
 
         // If we are in grid-less mode, highlight the shape directly
-        if (grid.type === CONST.GRID_TYPES.GRIDLESS) {
-            if (!this.hideHighlight) {
-                const highlightShape = this._getGridHighlightShape();
-                grid.grid.highlightGridPosition(highlightLayer, {
-                    alpha,
-                    border,
-                    color: fillColor,
-                    shape: highlightShape,
+        if (canvas.grid.type === CONST.GRID_TYPES.GRIDLESS) {
+
+            if (!this.shape) {
+                this._applyRenderFlags({ refreshShape: true });
+                // HACK: Wait for next tick, the template won't be finalized by Foundry until then.
+                // Likely breaks with Foundry v12 with newer PIXI version
+                new Promise((resolve) => canvas.app.ticker.addOnce(() => resolve()), undefined, PIXI.UPDATE_PRIORITY.LOW).then(() => {
+                    const shape = this._getGridHighlightShape();
+                    canvas.interface.grid.highlightPosition(this.highlightId, { border, color, shape, alpha });
                 });
+            }
+            else {
+                const shape = this._getGridHighlightShape();
+                canvas.interface.grid.highlightPosition(this.highlightId, { border, color, shape, alpha });
             }
         }
 
-        // Otherwise, highlight specific grid squares
+        // Otherwise, highlight specific grid positions
         else {
-            const highlightSquares = usePf1Highlight ? this.getHighlightedSquares() : this._getGridHighlightPositions();
-            for (const { x, y } of highlightSquares) {
-                grid.grid.highlightGridPosition(highlightLayer, {
-                    alpha,
-                    border,
-                    color: fillColor,
-                    x,
-                    y,
-                });
+            const positions = this._getGridHighlightPositions();
+            for (const { x, y } of positions) {
+                canvas.interface.grid.highlightPosition(this.highlightId, { x, y, border, color, alpha });
             }
         }
     }
-    /** END MY CODE */
 
     /* -------------------------------------------- */
-
-    /**
-     * Get the shape to highlight on a Scene which uses grid-less mode.
-     * @returns {PIXI.Polygon|PIXI.Circle|PIXI.Rectangle}
-     * @protected
-     */
-    _getGridHighlightShape() {
-        const shape = this.shape.clone();
-        if ("points" in shape) {
-            shape.points = shape.points.map((p, i) => {
-                if (i % 2) return this.y + p;
-                else return this.x + p;
-            });
-        } else {
-            shape.x += this.x;
-            shape.y += this.y;
-        }
-        return shape;
-    }
-
-    /* -------------------------------------------- */
-
-    /**
-     * Get an array of points which define top-left grid spaces to highlight for square or hexagonal grids.
-     * @returns {Point[]}
-     * @protected
-     */
-    _getGridHighlightPositions() {
-        const grid = canvas.grid.grid;
-        const d = canvas.dimensions;
-        const { x, y, distance } = this.document;
-
-        // Get number of rows and columns
-        const [maxRow, maxCol] = grid.getGridPositionFromPixels(d.width, d.height);
-        let nRows = Math.ceil(((distance * 1.5) / d.distance) / (d.size / grid.h));
-        let nCols = Math.ceil(((distance * 1.5) / d.distance) / (d.size / grid.w));
-        [nRows, nCols] = [Math.min(nRows, maxRow), Math.min(nCols, maxCol)];
-
-        // Get the offset of the template origin relative to the top-left grid space
-        const [tx, ty] = grid.getTopLeft(x, y);
-        const [row0, col0] = grid.getGridPositionFromPixels(tx, ty);
-        const [hx, hy] = [Math.ceil(grid.w / 2), Math.ceil(grid.h / 2)];
-        const isCenter = (x - tx === hx) && (y - ty === hy);
-
-        // Identify grid coordinates covered by the template Graphics
-        const positions = [];
-        for (let r = -nRows; r < nRows; r++) {
-            for (let c = -nCols; c < nCols; c++) {
-                const [gx, gy] = grid.getPixelsFromGridPosition(row0 + r, col0 + c);
-                const [testX, testY] = [(gx + hx) - x, (gy + hy) - y];
-                const contains = ((r === 0) && (c === 0) && isCenter) || grid._testShape(testX, testY, this.shape);
-                if (!contains) continue;
-                positions.push({ x: gx, y: gy });
-            }
-        }
-        return positions;
-    }
-
-    /* -------------------------------------------- */
-    /*  Methods                                     */
-    /* -------------------------------------------- */
-
-    /** @override */
-    async rotate(angle, snap) {
-        const direction = this._updateRotation({ angle, snap });
-        return this.document.update({ direction });
-    }
-
-    /* -------------------------------------------- */
-    /*  Document Event Handlers                     */
-    /* -------------------------------------------- */
-
-    /** @override */
-    _onUpdate(data, options, userId) {
-        super._onUpdate(data, options, userId);
-
-        // Full re-draw
-        const changed = new Set(Object.keys(data));
-        if (changed.has("texture")) return this.renderFlags.set({ redraw: true });
-
-        // Incremental Refresh
-        this.renderFlags.set({
-            refreshState: changed.has("hidden"),
-            refreshShape: ["angle", "direction", "distance", "width", "t"].some(k => changed.has(k)),
-            refreshPosition: ["x", "y", "direction", "distance"].some(k => changed.has(k)),
-            refreshGrid: ["hidden", "borderColor", "fillColor"].some(k => changed.has(k))
-        });
-    }
 
     /* -------------------------------------------- */
     /*  Interactivity                               */
     /* -------------------------------------------- */
 
-    /** @override */
-    _canControl(user, event) {
-        if (!this.layer.active || this.isPreview) return false;
-        return user.isGM || (user === this.document.user);
-    }
-
-    /** @inheritdoc */
-    _canHUD(user, event) {
-        return this.owner; // Allow template owners to right-click
-    }
-
-    /** @inheritdoc */
-    _canConfigure(user, event) {
-        return false; // Double-right does nothing
-    }
-
-    /** @override */
-    _canView(user, event) {
-        return this._canControl(user, event);
-    }
-
-    /** @inheritdoc */
-    _onClickRight(event) {
-        this.document.update({ hidden: !this.document.hidden });
-    }
-
-    getHighlightedSquares() {
-        if (this.hideHighlight) {
-            return [];
-        }
-
-        if (!this.id || !this.shape) return [];
+    /**
+    * Get highlighted square coordinates.
+    *
+    * Supports only circle, cone and ray templates.
+    *
+    * @protected
+    * @override
+    * @returns {Point[]} - Array of grid coordinates
+    */
+    _getGridHighlightPositions() {
+        if (!this.id || !this.shape || this.hideHighlight) return [];
 
         if (this.shouldOverrideTokenEmanation) {
             const { token, sizeSquares } = this.tokenSizeSquares;
@@ -947,204 +503,130 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
             }
         }
 
-        const templateType = this.document.t;
-        if (!game.settings.get("pf1", "measureStyle") || !["circle", "cone", "ray", "rect", "line"].includes(templateType)) return [];
+        return super._getGridHighlightPositions();
+    }
 
-        const grid = canvas.grid;
-        // Size of each cell in pixels
-        const gridSizePxBase = canvas.dimensions.size;
-        // Offset for uneven grids
-        const gridSizePxOffset = gridSizePxBase % 2;
-        // Final grid size
-        const gridSizePx = gridSizePxBase + gridSizePxOffset;
-        const gridSizeUnits = canvas.dimensions.distance; // feet, meters, etc.
+    /**
+     * This is mostly the same except for Rects
+     * Determine tokens residing within the template bounds, based on either grid highlight logic or token center.
+     *
+     * @public
+     * @returns {Promise<Token[]>} Tokens sufficiently within the template.
+     */
+    async getTokensWithin() {
+        const shape = this.document.t,
+            dimensions = this.scene.dimensions,
+            gridSizePx = dimensions.size,
+            gridSizeUnits = dimensions.distance;
 
-        const templateDirection = this.document.direction;
-        const templateAngle = this.document.angle;
+        // Ensure shape and related data exists (e.g. this.ray) for getHighlightedSquares to work correctly.
+        // this.width, this.height, etc. are wrong without this
+        if (!this.shape) {
+            this._applyRenderFlags({ refreshShape: true });
+            // HACK: Wait for next tick, the template won't be finalized by Foundry until then.
+            // Likely breaks with Foundry v12 with newer PIXI version
+            await new Promise((resolve) => canvas.app.ticker.addOnce(() => resolve()), undefined, PIXI.UPDATE_PRIORITY.LOW);
+        }
 
-        // Parse rays as per Bresenham's algorithm
-        if (templateType === "ray" || templateType === 'line') {
-            const result = [];
+        const tCenter = this.center;
 
-            const line = (x0, y0, x1, y1) => {
-                x0 = Math.floor(x0 / gridSizePx);
-                x1 = Math.floor(x1 / gridSizePx);
-                y0 = Math.floor(y0 / gridSizePx);
-                y1 = Math.floor(y1 / gridSizePx);
+        const { distance, angle, direction } = this.document;
 
-                const dx = Math.abs(x1 - x0);
-                const dy = Math.abs(y1 - y0);
-                const sx = x0 < x1 ? 1 : -1;
-                const sy = y0 < y1 ? 1 : -1;
-                let err = dx - dy;
+        // Max distance from template center, +1 cell for proper detection, and +1 pixel for uneven grids and rounding protection
+        const maxDistance = Math.max(this.height, this.width) + gridSizePx + 1;
+        // Get tokens within max potential distance from the template
+        const relevantTokens = new Set(
+            canvas.tokens.placeables.filter((t) => new Ray(t.center, tCenter).distance - t.sizeErrorMargin <= maxDistance)
+        );
 
-                while (!(x0 === x1 && y0 === y1)) {
-                    result.push({ x: x0 * gridSizePx, y: y0 * gridSizePx });
-                    const e2 = err << 1;
-                    if (e2 > -dy) {
-                        err -= dy;
-                        x0 += sx;
-                    }
-                    if (e2 < dx) {
-                        err += dx;
-                        y0 += sy;
-                    }
-                }
+        const results = new Set();
+
+        const withinCircle = (target) => {
+            const ray = new Ray(tCenter, target);
+            // Calculate ray length in relation to circle radius
+            const raySceneLength = (ray.distance / gridSizePx) * gridSizeUnits;
+            // Include this token if its center is within template radius
+            return raySceneLength <= distance + 1;
+        };
+
+        const withinCone = (target, minAngle, maxAngle) => {
+            const ray = new Ray(tCenter, target);
+            const rayAngle = Math.normalizeDegrees(Math.toDegrees(ray.angle));
+            const rayWithinAngle = withinAngle(minAngle, maxAngle, rayAngle);
+            // Calculate ray length in relation to circle radius
+            const raySceneLength = (ray.distance / gridSizePx) * gridSizeUnits;
+            // Include token if its within template distance and within the cone's angle
+            return rayWithinAngle && raySceneLength <= distance + 1;
+        };
+
+
+        // Rectangle has same handling everywhere
+        if (shape === "rect") {
+            const rect = {
+                x: this.document.x,
+                y: this.document.y,
+                width: this.shape.width,
+                height: this.shape.height,
             };
 
-            // Get resulting squares
-            let xOffset = 0;
-            let yOffset = 0;
-            if (90 <= templateDirection && templateDirection <= 270) {
-                xOffset = -1;
-            }
-            if (180 <= templateDirection && templateDirection <= 360) {
-                yOffset = -1;
-            }
-
-            const width = this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.line.widthOverride] && this.document.flags?.[MODULE_NAME]?.[CONSTS.flags.line.width] || Settings.defaultLineWidth;
-            const qty = Math.ceil(width / 5);
-
-            const rad = Math.toRadians(templateDirection);
-            const rad90 = Math.toRadians(90);
-            let points = [];
-            const isOdd = qty % 2;
-            if (qty <= 1) {
-                points.push({ x: this.document.x, y: this.document.y });
-            } else if (isOdd) {
-                points = [...new Array(Math.floor(qty / 2))].flatMap((_, i) => [{
-                    x: this.document.x + gridSizePx * (i + 1) * Math.cos(rad + rad90),
-                    y: this.document.y + gridSizePx * (i + 1) * Math.sin(rad + rad90),
-                }, {
-                    x: this.document.x + gridSizePx * (i + 1) * Math.cos(rad - rad90),
-                    y: this.document.y + gridSizePx * (i + 1) * Math.sin(rad - rad90),
-                }]);
-                points.push({ x: this.document.x, y: this.document.y });
-            } else {
-                points = [...new Array(qty / 2)].flatMap((_, i) => [{
-                    x: this.document.x + (gridSizePx * (i + 1) - gridSizePx / 2) * Math.cos(rad + rad90),
-                    y: this.document.y + (gridSizePx * (i + 1) - gridSizePx / 2) * Math.sin(rad + rad90),
-                }, {
-                    x: this.document.x + (gridSizePx * (i + 1) - gridSizePx / 2) * Math.cos(rad - rad90),
-                    y: this.document.y + (gridSizePx * (i + 1) - gridSizePx / 2) * Math.sin(rad - rad90),
-                }]);
-                points.push({ x: this.document.x, y: this.document.y });
-            }
-
-            points.forEach((point) => {
-                // Extend ray by half a square for better highlight calculation
-                const ray = Ray.fromAngle(point.x, point.y, this.ray.angle, this.ray.distance + gridSizePx / 2);
-                line(ray.A.x + xOffset, ray.A.y + yOffset, ray.B.x, ray.B.y);
-            })
-
-            result.sort((a, b) => a.x === b.x ? a.y - b.y : a.x - b.x);
-            const xs = new Set(result.map((p) => p.x));
-            xs.forEach((x) => {
-                const ys = new Set(result.filter((p) => p.x === x).map((p) => p.y));
-
-                const yMax = Math.max(...ys);
-                const yMin = Math.min(...ys);
-                const expected = (yMax - yMin) / gridSizePx + 1;
-                if (expected <= 2) {
-                    return;
+            for (const t of relevantTokens) {
+                const tokenGridSquares = GridSquare.fromToken(t);
+                if (tokenGridSquares.containedSquares.some((square) => this.withinRect(square.center, rect))) {
+                    results.add(t);
                 }
-
-                // skip first and last because they already exist
-                for (let i = 1; i < expected - 1; i++) {
-                    const y = yMin + i * gridSizePx;
-                    if (ys.has(y)) {
-                        continue;
-                    }
-                    result.push({ x, y });
-                }
-            });
-
-            return result;
+            }
         }
-        else if (templateType === "circle" || templateType === "cone") {
-            // Get number of rows and columns
-            const nr = Math.ceil((this.document.distance * 1.5) / gridSizeUnits / (gridSizePx / grid.h));
-            const nc = Math.ceil((this.document.distance * 1.5) / gridSizeUnits / (gridSizePx / grid.w));
-
-            // Get the center of the grid position occupied by the template
-            const { x, y } = this.document;
-
-            const [cx, cy] = grid.getCenter(x, y);
-            const [col0, row0] = grid.grid.getGridPositionFromPixels(cx, cy);
-            const minAngle = Math.normalizeDegrees(templateDirection - templateAngle / 2);
-            const maxAngle = Math.normalizeDegrees(templateDirection + templateAngle / 2);
-
-            // Origin offset multiplier
-            const offsetMult = { x: 0, y: 0 };
-            // Offset measurement for cones
-            // Offset is to ensure that cones only start measuring from cell borders, as in https://www.d20pfsrd.com/magic/#Aiming_a_Spell
-            if (templateType === "cone") {
-                // Degrees anticlockwise from pointing right. In 45-degree increments from 0 to 360
-                const dir = (templateDirection >= 0 ? 360 - templateDirection : -templateDirection) % 360;
-                // If we're not on a border for X, offset by 0.5 or -0.5 to the border of the cell in the direction we're looking on X axis
-                // /2 turns from 1/0/-1 to 0.5/0/-0.5
-                offsetMult.x = x % gridSizePxBase != 0 ? Math.sign(Math.round(Math.cos(this.degToRad(dir)))) / 2 : 0;
-                // Same for Y, but cos Y goes down on screens, we invert
-                offsetMult.y = y % gridSizePxBase != 0 ? -Math.sign(Math.round(Math.sin(this.degToRad(dir)))) / 2 : 0;
+        // Special handling for gridless
+        else if (canvas.grid.type === CONST.GRID_TYPES.GRIDLESS && ["circle", "cone"].includes(shape)) {
+            // Pre-calc cone data
+            let minAngle, maxAngle;
+            if (shape === "cone") {
+                minAngle = Math.normalizeDegrees(direction - angle / 2);
+                maxAngle = Math.normalizeDegrees(direction + angle / 2);
             }
 
-            const result = [];
-            for (let a = -nc; a < nc; a++) {
-                for (let b = -nr; b < nr; b++) {
-                    // Position of cell's top-left corner, in pixels
-                    const [gx, gy] = canvas.grid.grid.getPixelsFromGridPosition(col0 + a, row0 + b);
-                    // Position of cell's center, in pixels
-                    const [cellCenterX, cellCenterY] = [gx + gridSizePx * 0.5, gy + gridSizePx * 0.5];
+            // TODO: Test against vision points and ensure ~third of them are inside the template instead.
+            for (const t of relevantTokens) {
+                const tokenGridSquares = GridSquare.fromToken(t);
+                const cells = tokenGridSquares.containedSquares.map(x => x.center);
 
-                    // Determine point of origin
-                    const origin = {
-                        x: x + offsetMult.x * gridSizePxBase,
-                        y: y + offsetMult.y * gridSizePxBase,
-                    };
-
-                    // Determine point we're measuring the distance to - always in the center of a grid square
-                    const destination = { x: cellCenterX, y: cellCenterY };
-
-                    if (templateType === "cone") {
-                        const ray = new Ray(origin, destination);
-                        const rayAngle = Math.normalizeDegrees(ray.angle / (Math.PI / 180));
-                        if (ray.distance > 0 && !this.withinAngle(minAngle, maxAngle, rayAngle)) {
-                            continue;
-                        }
+                switch (shape) {
+                    case "circle": {
+                        if (cells.some((c) => withinCircle(c))) results.add(t);
+                        break;
                     }
-
-                    const distance = pf1.utils.measureDistance(origin, destination);
-                    if (distance <= this.document.distance) {
-                        result.push({ x: gx, y: gy });
+                    case "cone": {
+                        if (cells.some((c) => withinCone(c, minAngle, maxAngle))) results.add(t);
+                        break;
                     }
                 }
             }
-
-            return result;
         }
-        else if (templateType === "rect") {
-            const { baseDistance } = this;
-            const { x, y } = this.document;
-            const nr = Math.ceil(baseDistance / gridSizeUnits);
-            const nc = Math.ceil(baseDistance / gridSizeUnits);
-            const result = [];
-            for (let a = 0; a < nc; a++) {
-                for (let b = 0; b < nr; b++) {
-                    // Position of cell's top-left corner, in pixels
-                    const [gx, gy] = [x + a * gridSizePx, y + b * gridSizePx];
-                    result.push({ x: gx, y: gy });
+        // Non-gridless
+        else {
+            const mapCoordsToCell = ({ x, y }) => ({ x, y, width: gridSizePx, height: gridSizePx });
+
+            const highlightSquares = this._getGridHighlightPositions().map(mapCoordsToCell);
+            for (const cell of highlightSquares) {
+                for (const t of relevantTokens) {
+                    const tokenGridSquares = GridSquare.fromToken(t);
+                    const cells = tokenGridSquares.containedSquares.map(x => x.center);
+
+                    if (cells.some((tc) => this.withinRect(tc, cell))) {
+                        results.add(t);
+                        relevantTokens.delete(t);
+                    }
                 }
             }
-            return result;
         }
 
-        return [];
+        return Array.from(results);
     }
 
     /** BEGIN MY CODE */
     clearTempate() {
         this.template.clear();
-        this.getHighlightLayer().clear();
+        canvas.interface.grid.clearHighlightLayer(this.highlightId);
         this.ruler.text = '';
         this.controlIcon.visible = false;
     }
@@ -1154,16 +636,18 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         const d = canvas.dimensions;
 
         // Get number of rows and columns
-        const nr = Math.ceil((this.document.distance * 1.5) / d.distance / (d.size / grid.h));
-        const nc = Math.ceil((this.document.distance * 1.5) / d.distance / (d.size / grid.w));
+        const nr = Math.ceil((this.document.distance * 1.5) / d.distance / (d.size / grid.sizeY));
+        const nc = Math.ceil((this.document.distance * 1.5) / d.distance / (d.size / grid.sizeX));
 
         // Get the center of the grid position occupied by the template
         const result = [];
-        const origins = this.tokenGridCorners;
+        const origins = this.movesWithToken
+            ? GridSquare.fromToken(this.token).gridPoints
+            : GridSquare.fromCenter(this.center, this.token.document.height || 1, this.token.document.width || 1).gridPoints;
 
         origins.forEach(({ x, y }) => {
-            const [cx, cy] = grid.getCenter(x, y);
-            const [col0, row0] = grid.grid.getGridPositionFromPixels(cx, cy);
+            const { x: cx, y: cy } = grid.getCenterPoint({ x, y });
+            const { i: col0, j: row0 } = grid.getOffset({ x: cx, y: cy });
 
             const measureDistance = function (p0, p1) {
                 const gs = canvas.dimensions.size;
@@ -1185,7 +669,7 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
             for (let a = -nc; a < nc; a++) {
                 for (let b = -nr; b < nr; b++) {
                     // Position of cell's top-left corner, in pixels
-                    const [gx, gy] = canvas.grid.grid.getPixelsFromGridPosition(col0 + a, row0 + b);
+                    const { x: gx, y: gy } = canvas.grid.getTopLeftPoint({ i: col0 + a, j: row0 + b });
                     // Position of cell's center, in pixels
                     const [cellCenterX, cellCenterY] = [gx + d.size * 0.5, gy + d.size * 0.5];
 
@@ -1207,161 +691,5 @@ export class MeasuredTemplatePFAdvanced extends MeasuredTemplate {
         return filtered;
     }
 
-    /**
-     * Determine tokens residing within the template bounds, based on either grid higlight logic or token center.
-     *
-     * @public
-     * @returns {Promise<Token[]>} Tokens sufficiently within the template.
-     */
-    async getTokensWithin() {
-        const shape = this.document.t;
-        const dimensions = this.scene.dimensions;
-        const gridSizePx = dimensions.size;
-        const gridSizeUnits = dimensions.distance;
-
-        const getCenter = () => {
-            if (shape !== "rect") return this.center;
-            // Hack: Fix for Foundry bug where .center for rectangle template returns top-left corner instead.
-            return {
-                x: this.x + this.width / 2,
-                y: this.y + this.height / 2,
-            };
-        };
-
-        // Ensure shape and related data exists (e.g. this.ray) for getHighlightedSquares to work correctly.
-        // this.width, this.height, etc. are wrong without this
-        if (!this.shape) {
-            this._applyRenderFlags({ refreshShape: true });
-            // HACK: Wait for next tick, the template won't be finalized by Foundry until then.
-            // Likely breaks with Foundry v12 with newer PIXI version
-            await new Promise((resolve) => canvas.app.ticker.addOnce(() => resolve()), undefined, PIXI.UPDATE_PRIORITY.LOW);
-        }
-
-        const { distance, angle, direction } = this.document;
-
-        const tCenter = getCenter();
-
-        let maxDistance;
-        switch (this.document.t) {
-            case 'rect':
-                maxDistance = this.baseDistance / gridSizeUnits * gridSizePx + gridSizePx;
-                break;
-            case 'ray':
-                maxDistance = this.document.distance / gridSizeUnits * gridSizePx + gridSizePx;
-                break;
-            default:
-                maxDistance = Math.max(this.height, this.width);
-                break;
-        }
-
-        const relevantTokens = new Set(
-            canvas.tokens.placeables.filter((t) => new Ray(t.center, tCenter).distance <= maxDistance + t.sizeErrorMargin)
-        );
-
-        const isLargeToken = (t) => t.document.width > 1 || t.document.height > 1;
-
-        const results = new Set();
-
-        // Special handling for gridless
-        if (canvas.grid.type === CONST.GRID_TYPES.GRIDLESS) {
-            if (shape === "ray") {
-                const shapePoints = this._computeShape().points;
-                const a = {
-                    x: shapePoints[0] + this.document.x,
-                    y: shapePoints[1] + this.document.y,
-                };
-                const b = {
-                    x: shapePoints[2] + this.document.x,
-                    y: shapePoints[3] + this.document.y,
-                };
-                const c = {
-                    x: shapePoints[4] + this.document.x,
-                    y: shapePoints[5] + this.document.y,
-                };
-                const d = {
-                    x: shapePoints[6] + this.document.x,
-                    y: shapePoints[7] + this.document.y,
-                };
-
-                const triangleArea = (aa, bb, cc) => Math.abs(aa.x * (bb.y - cc.y) + bb.x * (cc.y - aa.y) + cc.x * (aa.y - bb.y)) / 2;
-                // const rayArea = Math.abs((b.x * a.y - a.x * b.y) + (c.x * b.y - b.x * c.y) + (a.x * c.y - c.x * a.y)) / 2;
-                const rayArea = triangleArea(a, b, c) + triangleArea(a, c, d);
-                const isWithinRay = (p) => {
-                    const triangleAreas = triangleArea(a, p, b) + triangleArea(b, p, c) + triangleArea(c, p, d) + triangleArea(d, p, a);
-                    return rayArea + 10 > triangleAreas;
-                }
-
-                for (const t of relevantTokens) {
-                    const cells = isLargeToken(t) ? t.getOccupiedCells({ center: true }) : [t.center];
-                    if (cells.some((c) => isWithinRay(c))) results.add(t);
-                }
-            }
-            else {
-                // Pre-calc cone data
-                let minAngle, maxAngle;
-                if (shape === "cone") {
-                    minAngle = Math.normalizeDegrees(direction - angle / 2);
-                    maxAngle = Math.normalizeDegrees(direction + angle / 2);
-                }
-
-                const withinCircle = (target) => {
-                    const ray = new Ray(tCenter, target);
-                    // Calculate ray length in relation to circle radius
-                    const raySceneLength = (ray.distance / gridSizePx) * gridSizeUnits;
-                    // Include this token if its center is within template radius
-                    return raySceneLength <= distance + 1;
-                };
-
-                const withinCone = (target, minAngle, maxAngle) => {
-                    const ray = new Ray(tCenter, target);
-                    const rayAngle = Math.normalizeDegrees(Math.toDegrees(ray.angle));
-                    const rayWithinAngle = this.withinAngle(minAngle, maxAngle, rayAngle);
-                    // Calculate ray length in relation to circle radius
-                    const raySceneLength = (ray.distance / gridSizePx) * gridSizeUnits;
-                    // Include token if its within template distance and within the cone's angle
-                    return rayWithinAngle && raySceneLength <= distance + 1;
-                };
-
-                // TODO: Test against vision points and ensure ~third of them are inside the template instead.
-                for (const t of relevantTokens) {
-                    const cells = isLargeToken(t) ? t.getOccupiedCells({ center: true }) : [t.center];
-
-                    switch (shape) {
-                        case "circle": {
-                            if (cells.some((c) => withinCircle(c))) results.add(t);
-                            break;
-                        }
-                        case "cone": {
-                            if (cells.some((c) => withinCone(c, minAngle, maxAngle))) results.add(t);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        // Non-gridless
-        else {
-            const highlightSquares = this.getHighlightedSquares()
-                .map(({ x, y }) => ({ x, y, width: gridSizePx, height: gridSizePx }));
-            for (const highlightSquare of highlightSquares) {
-                for (const token of relevantTokens) {
-                    const tokenSquares = GridSquare.fromToken(token).containedSquares;
-                    for (const tokenSquare of tokenSquares) {
-                        if (this.withinRect(tokenSquare.center, highlightSquare)) {
-                            results.add(token);
-                            relevantTokens.delete(token);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        return Array.from(results);
-    }
-
-    getHighlightLayer() {
-        return canvas.grid.getHighlightLayer(this.highlightId);
-    }
     /** END MY CODE */
 }

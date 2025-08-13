@@ -24,7 +24,7 @@
 
     // initialize cone options
     updates.data.flags[MODULE_NAME][CONSTS.flags.placementType] ||=
-        action.data.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] || CONSTS.placement.cone.selectTargetSquare;
+        action.flags?.[MODULE_NAME]?.[CONSTS.flags.placementType] || CONSTS.placement.cone.selectTargetSquare;
 
     ifDebug(() => console.log("Opening cone settings for:", updates));
 </script>
