@@ -62,6 +62,8 @@ const track = (id) => {
 }
 const untrack = (id) => trackedApps.delete(id);
 
+let placingTemplate = false;
+
 /**
  * Common logic and switch statement for placing all templates
  *
@@ -72,6 +74,8 @@ const untrack = (id) => trackedApps.delete(id);
  */
 async function promptMeasureTemplate() {
     ifDebug(() => console.log('promptMeasureTemplate', this));
+
+    if (placingTemplate) return null;
 
     // return success early if user isn't allowed to place templates
     if (!hasTemplatePermission()) {
@@ -132,7 +136,13 @@ async function promptMeasureTemplate() {
         return { result: false };
     }
 
-    const result = await template.drawPreview().catch((e) => null);
+    placingTemplate = true;
+    let result = null;
+    try {
+        result = await template.drawPreview().catch((e) => null);
+    }
+    catch { }
+    placingTemplate = false;
 
     if (!result) {
         await Promise.all(windows.map((x) => x.maximize()));
