@@ -1,7 +1,7 @@
-import { AbilityTemplateAdvanced } from "../ability-template";
-import { ifDebug, localize, localizeFull } from '../../utils';
 import { CONSTS, MODULE_NAME } from "../../../consts";
 import { GridSquare } from "../../models/grid-square";
+import { ifDebug } from '../../utils';
+import { AbilityTemplateAdvanced } from "../ability-template";
 
 export class RectCentered extends AbilityTemplateAdvanced {
 
@@ -19,11 +19,12 @@ export class RectCentered extends AbilityTemplateAdvanced {
         const isEvenSquareWidth = !(this.#widthSquares % 2);
         const isEvenSquareHeight = !(this.#heightSquares % 2);
 
-        return isEvenSquareHeight && isEvenSquareWidth
-            ? CONST.GRID_SNAPPING_MODES.VERTEX
-            : isEvenSquareWidth
-                ? CONST.GRID_SNAPPING_MODES.LEFT_SIDE_MIDPOINT | CONST.GRID_SNAPPING_MODES.RIGHT_SIDE_MIDPOINT
-                : CONST.GRID_SNAPPING_MODES.BOTTOM_SIDE_MIDPOINT | CONST.GRID_SNAPPING_MODES.TOP_SIDE_MIDPOINT;
+        if (isEvenSquareHeight && isEvenSquareWidth) return CONST.GRID_SNAPPING_MODES.VERTEX;
+        if (!isEvenSquareHeight && !isEvenSquareWidth) return CONST.GRID_SNAPPING_MODES.CENTER;
+
+        return isEvenSquareWidth
+            ? CONST.GRID_SNAPPING_MODES.LEFT_SIDE_MIDPOINT | CONST.GRID_SNAPPING_MODES.RIGHT_SIDE_MIDPOINT
+            : CONST.GRID_SNAPPING_MODES.BOTTOM_SIDE_MIDPOINT | CONST.GRID_SNAPPING_MODES.TOP_SIDE_MIDPOINT;
     }
 
     #widthSquares = 0;
