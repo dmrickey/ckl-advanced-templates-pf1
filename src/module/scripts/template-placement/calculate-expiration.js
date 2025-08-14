@@ -1,4 +1,4 @@
-import { CONSTS, MODULE_NAME } from '../../consts';
+import { CONSTS } from '../../consts';
 
 export const calculateExpiration = (rollData = {}, flags = {}) => {
     const now = game.time.worldTime;

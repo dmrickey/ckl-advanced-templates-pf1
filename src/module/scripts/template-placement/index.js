@@ -88,7 +88,6 @@ async function promptMeasureTemplate() {
 
     const type = this.shared.action.measureTemplate.type;
 
-    const actor = this.item?.actor;
     const token = getToken(this.item) || {};
     const icon = this.shared.action.img === 'systems/pf1/icons/misc/magic-swirl.png' ? this.item.img : this.shared.action.img;
     let { maxRange, minRange } = this.shared.action;
@@ -98,7 +97,7 @@ async function promptMeasureTemplate() {
         ? _getHeight(this.shared, flags[CONSTS.flags.rect.height])
         : distance;
 
-    const expirationTime = calculateExpiration(this.getRollData(), flags);
+    const expirationTime = calculateExpiration(this.shared.rollData, flags);
 
     const templateData = {
         _id: foundry.utils.randomID(16),
