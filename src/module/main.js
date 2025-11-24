@@ -1,12 +1,15 @@
-import { deleteTemplatesForToken, getTemplatesAttachedToToken, moveTemplatesToToken } from './scripts/sync-templates-to-token.js';
-import { DurationTracker } from './scripts/duration-tracker.js';
-import { handleSingleOwner } from './scripts/utils/active-gm.js';
-import { initTemplates } from './scripts/templates/index.js';
 import { MODULE_NAME } from './consts.js';
-import { registerSettings } from './settings.js';
-import { injectTemplateSelector, destroyTemplateSelector } from './scripts/template-selector-injector/index.js';
+import { patchPixiRoundedRect } from './patch/pixi-rounded-rect.js';
+import './patch/v13-window-size-patch.js';
+import { DurationTracker } from './scripts/duration-tracker.js';
 import migrateIfNeeded from './scripts/migration/index.js';
+import { deleteTemplatesForToken, getTemplatesAttachedToToken, moveTemplatesToToken } from './scripts/sync-templates-to-token.js';
 import { addSkipRangeToDialog, promptMeasureTemplate } from './scripts/template-placement/index.js';
+import { destroyTemplateSelector, injectTemplateSelector } from './scripts/template-selector-injector/index.js';
+import { initTemplates } from './scripts/templates/index.js';
+import { handleSingleOwner } from './scripts/utils/active-gm.js';
+import { patchWalledTemplates } from './scripts/walled-templates/patch.js';
+import { registerSettings } from './settings.js';
 
 // Initialize module
 Hooks.once('init', async () => {
@@ -45,13 +48,6 @@ Hooks.on('pf1PostInit', () => {
     });
 });
 
-/**
- * @this {PIXI.RoundedRectangle}
- */
-function getRoundedRectBounds() {
-    return new PIXI.Rectangle(this.x, this.y, this.width, this.height);
-}
-
 Hooks.on('init', () => {
     libWrapper.register(MODULE_NAME, 'pf1.components.ItemAction.defineSchema', (wrapped) => {
         const schema = wrapped();
@@ -61,7 +57,7 @@ Hooks.on('init', () => {
         return schema;
     }, 'WRAPPER');
 
-    PIXI.RoundedRectangle.prototype.getBounds = getRoundedRectBounds;
+    patchPixiRoundedRect();
 });
 
 Hooks.on('updateToken', async (token, update, _options, userId) => {
@@ -92,3 +88,5 @@ Hooks.on('updateToken', async (token, update, _options, userId) => {
 
 Hooks.on('deleteToken', async (token, _options, userId) =>
     await handleSingleOwner(userId, async () => deleteTemplatesForToken(token.id)));
+
+// patchWalledTemplates();

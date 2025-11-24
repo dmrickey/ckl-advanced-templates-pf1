@@ -55,7 +55,7 @@ class DurationTracker {
         });
 
         Hooks.on('updateWorldTime', async (_worldTime, delta) => {
-            if (!isFirstGM()) {
+            if (!isFirstGM() || game.combat) {
                 return;
             }
 

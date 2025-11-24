@@ -125,7 +125,7 @@ export class RectCentered extends AbilityTemplateAdvanced {
         const gridSizePx = Math.max(canvas.scene.grid.sizeX, canvas.scene.grid.sizeY);
         const maxDistance = Math.max(this.#heightPx, this.#widthPx) + gridSizePx + 1;
         const relevantTokens = new Set(
-            canvas.tokens.placeables.filter((t) => new Ray(t.center, this.center).distance - t.sizeErrorMargin <= maxDistance)
+            canvas.tokens.placeables.filter((t) => new foundry.canvas.geometry.Ray(t.center, this.center).distance - t.sizeErrorMargin <= maxDistance)
         );
 
         const results = new Set();

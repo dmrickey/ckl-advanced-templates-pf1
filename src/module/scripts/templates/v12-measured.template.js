@@ -102,7 +102,7 @@ class MeasuredTemplate extends PlaceableObject {
 
         // Load Fill Texture
         if (this.document.texture) {
-            this.texture = await loadTexture(this.document.texture, { fallback: "icons/svg/hazard.svg" });
+            this.texture = await foundry.canvas.loadTexture(this.document.texture, { fallback: "icons/svg/hazard.svg" });
         } else {
             this.texture = null;
         }
@@ -129,7 +129,7 @@ class MeasuredTemplate extends PlaceableObject {
      */
     #createControlIcon() {
         const size = Math.max(Math.round((canvas.dimensions.size * 0.5) / 20) * 20, 40);
-        let icon = new ControlIcon({ texture: CONFIG.controlIcons.template, size: size });
+        let icon = new foundry.canvas.containers.ControlIcon({ texture: CONFIG.controlIcons.template, size: size });
         icon.x -= (size * 0.5);
         icon.y -= (size * 0.5);
         return icon;
@@ -144,7 +144,7 @@ class MeasuredTemplate extends PlaceableObject {
     #drawRulerText() {
         const style = CONFIG.canvasTextStyle.clone();
         style.fontSize = Math.max(Math.round(canvas.dimensions.size * 0.36 * 12) / 12, 36);
-        const text = new PreciseText(null, style);
+        const text = new foundry.canvas.containers.PreciseText(null, style);
         text.anchor.set(0, 1);
         return text;
     }
@@ -253,7 +253,7 @@ class MeasuredTemplate extends PlaceableObject {
 
         // Grid type
         if (game.settings.get("core", "gridTemplates")) {
-            this.ray = new Ray({ x, y }, canvas.grid.getTranslatedPoint({ x, y }, direction, distance));
+            this.ray = new foundry.canvas.geometry.Ray({ x, y }, canvas.grid.getTranslatedPoint({ x, y }, direction, distance));
         }
 
         // Euclidean type

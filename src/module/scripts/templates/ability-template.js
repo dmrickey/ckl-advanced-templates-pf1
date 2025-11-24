@@ -204,11 +204,11 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
 
     clearTargetIfEnabled() {
         if (Settings.target) {
-            game.user.updateTokenTargets();
+            game.user._onUpdateTokenTargets();
         }
     }
 
-    async targetIfEnabled(force = false) {
+    async targetIfEnabled({ broadcast = false, force = false } = {}) {
         if (this._isSelectingOrigin) return;
 
         if (!force
@@ -217,9 +217,15 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
         ) return;
 
         if (Settings.target && !this._isSelectingOrigin) {
-            const targets = await this.getTokensWithin();
-            const ids = targets.map((t) => t.id);
-            game.user.updateTokenTargets(ids);
+            // if walledtemplates is enabled
+            if (this.acquireTargets) {
+                this.acquireTargets({ broadcast });
+            }
+            else {
+                const targets = await this.getTokensWithin();
+                const ids = targets.map((t) => t.id);
+                game.user._onUpdateTokenTargets(ids);
+            }
         }
     }
 
@@ -334,7 +340,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                 ? angle + 360
                 : angle;
         };
-        const ray = new Ray(this.token.center, canvas.mousePosition);
+        const ray = new foundry.canvas.geometry.Ray(this.token.center, canvas.mousePosition);
         const direction = radToNormalizedAngle(ray.angle);
         const x = Math.cos(ray.angle) * this.token.w / 2 + this.token.center.x;
         const y = Math.sin(ray.angle) * this.token.h / 2 + this.token.center.y;
@@ -499,7 +505,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
             return this.#events.reject();
         }
 
-        await this.targetIfEnabled(true);
+        await this.targetIfEnabled({ broadcast: true, force: true });
         this._onFinish(event);
 
         this.#events.resolve(this.templateResult);

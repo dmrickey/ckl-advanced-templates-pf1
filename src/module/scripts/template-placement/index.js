@@ -92,12 +92,12 @@ async function promptMeasureTemplate() {
     const icon = this.shared.action.img === 'systems/pf1/icons/misc/magic-swirl.png' ? this.item.img : this.shared.action.img;
     let { maxRange, minRange } = this.shared.action;
     const flags = this.shared.action.flags?.[MODULE_NAME] || {};
-    let distance = _getSize(this.shared) || 5;
+    let distance = await _getSize(this.shared) || 5;
     let height = flags[CONSTS.flags.rect.height]
-        ? _getHeight(this.shared, flags[CONSTS.flags.rect.height])
+        ? await _getHeight(this.shared, flags[CONSTS.flags.rect.height])
         : distance;
 
-    const expirationTime = calculateExpiration(this.shared.rollData, flags);
+    const expirationTime = await calculateExpiration(this.shared.rollData, flags);
 
     const templateData = {
         _id: foundry.utils.randomID(16),
@@ -116,6 +116,9 @@ async function promptMeasureTemplate() {
                 minRange,
                 tokenId: token?.id,
             },
+            walledtemplates: {
+                wallsBlock: 'walled', // or 'recurse'
+            }
         },
         user: game.userId,
         fillColor: this.shared.action.measureTemplate.color || game.user.color,
@@ -162,8 +165,10 @@ export {
     promptMeasureTemplate,
 };
 
-const _getSize = (shared) => pf1.utils.convertDistance(RollPF.safeTotal(shared.action.measureTemplate.size, shared.rollData))[0];
-const _getHeight = (shared, distance) => pf1.utils.convertDistance(RollPF.safeTotal(distance, shared.rollData))[0];
+const _roll = async (formula, rollData) => (await RollPF.create(formula, rollData).evaluate()).total;
+
+const _getSize = async (shared) => pf1.utils.convertDistance(await _roll(shared.action.measureTemplate.size, shared.rollData))[0];
+const _getHeight = async (shared, distance) => pf1.utils.convertDistance(await _roll(distance, shared.rollData))[0];
 
 const hasTemplatePermission = () => game.permissions.TEMPLATE_CREATE.includes(game.user.role);
 
