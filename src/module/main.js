@@ -80,7 +80,7 @@ Hooks.on('updateToken', async (token, update, _options, userId) => {
             template.y = temp.y;
         });
     }, 10);
-    CanvasAnimation.getAnimation(token.object?.animationName)?.promise.then(async () => {
+    token.object?.movementAnimationPromise?.then(async () => {
         clearInterval(moveTemplate);
         await handleSingleOwner(userId, async () => moveTemplatesToToken(position));
     });
