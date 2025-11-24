@@ -334,7 +334,7 @@ export class AbilityTemplateAdvanced extends MeasuredTemplatePFAdvanced {
                 ? angle + 360
                 : angle;
         };
-        const ray = new Ray(this.token.center, canvas.mousePosition);
+        const ray = new foundry.canvas.geometry.Ray(this.token.center, canvas.mousePosition);
         const direction = radToNormalizedAngle(ray.angle);
         const x = Math.cos(ray.angle) * this.token.w / 2 + this.token.center.x;
         const y = Math.sin(ray.angle) * this.token.h / 2 + this.token.center.y;

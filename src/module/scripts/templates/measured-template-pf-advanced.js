@@ -84,7 +84,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
     #drawControlIconText() {
         const style = CONFIG.canvasTextStyle.clone();
         style.fontSize = Math.max(Math.round(canvas.dimensions.size * 0.36 * 12) / 12, 36);
-        const text = new PreciseText(null, style);
+        const text = new foundry.canvas.containers.PreciseText(null, style);
         text.anchor.set(.5, 0);
         return text;
     }
@@ -99,7 +99,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
             if (!this.#controlIconText) {
                 const style = CONFIG.canvasTextStyle.clone();
                 style.align = 'center';
-                this.#controlIconText = this.template.addChild(new PreciseText(null, style));
+                this.#controlIconText = this.template.addChild(new foundry.canvas.containers.PreciseText(null, style));
             }
             const _text = text.join("\n");
             if (this.#controlIconText.text !== _text) {
@@ -131,7 +131,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
     async _draw() {
         // Load Fill Texture
         if (this.document.texture) {
-            this.texture = await loadTexture(this.document.texture, { fallback: "icons/svg/hazard.svg" });
+            this.texture = await foundry.canvas.loadTexture(this.document.texture, { fallback: "icons/svg/hazard.svg" });
         } else {
             this.texture = null;
         }
@@ -160,7 +160,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         const size = Math.max(Math.round((canvas.dimensions.size * 0.5) / 20) * 20, 40);
         //#region override icon texture
         iconTexture ||= this.document.flags?.[MODULE_NAME]?.icon || CONFIG.controlIcons.template;
-        let icon = new ControlIcon({ texture: iconTexture, size: size });
+        let icon = new foundry.canvas.containers.ControlIcon({ texture: iconTexture, size: size });
         //#endregion
         icon.x -= (size * 0.5);
         icon.y -= (size * 0.5);
@@ -178,7 +178,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         // nothing here is overridden, but because I'm overriding _draw I need to include this
         const style = CONFIG.canvasTextStyle.clone();
         style.fontSize = Math.max(Math.round(canvas.dimensions.size * 0.36 * 12) / 12, 36);
-        const text = new PreciseText(null, style);
+        const text = new foundry.canvas.containers.PreciseText(null, style);
         text.anchor.set(0, 1);
         return text;
     }
@@ -356,12 +356,14 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
     /* -------------------------------------------- */
 
     /** BEGIN MY CODE */
-    _getEmanationShape() {
+    _getEmanationShape(radius) {
         const { sizeSquares } = this.tokenSizeSquares;
 
         const dimensions = canvas.dimensions;
-        let { distance: radius } = this.document;
-        radius *= (dimensions.size / dimensions.distance);
+        if (!radius) {
+            radius ||= this.document.distance;
+        }
+        radius *= dimensions.distancePixels;
         radius += dimensions.size * sizeSquares / 2;
         return new PIXI.RoundedRectangle(-radius, -radius, radius * 2, radius * 2, radius - dimensions.size * sizeSquares / 2);
     }
@@ -536,13 +538,13 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         const maxDistance = Math.max(this.height, this.width) + gridSizePx + 1;
         // Get tokens within max potential distance from the template
         const relevantTokens = new Set(
-            canvas.tokens.placeables.filter((t) => new Ray(t.center, tCenter).distance - t.sizeErrorMargin <= maxDistance)
+            canvas.tokens.placeables.filter((t) => new foundry.canvas.geometry.Ray(t.center, tCenter).distance - t.sizeErrorMargin <= maxDistance)
         );
 
         const results = new Set();
 
         const withinCircle = (target) => {
-            const ray = new Ray(tCenter, target);
+            const ray = new foundry.canvas.geometry.Ray(tCenter, target);
             // Calculate ray length in relation to circle radius
             const raySceneLength = (ray.distance / gridSizePx) * gridSizeUnits;
             // Include this token if its center is within template radius
@@ -550,7 +552,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
         };
 
         const withinCone = (target, minAngle, maxAngle) => {
-            const ray = new Ray(tCenter, target);
+            const ray = new foundry.canvas.geometry.Ray(tCenter, target);
             const rayAngle = Math.normalizeDegrees(Math.toDegrees(ray.angle));
             const rayWithinAngle = withinAngle(minAngle, maxAngle, rayAngle);
             // Calculate ray length in relation to circle radius
@@ -651,7 +653,7 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
 
             const measureDistance = function (p0, p1) {
                 const gs = canvas.dimensions.size;
-                const ray = new Ray(p0, p1);
+                const ray = new foundry.canvas.geometry.Ray(p0, p1);
                 // How many squares do we travel across to get there? If 2.3, we should count that as 3 instead of 2; hence, Math.ceil
                 const nx = Math.ceil(Math.abs(ray.dx / gs));
                 const ny = Math.ceil(Math.abs(ray.dy / gs));

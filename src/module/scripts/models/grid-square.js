@@ -444,7 +444,7 @@ export class GridSquare {
                 : normalizedAngle;
         };
 
-        const ray = new Ray(this.center, { x, y });
+        const ray = new foundry.canvas.geometry.Ray(this.center, { x, y });
         const angle = radToNormalizedAngle(ray.angle);
         const spotIndex = Math.ceil(angle / 360 * totalSpots) % totalSpots;
 

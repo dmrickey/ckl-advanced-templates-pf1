@@ -56,7 +56,7 @@
 
     const selectTexture = async () => {
         const current = updates.data.measureTemplate.texture;
-        const picker = new FilePicker({
+        const picker = new foundry.applications.apps.FilePicker.implementation({
             type: "imagevideo",
             current,
             callback: (path) => {

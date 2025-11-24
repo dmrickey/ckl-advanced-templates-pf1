@@ -40,7 +40,7 @@ export class LineFromSelf extends AbilityTemplateAdvanced {
 
     /** @override */
     _followAngle({ x, y }) {
-        const ray = new Ray(this.center, { x, y });
+        const ray = new foundry.canvas.geometry.Ray(this.center, { x, y });
         const degrees = Math.toDegrees(ray.angle);
         this.document.direction = degrees;
 
