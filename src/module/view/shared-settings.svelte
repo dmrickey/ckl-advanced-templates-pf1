@@ -75,7 +75,7 @@
             }
         }, 100);
 
-        await picker.browse(current);
+        await picker.browse(current || '');
     };
 
     const clampColorAlpha = () => {
