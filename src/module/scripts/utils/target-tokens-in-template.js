@@ -27,7 +27,7 @@ const targetTokens = (template) => {
             .geometry.containsPoint(o.center))
         .map((x) => x.id);
 
-    game.user.updateTokenTargets(tokenIdsToTarget);
+    game.user._onUpdateTokenTargets(tokenIdsToTarget);
 };
 
 export { targetTokens };
