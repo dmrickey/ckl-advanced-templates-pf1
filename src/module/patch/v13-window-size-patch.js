@@ -1,0 +1,3 @@
+// V12 -> 13 SHIM
+window.MIN_WINDOW_WIDTH = 200;
+window.MIN_WINDOW_HEIGHT = 50;
