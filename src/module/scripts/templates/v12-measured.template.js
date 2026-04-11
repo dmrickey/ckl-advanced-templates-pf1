@@ -282,6 +282,7 @@ class MeasuredTemplate extends PlaceableObject {
                 return this.constructor.getConeShape(distance, direction, angle);
             case "rect":
                 return this.constructor.getRectShape(distance, direction);
+            case "line":
             case "ray":
                 return this.constructor.getRayShape(distance, direction, width);
         }

@@ -7,13 +7,10 @@ export class LineFromSelf extends AbilityTemplateAdvanced {
 
     /** @override */
     get _snapMode() {
-        return this._isSelectingOrigin
-            ? CONST.GRID_SNAPPING_MODES.VERTEX
-            : 0;
+        return 0;
     }
-
     /** @override */
-    get angleStartPoints() { return ANGLE_POINTS.VERTEX; }
+    get angleStartPoints() { return ANGLE_POINTS.VERTEX | ANGLE_POINTS.EDGE_MIDPOINT; }
 
     /** @override */
     get placementType() {

@@ -473,10 +473,18 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
 
         // Otherwise, highlight specific grid positions
         else {
+            let _shape = this.shape;
+
+            if (this.document.t === 'line' || this.document.t === 'ray') {
+                const { distance, direction, width } = this.document;
+                this.shape = this.constructor.getRayShape(distance, direction, width - 0.1);
+            }
             const positions = this._getGridHighlightPositions();
             for (const { x, y } of positions) {
                 canvas.interface.grid.highlightPosition(this.highlightId, { x, y, border, color, alpha });
             }
+
+            this.shape = _shape;
         }
     }
 
