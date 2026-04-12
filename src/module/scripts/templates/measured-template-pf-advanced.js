@@ -702,4 +702,83 @@ export class MeasuredTemplatePFAdvanced extends pf1.canvas.MeasuredTemplatePF {
     }
 
     /** END MY CODE */
+
+    static gridDistanceToPixels(origin, angleRad, targetDistance) {
+        const dx = Math.cos(angleRad);
+        const dy = Math.sin(angleRad);
+
+        let min = 0;
+        let max = canvas.dimensions.distancePixels * targetDistance;
+
+        for (let i = 0; i < 12; i++) {
+            const mid = (min + max) / 2;
+
+            const pt = {
+                x: origin.x + dx * mid,
+                y: origin.y + dy * mid
+            };
+
+            const path = [origin, pt];
+            const dist = canvas.grid.measurePath(path).distance;
+
+            if (dist < targetDistance) min = mid;
+            else max = mid;
+        }
+
+        return max;
+    }
+
+    /** @override */
+    static getRayShape(distance, direction, width) {
+        const d = canvas.dimensions;
+        width *= d.distancePixels;
+        const p00 = Ray.fromAngle(0, 0, Math.toRadians(direction - 90), width / 2).B;
+        const p01 = Ray.fromAngle(0, 0, Math.toRadians(direction + 90), width / 2).B;
+        let p10;
+        let p11;
+
+        // Grid ray
+        if (game.settings.get("core", "gridTemplates")) {
+            p10 = canvas.grid.getTranslatedPoint(p00, direction, distance);
+            p11 = canvas.grid.getTranslatedPoint(p01, direction, distance);
+        }
+
+        // Euclidean ray
+        else {
+            direction = Math.toRadians(direction);
+
+            const d10 = this.gridDistanceToPixels(p00, direction, distance);
+            const d11 = this.gridDistanceToPixels(p01, direction, distance);
+
+            p10 = Ray.fromAngle(p00.x, p00.y, direction, d10).B;
+            p11 = Ray.fromAngle(p01.x, p01.y, direction, d11).B;
+        }
+
+        return new PIXI.Polygon(p00.x, p00.y, p10.x, p10.y, p11.x, p11.y, p01.x, p01.y);
+    }
+
+    /** @override */
+    _refreshShape() {
+        let { t, x, y, direction, distance } = this.document;
+
+        // Grid type
+        if (game.settings.get("core", "gridTemplates")) {
+            this.ray = new foundry.canvas.geometry.Ray({ x, y }, canvas.grid.getTranslatedPoint({ x, y }, direction, distance));
+        }
+
+        // Euclidean type
+        else {
+            if (t === 'line' || t === 'ray') {
+                direction = Math.toRadians(direction);
+                const px = MeasuredTemplatePFAdvanced.gridDistanceToPixels({ x, y }, direction, distance);
+                this.ray = Ray.fromAngle(x, y, direction, px);
+            }
+            else {
+                this.ray = Ray.fromAngle(x, y, Math.toRadians(direction), distance * canvas.dimensions.distancePixels);
+            }
+        }
+
+        // Get the Template shape
+        this.shape = this._computeShape();
+    }
 }
